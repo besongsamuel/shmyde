@@ -1,0 +1,2 @@
+[21-Feb-2016 02:06:58 UTC] PHP Fatal error:  Call to a member function get_product_id() on a non-object in /home/shmyde/public_html/v2/shmyde/application/controllers/Design.php on line 42
+[30-May-2016 02:59:59 UTC] PHP Fatal error:  Call to undefined method Admin_model::get_fabric_design_submenus() in /home/shmyde/public_html/v2/shmyde/application/controllers/Admin.php on line 408

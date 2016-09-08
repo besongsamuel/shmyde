@@ -1,0 +1,1305 @@
+<?php
+class Admin extends CI_Controller {
+
+
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->load->helper('url');
+
+        $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+
+        switch ($lang){
+                case "fr":
+                $current_language = "french";
+                break;
+                case "en":
+                $current_language = "english";
+                break;
+        default:
+                $current_language = "english";
+                break;
+        }
+
+        $this->lang->load('shmyde', $current_language);
+
+    }
+    
+    public function button_editor($editor_type, $id){
+        
+        $data = array();
+        
+        $data['id'] = json_encode($id);
+        
+        $data['editor_type'] = json_encode($editor_type);
+        
+        $this->load->view('admin/header');
+        $this->load->view('admin/editor.php', $data);
+    }
+
+    public function view($page = 'product_id', $product_id = -1, $menu_id = -1, $submenu_id = -1)
+    {
+        if ( ! file_exists(APPPATH.'/views/admin/'.$page.'.php'))
+        {
+            // Whoops, we don't have a page for that!
+            show_404();
+        }
+
+        if($page == 'product'){
+
+            $data['products'] = $this->admin_model->get_all_products();
+
+        }
+
+        if($page == 'menu'){
+
+            $data['menus'] = $this->admin_model->get_all_menus();
+        }
+
+        if($page == 'submenu'){
+
+            $data['submenus'] = $this->admin_model->get_all_submenus();
+        }
+
+        if($page == 'option'){
+
+            $data['menus'] = $this->admin_model->get_design_menus();
+
+            $data['products'] = $this->admin_model->get_all_products();
+
+            $data['default_product_id'] = $product_id;
+
+            $data['default_menu_id'] = $menu_id;
+
+            $data['default_submenu_id'] = $submenu_id;
+
+            $query_options = $this->admin_model->get_all_options_extended();
+
+            $options = Array();
+
+            foreach ($query_options->result() as $row)
+            {
+                    $options[$row->id]['id'] = $row->id;
+                    $options[$row->id]['name'] = $row->name;
+                    $options[$row->id]['description'] = $row->description;
+                    $options[$row->id]['price'] = $row->price;
+                    $options[$row->id]['product_name'] = $row->product_name;
+                    $options[$row->id]['menu_name'] = $row->menu_name;
+                    $options[$row->id]['product_id'] = $row->product_id;
+                    $options[$row->id]['menu_id'] = $row->shmyde_design_main_menu_id;
+                    $options[$row->id]['is_default'] = $row->is_default;
+
+            }
+
+
+            $data['options'] = $options;
+        }
+            
+            if($page == 'fabric'){
+                
+                $data['fabrics'] = $this->admin_model->get_all_fabrics();
+                                           
+            }
+            
+            if($page == 'measurement'){
+                
+                $data['measurements'] = $this->admin_model->get_measurements();
+                                           
+            }
+            
+            if($page == 'thread'){
+                
+                $data['threads'] = $this->admin_model->get_threads();
+                                           
+            }
+            
+            if($page == 'product_fabric'){
+                
+                $data['product_fabrics'] = $this->admin_model->get_all_product_fabrics_with_submenus();
+            }
+
+            $data['title'] = ucfirst($page); 
+
+            $this->lang->load('shmyde', CURRENT_LANGUAGE);
+
+                    $this->load->view('admin/header');
+            $this->load->view('admin/'.$page, $data);
+
+
+    }
+
+    public function edit($page, $id, $param0 = 0, $param1 = 0)
+    {
+        if ( ! file_exists(APPPATH.'/views/admin/create_'.$page.'.php'))
+        {
+            show_404();
+        }
+
+        if ($this->input->server('REQUEST_METHOD') == 'POST'){
+
+            if($page == 'product'){
+
+                $this->edit_product($id);
+            }
+
+            if($page == 'menu'){
+
+                $this->edit_menu($id);
+            }
+
+            if($page == 'option'){
+
+                $this->edit_option($id, $param0, $param1);
+            }
+            
+            
+            if($page == 'product_fabric'){
+
+                $this->edit_product_fabric($id);
+            }
+            
+            if($page == 'measurement'){
+
+                $this->edit_measurement($id);
+            }
+            
+            if($page == 'thread'){
+
+                $this->edit_thread($id);
+            }
+
+            return;
+        }
+        
+        $data = Array();
+        
+        $data['is_edit'] = json_encode(true);
+        
+        if($page == 'product'){
+            
+            $data = $this->begin_edit_product($id, $data);	
+        }
+
+        if($page == 'menu'){
+
+            $data = $this->begin_edit_menu($id, $data);
+        }
+
+
+        if($page == 'option'){
+                
+            $data = $this->begin_edit_option($id, $data, $param0, $param1);
+            
+        }
+        
+        if($page == 'fabric'){
+                            
+            $data = $this->begin_edit_fabric($id, $data);
+            
+        }
+        
+        if($page == 'measurement'){
+                            
+            $data = $this->begin_edit_measurement($id, $data);
+            
+        }
+        
+        if($page == 'thread'){
+                            
+            $data = $this->begin_edit_thread($id, $data);
+            
+        }
+        
+        if($page == 'product_fabric'){
+                            
+            $data = $this->begin_edit_product_fabric($id, $data);
+        }
+
+        $data['title'] = 'EDIT';  // Capitalize the first letter
+                
+        $this->lang->load('shmyde', CURRENT_LANGUAGE);
+
+        $this->load->view('admin/header');
+
+        $this->load->view('admin/create_'.$page, $data);
+        
+
+
+    }
+
+    function edit_product($id){
+        
+
+        if($this->admin_model->edit_product(
+                $id, $this->input->post('name'),  
+                $this->input->post('url_name'), 
+                $this->input->post('target'),
+                $this->input->post('price'))){
+
+            
+            redirect('/admin/view/product', 'refresh');
+        }
+        
+    }
+    
+    function edit_thread($id){
+                
+        //Image was changed
+        if($_FILES["image"]["size"] > 0){
+        
+            $this->admin_model->delete_thread($id);
+        
+            $this->create_thread('thread');
+        }
+        else{
+            
+            $this->admin_model->edit_thread($id, $this->input->post('color'));
+            
+            redirect('/admin/view/thread', 'refresh');
+        }
+        
+    }
+    
+    function edit_product_fabric($id){
+                                                          
+        $this->admin_model->remove_product_submenu_fabric($id);
+                                       
+        $this->create_product_fabric_submenu($id);
+        
+        redirect('/admin/view/product_fabric', 'refresh');
+        
+    }
+    
+    function edit_menu($id){
+                
+        if($this->admin_model->edit_menu(
+                $id, 
+                $this->input->post('name'), 
+                $this->input->post('product'), 
+                $this->input->post('category'), 
+                $this->input->post('mixed_fabric_support') == null ? 0 : 1,
+                $this->input->post('inner_contrast_support') == null ? 0 : 1,
+                $this->input->post('is_back_menu') == null ? 0 : 1)){
+            
+            redirect('/admin/view/menu', 'refresh');
+        }
+    }
+    
+    function edit_measurement($id){
+                
+        if($this->admin_model->edit_measurement(
+                $id, 
+                $this->input->post('name'), 
+                $this->input->post('product'),                  
+                $this->input->post('description'),
+                $this->input->post('default_value'),
+                $this->input->post('youtube_video'))){
+            
+            redirect('/admin/view/measurement', 'refresh');
+        }
+    }
+    
+    
+    function edit_option($id){
+                
+        if($this->admin_model->edit_option(
+                $id, $this->input->post('name'), 
+                $this->input->post('menu'), 
+                $this->input->post('price'), 
+                $this->input->post('description'), 
+                $this->input->post('is_default'))){
+            
+                    redirect('/admin/view/option/'.$this->input->post('product').'/'. $this->input->post('menu'), 'refresh');
+        }
+    }
+    
+    
+    function begin_edit_product($id, $data){
+                
+        $data['product'] = $this->admin_model->get_product($id);
+        
+        $data['product_id'] = $data['product']->id;
+        
+        $back_image = $this->admin_model->get_images($id, 'shmyde_product_back_image');
+        
+        $front_image = $this->admin_model->get_images($id, 'shmyde_product_front_image');
+        
+        if(isset($back_image)){
+            
+            if(!empty($back_image)){
+                
+                
+                $data['back_images'] = json_encode($back_image);
+            }
+            else{
+                
+                $data['back_images'] = array();
+            }
+            
+        }
+        
+        if(isset($front_image)){
+            
+            if(!empty($front_image)){
+                
+                
+                $data['front_images'] = json_encode($front_image);
+            }
+            else{
+                
+                $data['front_images'] = array();
+            }
+            
+        }
+
+        
+        return $data;
+        
+    }
+        
+    function begin_edit_product_fabric($id, $data){
+        
+        // Gets the fabric with its image data         
+        $data['product_fabric'] = json_encode($this->admin_model->get_product_fabric($id));
+                                                
+        $data['fabric_id'] = $id;
+        
+        $data['products'] = $this->admin_model->get_all_products();
+        
+        $data['fabric_submenus'] = $this->admin_model->get_fabric_menus();
+        
+        $data['product_submenu_fabrics'] = $this->admin_model->get_product_submenu_fabrics();
+                              
+        return $data;
+        
+    }
+    
+    function begin_edit_menu($id, $data){
+        
+        $data['menu'] = $this->admin_model->get_menu($id);
+        
+        $data['products'] = $this->admin_model->get_all_products();
+        
+        $data['categories'] = $this->admin_model->get_categories();
+        
+        $data['menu_category'] = $this->admin_model->get_category($data['menu']->shmyde_design_category_id);
+                        
+        return $data;
+        
+    }
+    
+    function begin_edit_measurement($id, $data){
+        
+        $data['measurement'] = $this->admin_model->get_measurement($id);
+        
+        $data['products'] = $this->admin_model->get_all_products();
+                     
+        return $data;
+        
+    }
+    
+    function begin_edit_thread($id, $data){
+        
+        $data['thread'] = $this->admin_model->get_thread($id);
+                             
+        return $data;
+        
+    }
+        
+    function begin_edit_option($id, $data, $param0 = 0, $param1 = 0){
+                
+        $data['option_id'] = $id;
+        
+        $data['menus'] = $this->admin_model->get_design_menus();
+
+        $data['products'] = $this->admin_model->get_all_products();
+        
+        $data['selected_product'] = $param0;
+        
+        $data['selected_menu'] = $param1;
+
+        $option_images = $this->admin_model->get_images($id, 'shmyde_images');
+                
+        $option_thumbnail = $this->admin_model->get_images($id, 'shmyde_option_thumbnail');
+        
+        if(isset($option_images)){
+            
+            if(!empty($option_images)){
+                
+                
+                $data['option_images'] = json_encode($option_images);
+            }
+            else{
+                
+                $data['option_images'] = array();
+            }
+            
+        }
+        
+        if(isset($option_thumbnail)){
+            
+            if(!empty($option_thumbnail)){
+                
+                
+                $data['option_thumbnails'] = json_encode($option_thumbnail);
+            }
+            else{
+                
+                $data['option_thumbnails'] = array();
+            }
+            
+        }
+        
+
+        
+
+        $data['option'] = $this->admin_model->get_option($id);
+        
+        return $data;
+        
+    }
+    
+
+    public function delete($page = 'product', $id)
+    {
+        	
+            if($page == 'product'){
+
+                $this->admin_model->delete_product($id);
+
+                redirect('/admin/view/product', 'refresh');
+
+            }
+            
+            if($page == 'product_fabric'){
+
+                $this->admin_model->delete_product_fabric($id);
+
+                redirect('/admin/view/product_fabric', 'refresh');
+
+            }
+            
+
+            if($page == 'menu'){
+
+                $this->admin_model->delete_menu($id);
+
+                redirect('/admin/view/menu', 'refresh');
+
+            }
+
+            if($page == 'option'){
+
+                $this->admin_model->delete_option($id);
+
+                redirect('/admin/view/option', 'refresh');
+
+            }
+            
+            if($page == 'measurement'){
+
+                $this->admin_model->delete_measurement($id);
+
+                redirect('/admin/view/measurement', 'refresh');
+
+            }
+            
+            if($page == 'thread'){
+
+                $this->admin_model->delete_thread($id);
+
+                redirect('/admin/view/thread', 'refresh');
+
+            }
+
+        }
+    
+    /**
+     * This function is used to display the creation page of most of the
+     * data elements of the website
+     * @param type $page This represents the current page or item being created
+     * @return type
+     */    
+    public function create($page = 'product', $param0 = 0, $param1 = 0)
+    {
+
+        if ( ! file_exists(APPPATH.'/views/admin/create_'.$page.'.php'))
+        {
+            show_404();
+        }
+
+        if ($this->input->server('REQUEST_METHOD') == 'POST'){
+
+
+            $this->create_product($page);
+            
+            $this->create_product_fabric($page);
+
+            $this->create_menu($page);
+                        
+            $this->create_option($page);
+            
+            $this->create_measurement($page);
+            
+            $this->create_thread($page);
+            
+            return;
+        }
+        
+        $data = Array();
+                       
+        $data = $this->view_create_product($page, $data);
+                       
+        $data = $this->view_create_product_fabric($page, $data);
+        
+        $data = $this->view_create_measurement($page, $data);
+        
+        $data = $this->view_create_menu($page, $data);
+        
+        $data = $this->view_create_thread($page, $data);
+                
+        $data = $this->view_create_option($page, $data, $param0, $param1);
+                              
+        $data['title'] = 'CREATE'; 
+        
+        $data['is_edit'] = json_encode(false);
+        
+
+        $this->lang->load('shmyde', CURRENT_LANGUAGE);
+
+        $this->load->view('admin/header');
+
+        $this->load->view('admin/create_'.$page, $data);
+
+
+    }
+    
+    /**
+     * This function is called when the create product page is posted
+     * @param type $page the current page being posted
+     */
+    private function create_product($page){
+        
+        if($page == 'product'){
+                
+
+            if($this->admin_model->create_product(
+                $this->input->post('name'),
+                $this->input->post('url_name'),
+                $this->input->post('target'),
+                $this->input->post('price'))){
+
+                redirect('/admin/view/product', 'refresh');
+
+            }
+        }
+    }
+    
+    /**
+     * This function creates a thread
+     * @param type $page
+     */
+    private function create_thread($page){
+        
+        if($page == 'thread'){
+            
+            $target_dir = ASSETS_DIR_PATH.'images/threads/';
+            
+            $target_file = $target_dir . basename($_FILES["image"]["name"]);
+            
+            $uploadOk = 1;
+            
+            $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+            
+            // Check if image file is a actual image or fake image
+            if(isset($_POST["submit"])) {
+                
+                $check = getimagesize($_FILES["image"]["tmp_name"]);
+                
+                if($check !== false) 
+                {
+                    echo "File is an image - " . $check["mime"] . ".";
+                    $uploadOk = 1;
+                } 
+                else 
+                {
+                    echo "File is not an image.";
+                    $uploadOk = 0;
+                }
+            }
+            // Check if file already exists
+            if (file_exists($target_file)) 
+            {
+                unlink($target_file);
+            }
+            // Check file size
+            if ($_FILES["image"]["size"] > 500000) 
+            {
+                echo "Sorry, your file is too large.";
+                $uploadOk = 0;
+            }
+            // Allow certain file formats
+            //if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+            //&& $imageFileType != "gif" ) 
+            //{
+                //echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+                //$uploadOk = 0;
+            //}
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 0) {
+                echo "Sorry, your file was not uploaded.";
+            // if everything is ok, try to upload file
+            } 
+            else 
+            {
+                if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) 
+                {                    
+                    if($this->admin_model->create_thread(basename($_FILES["image"]["name"]), $this->input->post('color')))
+                    {
+                        redirect('/admin/view/thread', 'refresh');
+                    }
+                    echo "The file ". basename( $_FILES["image"]["name"]). " has been uploaded.";
+                } 
+                else 
+                {
+                    $uploadOk = 0;
+                    echo "Sorry, there was an error uploading your file.";
+                }
+            }
+
+        }
+    }
+    
+    /**
+     * This function is called when the create product page is posted
+     * @param type $page the current page being posted
+     */
+    private function create_product_fabric($page){
+        
+        if($page == 'product_fabric'){
+            
+            $id = $this->admin_model->get_table_next_id("shmyde_fabrics");
+                                       
+            $this->create_product_fabric_submenu($id);
+            
+            $this->admin_model->save_fabric($id, "fabric_name");
+            
+            redirect('/admin/view/product_fabric', 'refresh');
+        
+        }
+               
+    }
+    
+    private function create_product_fabric_submenu($fabric_id){
+        
+        $products = $this->admin_model->get_all_products();
+        
+        foreach ($products->result() as $product) {
+
+            if(isset($this->input->post('product')[$product->id]['default'])){
+
+                $this->admin_model->set_product_fabric_default($product->id, $fabric_id);
+            }
+
+            $fabric_submenus = $this->admin_model->get_fabric_menus();
+
+            foreach ($fabric_submenus->result() as $fabric_submenu){
+
+                if(isset($this->input->post('product')[$product->id][$fabric_submenu->id])){
+
+                    $this->admin_model->save_product_submenu_fabric($fabric_id, $product->id, $fabric_submenu->id);
+
+                }
+
+            }
+
+        }
+    }
+
+
+    /**
+     * This function is called when the create menu page is posted
+     * @param type $page the current page being posted
+     */
+    private function create_menu($page){
+                
+        if($page == 'menu'){
+            
+            if($this->admin_model->create_menu(
+                    $this->input->post('name'), 
+                    $this->input->post('product'), 
+                    $this->input->post('category'), 
+                    $this->input->post('mixed_fabric_support') == null ? 0 : 1,
+                    $this->input->post('inner_contrast_support') == null ? 0 : 1,
+                    $this->input->post('is_back_menu') == null ? 0 : 1)){
+
+                redirect('/admin/view/menu', 'refresh');
+            }
+        }
+    }
+    
+    private function create_measurement($page){
+                
+        if($page == 'measurement'){
+            
+            if($this->admin_model->create_measurement(
+                    $this->input->post('name'), 
+                    $this->input->post('product'), 
+                    $this->input->post('description'),
+                    $this->input->post('default_value'),
+                    $this->input->post('youtube_video')                    
+                    )){
+
+                redirect('/admin/view/measurement', 'refresh');
+            }
+        }
+    }
+
+    
+    /**
+     * This function is called when the create option page is posted
+     * @param type $page the current page being posted
+     */
+    private function create_option($page){
+        
+                
+        if($page == 'option'){
+
+            if($this->admin_model->create_option(
+
+                $this->input->post('name'), 
+                $this->input->post('menu'), 
+                $this->input->post('price'), 
+                $this->input->post('description'),  
+                $this->input->post('is_default')
+                )){
+                
+                    redirect('/admin/view/option/'.$this->input->post('menu').'/'.$this->input->post('product'), 'refresh');
+            }
+        }
+    }
+    
+    
+    /**
+     * This function is used to generate the data required to create the page
+     * @param array $data
+     * @return type
+     */
+    private function view_create_product($page, $data){
+        
+        if($page == 'product'){
+            
+            $id = $this->admin_model->get_table_next_id("shmyde_product");
+            
+            $data['product_id'] = $id;
+        
+            
+        }
+        
+        return $data;
+               
+    }
+    
+    /**
+     * This function is used to generate the data required to create the page
+     * @param array $data
+     * @return type
+     */
+    private function view_create_product_fabric($page, $data){
+        
+        if($page == 'product_fabric'){
+            
+            $id = $this->admin_model->get_table_next_id("shmyde_fabrics");
+            
+            $data['fabric_id'] = $id;
+            
+            $data['product_fabric'] = '';
+                                    
+            $data['products'] = $this->admin_model->get_all_products();
+            
+            $data['fabric_submenus'] = $this->admin_model->get_fabric_menus();
+            
+            $data['product_submenu_fabrics'] = $this->admin_model->get_product_submenu_fabrics();
+            
+        }
+        
+        return $data;
+               
+    }
+    
+    /**
+     * This function is used to generate the data required to create the page
+     * @param array $data
+     * @return type
+     */
+    private function view_create_menu($page, $data){
+        
+        if($page == 'menu'){
+            
+            $data['products'] = $this->admin_model->get_all_products();
+            
+            $data['categories'] = $this->admin_model->get_categories();
+        }
+                
+        return $data;
+    }
+    
+    private function view_create_measurement($page, $data){
+        
+        if($page == 'measurement'){
+            
+            $data['products'] = $this->admin_model->get_all_products();
+            
+        }
+                
+        return $data;
+    }
+    
+    private function view_create_thread($page, $data){
+        
+        return $data;
+    }
+    
+    
+    /**
+     * This function is used to generate the data required to create the page
+     * @param array $data
+     * @return type
+     */
+    private function view_create_option($page, $data, $param0, $param1){
+        
+        if($page == 'option'){
+            
+            $data['menus'] = $this->admin_model->get_design_menus();
+
+            $data['products'] = $this->admin_model->get_all_products();
+            
+            $data['selected_product'] = $param0;
+            
+            $data['selected_menu'] = $param1;
+            
+            $id = $this->admin_model->get_table_next_id("shmyde_design_option");
+
+            /// The ID of the option that shall be created. This is associated with the images uploaded. 
+            $data['option_id'] = $id;
+
+        }
+        
+        return $data;
+    }
+    
+
+		
+    
+    public function get_menus($product_id){
+	
+        $menus = Array();
+        
+        $result = $this->admin_model->get_product_menus($product_id);
+        
+        if(isset($result)){
+            
+            foreach($result->result() as $row){
+                
+                $menus[$row->id]['name'] = $row->name;
+                $menus[$row->id]['id'] = $row->id;
+                
+            }
+            
+            echo json_encode($menus);
+        }
+        else{
+            
+            echo '';
+        }
+
+    }
+   
+    public function get_buttons(){
+        
+        echo json_encode($this->admin_model->get_buttons());
+    }
+
+    public function get_product_design_menus($product_id, $category_id){
+	
+        
+        if($category_id == 3)
+            $category_id = 2;
+        
+        $menus = Array();
+        
+        $result = $this->admin_model->get_product_category_menus($product_id, $category_id);
+        
+        if(isset($result)){
+            
+            foreach($result->result() as $row){
+                
+                $menus[$row->id]['name'] = $row->name;
+                $menus[$row->id]['id'] = $row->id;
+                $menus[$row->id]['mixed_fabric_support'] = $row->mixed_fabric_support;
+                $menus[$row->id]['inner_contrast_support'] = $row->inner_contrast_support;
+                
+            }
+            
+            echo json_encode($menus);
+        }
+        else{
+            
+            echo json_encode('');
+        }
+
+    }
+    
+    public function get_product_style_images($option_id){
+                
+        echo json_encode($this->admin_model->get_product_style_images($option_id));
+    }
+    
+    public function get_product_base_images($side, $product_id){
+        
+        echo json_encode($this->admin_model->get_images($product_id, 'shmyde_product_'.$side.'_image'));
+    }
+    
+    public function create_new_style_button($option_id){
+                
+        echo json_encode($this->admin_model->create_new_style_button($option_id));
+    }
+    
+    public function load_style_buttons($option_id){
+        
+        echo json_encode($this->admin_model->load_style_buttons($option_id));
+    }
+    
+    public function load_product_buttons($product_id, $side){
+        
+        echo json_encode($this->admin_model->load_product_buttons($product_id,$side));
+    }
+    
+    public function delete_style_button($option_id){
+        
+        echo json_encode($this->admin_model->delete_style_button($option_id));
+    }
+    
+    public function delete_product_button($product_id, $side){
+        
+        echo json_encode($this->admin_model->delete_product_button($product_id, $side));
+    }
+    
+    public function save_style_button($option_id, $pos_x, $pos_y){
+        
+        echo json_encode($this->admin_model->save_style_button($option_id, $pos_x, $pos_y));
+    }
+    
+    public function save_product_button($product_id, $side, $pos_x, $pos_y){
+        
+        echo json_encode($this->admin_model->save_product_button($product_id, $side, $pos_x, $pos_y));
+    }
+
+    public function create_new_product_button($product_id, $side){
+        
+        echo json_encode($this->admin_model->create_new_product_button($product_id,$side));
+    }
+
+
+    public function get_all_product_fabrics($product_id){
+        
+        $result = json_encode($this->admin_model->get_all_design_product_fabrics($product_id));
+        
+        if(isset($result)){
+
+            echo $result;
+        }
+    }
+
+
+    public function get_product_design_options($menu_id, $category_id, $product_id){
+	        
+        $result = '';
+                
+        if($category_id == 1)
+        {
+            $result = json_encode($this->admin_model->get_product_submenu_fabric_images($product_id, $menu_id));
+        }
+        else
+            {
+            $result = $this->admin_model->get_json_menu_options($menu_id);
+        }
+               
+        if(isset($result)){
+
+            echo $result;
+        }
+    }
+    
+    public function get_options($menu_id){
+
+        $result = $this->admin_model->get_json_menu_options($menu_id);
+
+        if(isset($result)){
+
+            echo $result;
+        }
+    }
+    
+    public function get_measurement($measurement_id){
+	
+                
+        $result = $this->admin_model->get_json_measurement($measurement_id);
+
+        if(isset($result)){
+
+            echo $result;
+        }
+    }
+    
+    public function get_fabric($fabric_id){
+              
+        $result = json_encode($this->admin_model->get_product_fabric($fabric_id));
+
+        if(isset($result)){
+
+            echo $result;
+        }
+    }
+
+
+    public function get_product_fabrics($product_id, $submenu_id){
+        
+        
+        $result = json_encode($this->admin_model->get_product_fabrics($product_id, $submenu_id));
+        
+        echo $result;
+    }
+    
+    public function get_product_fabric($fabric_id){
+               
+        echo $this->admin_model->get_product_fabric_json($fabric_id);
+        
+    }
+
+
+    public function get_option($id){
+			
+        $result = $this->admin_model->get_json_option($id);
+
+        if(isset($result)){
+
+            echo $result;
+        }
+    }
+    
+       
+    /**
+     * This function uploads an image with it's parameters given the option ID and json
+     * parameters that are posted. 
+     * This function still requires optimization
+     * @param type $id The option_id to which the image is being posted. 
+     */
+    public function upload_image($id){
+        
+        
+        $parameters = json_decode($this->input->post('parameters'));
+                                
+        $image_dir = $parameters->image_dir;
+        
+        $table_name = $parameters->table_name;
+        
+        $upload_file_name = $parameters->file_name;
+        
+        $image_name = $parameters->image_name;
+                              
+        $upload_path = ASSETS_DIR_PATH.'images/'.$image_dir;
+                        
+        for ($i = 0; $i <= 100; $i++) {
+
+            $key = $upload_file_name."_".$i;
+            
+            ///This will represent the name of the file name if it exists
+            $file_name = $image_name.'_'.$id.'_'.$i;
+            
+            $file_size = 0;
+            
+            $file_tmp = '';
+            
+            $file_ext = '';
+            
+            $depth = 0;
+            
+            $pos_x = 0;
+            
+            $pos_y = 0;
+            
+            $is_inner = 0;
+            
+            $is_back_image = 0;
+            
+            if(isset($_FILES[$key]) && $_FILES[$key]['size'] > 0){
+                                             
+                $file_size = $_FILES[$key]['size'];
+                
+                $file_tmp =$_FILES[$key]['tmp_name'];
+
+                $tmp = explode('.',$_FILES[$key]['name']);
+
+                $file_ext =strtolower(end($tmp));
+            }
+            
+            if(isset($this->input->post('depth')[$i])){
+            
+                $depth = $this->input->post('depth')[$i];
+
+                $pos_x = $this->input->post('pos_x')[$i];
+
+                $pos_y = $this->input->post('pos_y')[$i];
+                
+                if(isset($this->input->post('is_inner')[$i])){
+                    
+                    $is_inner = $this->input->post('is_inner')[$i];
+                    
+                }
+                
+                if(isset($this->input->post('is_back_image')[$i])){
+                    
+                    $is_back_image = $this->input->post('is_back_image')[$i];
+                    
+                }
+                
+                if($file_size == 0){
+                    
+                    $file_name = $this->admin_model->get_image_name($id, $i, $table_name);
+                    
+                    $this->admin_model->save_image($id, $i, $file_name, $table_name, $pos_x, $pos_y, $is_inner, $depth, $is_back_image);
+
+                }
+
+            }
+                        
+            if($file_size > 0){
+                
+                $errors= array();
+                                
+                $file_size =$_FILES[$key]['size'];
+                
+                $file_tmp =$_FILES[$key]['tmp_name'];
+
+                $tmp = explode('.',$_FILES[$key]['name']);
+
+                $file_ext=strtolower(end($tmp));
+
+                $expensions= array("jpeg","jpg","png");
+
+                if(in_array($file_ext,$expensions)=== false){
+
+                   $errors[]="extension '".$file_ext."' not allowed, please choose a JPEG or PNG file.";
+                }
+
+                if($file_size > 2097152){
+                    
+                   $errors[]='File size must be excately 2 MB';
+                }
+
+                if(empty($errors)== true){
+                    
+                   move_uploaded_file($file_tmp, $upload_path.$file_name.'.'.$file_ext);
+                                      
+                   $this->admin_model->save_image($id, $i, $file_name.'.'.$file_ext, $table_name, $pos_x, $pos_y, $is_inner, $depth, $is_back_image);
+
+
+                   echo "Upload ".$file_name.'.'.$file_ext." Successful \n";
+
+                }else{
+
+                   echo print_r($errors);
+
+                }
+             }          
+
+        }
+        
+                            
+    }
+                    
+    function recurse_copy($src,$dst) { 
+        
+        $dir = opendir($src); 
+                
+        while(false !== ( $file = readdir($dir)) ) { 
+            if (( $file != '.' ) && ( $file != '..' )) { 
+                if ( is_dir($src . '/' . $file) ) { 
+                    
+                    recurse_copy($src . '/' . $file,$dst . '/' . $file); 
+                } 
+                else { 
+                    
+                    try {
+                        
+                        copy($src . '/' . $file, $dst . '/' . $file); 
+                    }
+                    catch(Exception $e){
+                        
+                    }
+                } 
+            } 
+        } 
+        closedir($dir);
+        $this->delete_all_files($src);
+    }   
+    
+    public function delete_all_files($dir_name){
+        
+        $files = glob($dir_name.'*'); // get all file names
+        foreach($files as $file){ // iterate files
+          if(is_file($file)){
+            unlink($file);
+          }
+        }
+    }
+    
+    /**
+     * This function is called by the uploader function to delete an image from 
+     * the database and from the directory
+     */
+    public function delete_image(){
+        
+         $table_name = $this->input->post('table_name');
+                
+         $item_id = $this->input->post('item_id');
+        
+         $image_id = $this->input->post('image_id');
+        
+         $image_dir = $this->input->post('image_dir');
+                
+         $this->remove_image($table_name, $image_dir, $item_id, $image_id);
+    }
+    
+    /**
+     * This function is called to remove an image
+     * @param type $table_name The database table from which the image is removed
+     * @param type $image_dir The image directory from which the image will be removed
+     * @param type $item_id The item id
+     * @param type $image_id The id of the image
+     */
+    private function remove_image($table_name, $image_dir, $item_id, $image_id){
+        
+        $image_name = $this->admin_model->get_image_name($item_id, $image_id, $table_name);
+              
+        if($image_name != ""){
+            
+            
+            $upload_file = ASSETS_DIR_PATH.'images/'.$image_dir.$image_name;
+            
+            
+            if(file_exists($upload_file)){
+                
+                 unlink($upload_file);
+            }
+        }
+        
+        $this->admin_model->delete_image($item_id, $image_id, $table_name);
+    }
+        
+
+}
+

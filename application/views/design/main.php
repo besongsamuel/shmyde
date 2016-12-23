@@ -1463,7 +1463,9 @@
        
        var user = design_data['user'];
        
-       $("#contact_name").val(user.last_name + " " + user.first_name);
+       $("#last_name").val(user.last_name);
+       
+       $("#first_name").val(user.first_name);
        
        $("#contact_phone").val(user.phone_number);
        
@@ -1519,6 +1521,10 @@
     function user_data_changed(){
         
         var user = design_data['user'];
+        
+        user.first_name = $("#first_name").val();
+        
+        user.last_name = $("#last_name").val();
         
         user.phone_number = $("#contact_phone").val();
         
@@ -1744,8 +1750,6 @@
                 
                 $('#userDataModal').modal('show');
 
-                //alert('Pending Checkout Implementation');
-
             });
         }
 
@@ -1865,8 +1869,10 @@
       <div class="modal-body">
           <div style="width: 100%">
               <div class="form-group">
-                <label for="contact_name">Contact Name:</label>
-                <input type="text" class="form-control" id="contact_name" readonly>
+                  <label for="last_name">Last Name:</label>
+                <input type="text" class="form-control" id="last_name" onchange="user_data_changed()">
+                <label for="first_name">First Name:</label>
+                <input type="text" class="form-control" id="first_name" onchange="user_data_changed()">
               </div>
               <div class="form-group">
                 <label for="contact_phone">Phone Number:</label>

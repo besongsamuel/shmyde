@@ -248,6 +248,8 @@ class User_model extends CI_Model {
                 (
                     'id' => $insert_id,
                     'user_id' => $user_id,
+                    'first_name' => $data['first_name'],
+                    'last_name' => $data['last_name'],
                     'phone_number' => $data['phone_number'],
                     'address_line_1' => $data['address_line_1'],
                     'address_line_2' => $data['address_line_2'],
@@ -261,5 +263,20 @@ class User_model extends CI_Model {
                 
                 
             }
+        }
+        
+        /**
+         * This function returns the user's data
+         * @param type $user_id
+         * @return type
+         */
+        public function get_user_data($user_id)
+        {
+            $this->db->select('shmyde_user_data.*, email, avatar');
+            $this->db->from('users');
+            $this->db->join('shmyde_user_data', 'shmyde_user_data.user_id = users.id');
+            $this->db->where('user_id', $user_id, 'left');
+            
+            return $this->db->get()->row();
         }
 }

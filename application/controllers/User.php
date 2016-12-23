@@ -137,7 +137,8 @@ class User extends CI_Controller {
             $result = array();
             
             $result['success'] = false;
-		
+		   
+            
             // load form helper and validation library
             $this->load->helper('form');
             $this->load->library('form_validation');
@@ -334,14 +335,16 @@ class User extends CI_Controller {
         public function update_user_data()
         {
             $user = json_decode($this->input->post('user'));
-            
-            var_dump($user);
-                        
+                                    
             if($this->session->userdata('user_id') !== null)
             {
                 $user_id = $this->session->userdata('user_id');
                 
                 $user_data = array();
+                
+                $user_data['first_name'] = $user->first_name == null ? '' : $user->first_name;
+                
+                $user_data['last_name'] = $user->last_name == null ? '' : $user->last_name;
                 
                 $user_data['address_line_1'] = $user->address_line_01 == null ? '' : $user->address_line_01;
                 

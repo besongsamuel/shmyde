@@ -13,7 +13,7 @@ class Design extends CI_Controller
             parent::__construct();
 
             $this->load->helper('url');
-
+            
             $this->load->helper('DesignData');
 
             $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
@@ -73,7 +73,9 @@ class Design extends CI_Controller
             $data['design_data'] = json_encode($design_data);
             
             if($this->session->userdata('user_id') !== null)
-            {
+            {                
+                $design_data->LoadUserData($this->user_model->get_user_data($this->session->userdata('user_id')));
+                
                 $storedUserDesign = $this->GetUserDesign($this->session->userdata('user_id'));
                 // Override default design data with last stored user design
                 if($storedUserDesign != null)

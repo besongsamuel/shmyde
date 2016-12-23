@@ -42,7 +42,8 @@ class DesignData {
     
     public $outer_mix_Fabrics = array();
             
-    function LoadParameters($product_id) {
+    function LoadParameters($product_id) 
+    {
         
         $this->product_id = $product_id;
         
@@ -53,9 +54,25 @@ class DesignData {
         $this->design = $CI->admin_model->get_option_design_data($product_id, 'front');
                 
         $this->measurements = $CI->admin_model->get_measurements_data($product_id);
+                       
+    }
+    
+    /**
+     * Creates a user from the data supplied
+     * @param type $user_data
+     */
+    public function LoadUserData($user_data) 
+    {
         
-        $this->user = new UserData('Samuel', 'Besong', 'Rue L. O. David', 'Montreal', 'H2E1M1', '5147067120', 'samuel@samuel.com');
-               
+        $this->user = new UserData(
+                $user_data->first_name, 
+                $user_data->last_name, 
+                $user_data->address_line_1,
+                $user_data->address_line_2,
+                $user_data->city, 
+                $user_data->postcode, 
+                $user_data->phone_number, 
+                $user_data->email);
     }
     
 }
@@ -250,11 +267,13 @@ class UserData{
     public $email;
 
 
-    public function __construct($first_name, $last_name, $address_line_01, $address_line_02, $postal_code, $phone_number, $email) {
+    public function __construct($first_name, $last_name, $address_line_01, $address_line_02, $city, $postal_code, $phone_number, $email) {
        
         $this->first_name = $first_name;
         
         $this->last_name = $last_name;
+        
+        $this->city = $city;
         
         $this->address_line_01 = $address_line_01;
         

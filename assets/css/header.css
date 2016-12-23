@@ -1,0 +1,162 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 3-Oct-2016, 5:59:49 PM
+    Author     : besong
+*/
+
+
+/* Header Top Menu */
+
+.top-menu
+{
+    position: static;
+    width:100%;
+    height:65px;
+    z-index:20;
+    text-align:center;
+}
+
+.top-menu .row
+{
+    font-family: 'Raleway', sans-serif;
+    color:#fbd80a;
+    font-size:14px;
+}
+
+.top-menu-link
+{
+    position: static;
+    width:100%;
+    text-align:center;
+}
+
+.top-menu, .top-menu-link 
+ul
+{
+    display:block;
+    list-style-type:none;
+}
+
+.top-menu, .top-menu-link 
+ul li
+{
+    display:inline-block;
+    margin-right: 25px;
+    padding:5px;
+}
+
+.top-menu a
+{
+    font-family: 'Raleway', sans-serif;
+    color: #fbd80a;
+    font-size:12px;
+    font-weight: bold;
+}
+
+.top-menu-link a
+{
+    font-family: 'Raleway', sans-serif;
+    color: #fbd80a;
+    font-size:11px;
+    font-weight: bold;
+}
+
+.top-menu, .top-menu-link 
+a:hover
+{
+    text-decoration:underline;
+}
+.top-menu, top-menu-link 
+a:active
+{
+    color:#a45a5a;
+}
+
+.logo-image
+{	
+    width:60px;
+    height:60px;
+    vertical-align: middle;
+    display: inline;
+}
+
+/* Login/Language Section */
+.login-link
+{
+    display:inline; 
+    text-align:right;
+    float:right;
+    clear:right;
+    padding-right:5%;
+    font-size:12px; 
+    cursor: pointer;
+    margin-top: 3px;
+}
+
+.language-select
+{
+    display:inline; 
+    text-align:right;
+    float:right;
+    padding-right:5%;
+    font-size:12px;
+}
+
+.login-link a
+{
+    font-size:12px;
+}
+
+/* LogIn/Registration Modal Styles */
+
+.login-box 
+{
+    background-color: #ffffff;
+    width: 400px;
+    height: auto;
+    margin: auto;
+    margin-top: 100px;
+    margin-bottom: 15px;
+    border-radius: 25px;
+    border: 2px solid gray;
+    padding: 20px;
+}
+
+.register-box 
+{
+    
+    background-color: #ffffff;
+    width: 400px;
+    height: auto;
+    margin: auto;
+    margin-top: 100px;
+    margin-bottom: 15px;
+    border-radius: 25px;
+    border: 2px solid gray;
+    padding: 20px;
+}
+
+.header-messages
+{
+    background-color: #009926;
+    opacity: 0.8;
+    filter : alpha(opacity=80);
+    width: 100%;
+    height: auto;
+    text-align: center;
+    color : white;
+    font-family: "Times New Roman", Times, serif;
+    font-style: normal;
+    font-size: 16px;
+    margin-bottom: 5px;
+    
+}
+
+.header-messages p
+{
+    vertical-align: middle;
+}

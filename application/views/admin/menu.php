@@ -17,6 +17,7 @@
         <th>Mixed Fabric Support</th> 
         <th>Inner Contrast Support</th>
         <th>Is Back Option Menu</th>
+        <th>Is Independent Menu</th>
         <th>Links</th>
       </tr>
     </thead>
@@ -30,6 +31,7 @@
             <td><?php echo $row->mixed_fabric_support == 1 ? "Yes" : "No"; ?></td>
             <td><?php echo $row->inner_contrast_support == 1 ? "Yes" : "No"; ?></td>
             <td><?php echo $row->is_back_menu == 1 ? "Yes" : "No"; ?></td>
+            <td><?php echo $row->is_independent == 1 ? "Yes" : "No"; ?></td>
             <td>
                 <a href="<?php echo site_url('admin/edit/menu/'.$row->id); ?>">Edit</a> | 
                 <a href="<?php echo site_url('admin/delete/menu/'.$row->id); ?>">Delete</a>

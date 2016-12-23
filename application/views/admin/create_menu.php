@@ -30,7 +30,11 @@
         </select>
     </div>
     
-    <div class="checkbox" id='is_back_menu+div'>
+    <div class="checkbox" id='is_independent_div'>
+        <label><input type="checkbox" value="1" name="is_independent" id="is_independent">Independent Menu</label>
+    </div>   
+      
+    <div class="checkbox" id='is_back_menu_div'>
         <label><input type="checkbox" value="1" name="is_back_menu" id="is_back_menu">Back Option Menu</label>
     </div>  
       
@@ -110,7 +114,9 @@
                         
             $('#category').val(<?php if(isset($menu_category)) {echo $menu_category->id; }  ?>);
                         
-            $('#is_back_menu').prop('checked', Boolean(<?php if(isset($menu)) { echo $menu->is_back_menu; }  ?>));  
+            $('#is_back_menu').prop('checked', Boolean(<?php if(isset($menu)) { echo $menu->is_back_menu; }  ?>)); 
+            
+            $('#is_independent').prop('checked', Boolean(<?php if(isset($menu)) { echo $menu->is_independent; }  ?>)); 
             
             if(parseInt($('#category').val()) === 2){
                 

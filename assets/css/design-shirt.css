@@ -1,29 +1,81 @@
-.design-page{
-	background:url('../images/designpage/bg.png');
-	background-size:cover;
-	padding-top:10%;
+
+.design-page
+{	
+    background-size:cover;
+    padding-top:1%;
 }
-
-
-.inline
-{
-
-	display: inline-block;
-
-}
-
-
 
 .design-page .design-menu
 {
-	background-color:#323536;
-	width:200px;
-	height:440px;
-	color:#ddd;
-	margin-right:20px;
+    border: 1px solid ghostwhite;
+    background-color:#323536;
+    width:200px;
+    height:auto;
+    color:#B3B4BD;
+    border-radius: 25px;
 }
 
-.button-design-image {
+.design-page .design-menu .design-menu-header
+{
+    margin-top:5px;
+    width:180px;
+    height:45px;
+    margin-bottom:10px;
+    font-size:18px;
+    text-align:center;
+    padding-top:5%;
+}
+
+.design-page .design-sub-menu
+{
+    background-color:#4D5659;
+    width:163px;
+    height:auto;
+    padding-top:20px;
+}
+
+.design-page .design-sub-menu ul
+{
+    list-style-type:none;
+}
+
+.design-page .design-sub-menu ul a
+{
+    color:#fff;
+    font-size:15px;
+    text-decoration:none;
+}
+
+.design-page .design-sub-menu ul a:active
+{
+	text-decoration:underline;
+}
+
+.design-page .design-preview
+{
+    position: relative;
+    margin: auto;
+    width:auto;
+    height:auto;
+}
+
+.design-page .design-preview .preview-image
+{
+    position: absolute;
+    display: block;
+    margin: 0 auto;
+    height: 300px;
+    width: 230px;
+}
+
+.inline
+{
+    display: inline-block;
+}
+
+.button-design-image 
+{
+    text-align: center;
     display: block;
     margin: auto;
     width: 200px;
@@ -41,125 +93,5 @@
 
 
 
-.design-page .design-menu .design-menu-header
-{
-	margin-top:5px;
-	width:180px;
-	height:45px;
-	margin-bottom:10px;
-
-	font-size:18px;
-	text-align:center;
-	padding-top:5%;
-
-}
 
 
-
-.design-page .design-sub-menu
-{
-	background-color:#4D5659;
-	width:163px;
-	height:400px;
-	margin-right:0;
-	padding-top:20px;
-	margin-top:20px;
-
-}
-
-.design-page .design-sub-menu ul
-{
-	list-style-type:none;
-}
-
-.design-page .design-sub-menu ul a
-{
-	color:#fff;
-	font-size:15px;
-	text-decoration:none;
-}
-
-.design-page .design-sub-menu ul a:active
-{
-	text-decoration:underline;
-}
-
-
-
-.design-page .design-preview
-{
-	width:auto;
-	height:auto;
-
-}
-
-.preview-image
-{
-	position: absolute;
-	height: 300px;
-	width: 230px;
-
-}
-
-.fabrique-heading
-{
-	color:#000;
-	font-size:16px;
-	font-weight:300;
-	text-decoration:underline;
-}
-
-.design-page .design-fabrique
-{
-	background:url('../images/designpage/chose fabrique/bg.png');
-	width:841px;
-	height:124px;
-	margin-top:10px;
-	padding:10px;
-}
-
-.design-page .design-fabrique a img
-{
-	margin:2px;
-}
-
-.design-page .design-side
-{
-	background:#000;
-	height:350px;
-	margin-top:5%;
-}
-
-.design-page .design-side h4
-{
-	color:white;
-	border-bottom:1px solid grey;
-	text-align:center;
-}
-
-.design-page .design-side ul 
-{
-	list-style-type:none;
-	padding-left:18%;
-}
-
-.design-page .design-side ul li
-{
-	margin-top:10px;
-}
-
-.design-page .design-side img
-{
-	height:85px;
-}
-
-.design-page .design-side h5
-{
-	text-align:center;
-}
-
-.design-page .design-side .active img:before
-{
-	content:'Some content';
-	display:block;
-}

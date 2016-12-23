@@ -536,6 +536,7 @@ class SimpleImage {
             throw new Exception('Required extension GD is not loaded.');
         }
         $this->filename = $filename;
+        
         return $this->get_meta_data();
     }
 
@@ -850,6 +851,61 @@ class SimpleImage {
         
         return $this;
     }
+    
+    function apply_color($threadColor) {
+        
+        /**
+         * Create black image of the size of the base image
+         */ 
+        $pixel = imagecreatetruecolor( 1, 1 );
+        imagesavealpha( $pixel, true );
+        $rgb = $this->hex2rgb($threadColor);
+        $pixel_color_id = imagecolorallocate($pixel, $rgb[0], $rgb[1], $rgb[2]);
+        
+        // Get sizes and set up new picture
+        $xSize = imagesx(  $this->image );
+        
+        $ySize = imagesy(  $this->image );
+
+        // Perform pixel-based alpha map application
+        for( $x = 0; $x < $xSize; $x++ ) {
+            for( $y = 0; $y < $ySize; $y++ ) {
+                                
+                $mask_color_index = imagecolorat( $this->image, $x, $y );
+                                
+                $r = ($mask_color_index & 0x00FF0000) >> 16;
+                
+                $a = ($mask_color_index & 0x7F000000) >> 24;
+                                                                          
+                if($a != 127 && $r > 200){
+                                        
+                    imagesetpixel( $this->image, $x, $y, $pixel_color_id);
+                    
+                }
+                                
+            }
+        }
+
+        return $this;
+    }
+    
+    function hex2rgb($hex) {
+        
+        $hex = str_replace("#", "", $hex);
+
+        if(strlen($hex) == 3) {
+           $r = hexdec(substr($hex,0,1).substr($hex,0,1));
+           $g = hexdec(substr($hex,1,1).substr($hex,1,1));
+           $b = hexdec(substr($hex,2,1).substr($hex,2,1));
+        } else {
+           $r = hexdec(substr($hex,0,2));
+           $g = hexdec(substr($hex,2,2));
+           $b = hexdec(substr($hex,4,2));
+        }
+        $rgb = array($r, $g, $b);
+        //return implode(",", $rgb); // returns the rgb values separated by commas
+        return $rgb; // returns an array with the rgb values
+     }
     
     function create_mask($fabric_image, $mask_image) {
         

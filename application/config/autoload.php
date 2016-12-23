@@ -62,7 +62,7 @@ $autoload['packages'] = array(
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
 $autoload['libraries'] = array(
-    'database','session', 'ion_auth','form_validation'
+    'database','session', 'ion_auth','form_validation', 'rememberme', 'user_agent'
 );
 
 /*
@@ -106,6 +106,7 @@ $autoload['helper'] = array(
 */
 $autoload['config'] = array(
     
+	'rememberme'
 );
 
 /*
@@ -137,6 +138,6 @@ $autoload['language'] = array();
 */
 $autoload['model'] = array(
 
-	'ion_auth_model', 'admin_model'
+	'ion_auth_model', 'admin_model', 'user_model'
     
 );

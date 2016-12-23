@@ -23,14 +23,14 @@
   <!-- Wrapper for slides -->
   <div class="carousel-inner" role="listbox">
     <div class="item active">
-      <img src="<?php echo ASSETS_PATH; ?>frameworks/ninja-slider/img/1.png" alt="...">
+      <img src="<?php echo ASSETS_PATH; ?>frameworks/ninja-slider/img/1.jpg" alt="...">
       <div class="carousel-caption">
         <a href='#'><h3>Design Cool Gouns</h3></a>
 	<h2>In minutes, not hours</h2>
       </div>
     </div>
     <div class="item">
-      <img src="<?php echo ASSETS_PATH; ?>frameworks/ninja-slider/img/1.jpg" alt="...">
+      <img src="<?php echo ASSETS_PATH; ?>frameworks/ninja-slider/img/2.jpg" alt="...">
       <div class="carousel-caption">
         ...
       </div>
@@ -42,13 +42,13 @@
       </div>
     </div>
      <div class="item">
-      <img src="<?php echo ASSETS_PATH; ?>frameworks/ninja-slider/img/5.jpg" alt="...">
+      <img src="<?php echo ASSETS_PATH; ?>frameworks/ninja-slider/img/4.jpg" alt="...">
       <div class="carousel-caption">
         ...
       </div>
     </div>
      <div class="item">
-      <img src="<?php echo ASSETS_PATH; ?>frameworks/ninja-slider/img/6.jpg" alt="...">
+      <img src="<?php echo ASSETS_PATH; ?>frameworks/ninja-slider/img/5.jpg" alt="...">
       <div class="carousel-caption">
         ...
       </div>

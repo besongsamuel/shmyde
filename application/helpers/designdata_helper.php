@@ -15,6 +15,32 @@ class DesignData {
     public $measurements = array();
     
     public $user;
+    
+    public $currentButton;
+    
+    public $currentThread;
+    
+    /**
+     * This is a list of menu id's that have their inner fabric
+     * as the mix fabric
+     * @var type 
+     */
+    public $SelectedInnerMix = array();
+    
+    /**
+     * This is a list of menu id's that have their outer fabric
+     * as the mix fabric
+     * @var type 
+     */
+    public $SelectedOuterMix = array();
+
+    public $defaultFabric;
+    
+    public $mixFabric;
+
+    public $inner_mix_Fabrics = array();
+    
+    public $outer_mix_Fabrics = array();
             
     function LoadParameters($product_id) {
         
@@ -216,6 +242,10 @@ class UserData{
     public $postal_code;
     
     public $phone_number;
+    
+    public $city;
+    
+    public $country;
     
     public $email;
 

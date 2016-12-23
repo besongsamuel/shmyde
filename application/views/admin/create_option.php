@@ -230,6 +230,36 @@
                         
                     </select>
                 </div>
+                
+                <b>Dependent Menus:</b>
+                
+                <table class="table">
+                        
+                    <thead>
+                        <tr>
+                            <th>Menu Name</th>
+                            <th>Yes</th>                                
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <?php foreach($menus->result() as $menu) {?>
+                            <tr>
+
+                                <td>
+                                    <?php echo $menu->name; ?>
+                                </td>
+
+                                <td>
+                                    <label><input type="checkbox" value="1" name="option_dependent_menu[<?php echo $menu->id; ?>]" 
+                                        <?php if(isset($option_dependent_menu[$menu->id])){ echo "checked"; }?> ></label>
+                                </td>
+
+                            </tr>
+                        <?php }?>
+                    </tbody>
+                        
+                </table>
 
                 <div class="form-group">
                     <label for="name">Name:</label>

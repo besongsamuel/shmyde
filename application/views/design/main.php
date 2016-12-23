@@ -2,8 +2,7 @@
 <html lang="en">
 
 <script>
-    
-    
+
     ///Displays the list of option thumbnail images
     var sly;
     
@@ -29,26 +28,7 @@
      * @type undefined
      */
     var product_id;
-    
-    /**
-     * This value stores the current default or primary fabric
-     * @type undefined|option_object
-     */
-    var default_fabric;
-    
-    /**
-     * This value stores the current mix or secondary fabric
-     * @type undefined|option_object
-     */
-    var mix_fabric;
-    
-    /**
-     * This variable stores the status of the checked menus in the 
-     * mixed design menu
-     * @type type
-     */
-    var mix_fabric_check_status = {};
-        
+          
     /**
      * THis represents the images that will be added to the canvas. 
      * @type Array
@@ -62,18 +42,8 @@
     var current_side = 'front';
     
     var current_design_data;
-    
-    /**
-     * The current design button
-     * @type type
-     */
-    var currentButton = null;
-    
-    /**
-     * The current design thread used with the button
-     * @type type
-     */
-    var currentThread = null;
+        
+    var tmpThread = null;
     
     /**
      * Al system buttons
@@ -88,6 +58,10 @@
     var Threads = null;
     
     var button_image_size = 10;
+    
+    var button_image;
+    
+    var tmp_button_image;
                
     $(document).ready(function(){
          
@@ -96,7 +70,7 @@
             LoadMeasurementsIntoModal();
         });
         
-        $('#requestMeasurementModal').on('shown.bs.modal', function() {
+        $('#userDataModal').on('shown.bs.modal', function() {
             
             LoadUserDataIntoModal();
         });
@@ -109,19 +83,9 @@
         design_data = <?php echo $design_data;  ?>;
         
         current_design_data = design_data['design'];
-        
-        console.log(design_data);
-                        
-        default_fabric = <?php echo $default_fabric; ?>
-        
-        mix_fabric = <?php echo $mix_fabric; ?>
-                
+                                                        
         product_id = <?php echo json_encode($product_id); ?>;
-        
-        currentButton = <?php echo json_encode($currentButton); ?>;
-        
-        currentThread = <?php echo json_encode($currentThread); ?>;
-        
+                
         Buttons = JSON.parse(<?php echo json_encode($Buttons); ?>);
         
         Threads = JSON.parse(<?php echo json_encode($Threads); ?>);
@@ -204,9 +168,9 @@
 
             var depth = base_image.depth;
 
-            if("name" in default_fabric){
+            if("name" in design_data.defaultFabric){
 
-                var blend_path = base_image_dir + "fabric/" + default_fabric['name'];
+                var blend_path = base_image_dir + "fabric/" + design_data.defaultFabric['name'];
 
                 var data = {
 
@@ -336,6 +300,30 @@
     }
     
     /**
+     * This functon gets an array list containing the id's of all 
+     * currentlu selected options
+     * @type Arguments
+     */
+    function GetSelectedOptionsList(){
+        
+        var selected_list = [];
+        
+        for (var menu in current_design_data['design']) {
+                    
+            if(current_design_data['design'][menu].option !== null){
+
+                var design_option = current_design_data['design'][menu].option;
+
+                selected_list.push(design_option.id);
+            }
+
+        }
+        
+        return selected_list;
+        
+    }
+    
+    /**
      * This function blends all images in the canvas
      * with the proper fabrics, add them to the image preview and later adds all required
      * buttons to the image preview in the view
@@ -367,39 +355,33 @@
                 }
                 
                 element.fadeIn("300");
+                                                
+                if(!design_data.currentButton || !design_data.currentThread ){
+                    
+                    button_image = "<?php echo ASSETS_PATH; ?>".concat("images/buttons/") + design_data.currentButton.image_name;
                 
-                LoadButtons();
-                
+                    LoadButtons(button_image);
+                }
+                else{
+                    
+                    $.post('<?= site_url("Design/BlendButtonThread/"); ?>',{ currentButton : JSON.stringify(design_data.currentButton), threadColor : design_data.currentThread.color  },function(json_result){
+
+                        var image_data = JSON.parse(json_result);
+
+                        $("#design_button_image").attr("src", image_data.design_image_name);
+
+                        button_image = image_data.image_name;
+
+                        LoadButtons(button_image);
+
+                    });
+                }
+
             });
             
         });
     }
-    
-    /**
-     * This function blends the buttons with its thread
-     * then displays it on the product
-     * @returns {undefined}
-     */
-    function BlendButtonImages(){
-        
-        $.post('<?= site_url("Design/BlendImages/"); ?>',{ images : JSON.stringify(canvas_images) },function(json_result){
 
-            var images = JSON.parse(json_result);
-
-            for(var key in images){
-
-                var image = images[key];
-
-                if(parseInt(image.image_id) === -1){
-
-                    add_button_layer(image.image, image.id, image.pos_x, image.pos_y);
-                }
-
-            }
-                                        
-        });
-    }
-    
     /**
      * This function replaces an optionElement supplied with the 
      * current images in the canvas 
@@ -440,9 +422,9 @@
     * It is then applied to the appropriate menu options that are checked
     * @param {type} fabric_id
     * @returns {undefined}     */
-    function apply_mix_fabrics(){
+    function ApplyMixFabric(){
          
-        if(!("name" in mix_fabric)){
+        if(!("name" in design_data.mixFabric)){
             
             return;
         } 
@@ -480,15 +462,15 @@
                         var image_path = image_dir.concat(design_image.name);
 
                         var image_id = design_image.id;
-                           
-                        if(((parseInt(design_image.is_inner) === 0 && mix_fabric_check_status['mix_design_outer_' + menu]) 
-                            || (parseInt(design_image.is_inner) === 1 && parseInt(menu_data.inner_contrast_support)=== 1 && mix_fabric_check_status['mix_design_inner_' + menu]))
-                            && parseInt(design_image.fabric_id) !== parseInt(mix_fabric['id'])) {
-                                       
-                                       
-                            design_image.fabric_id = parseInt(mix_fabric['id']);
+                                                   
+                        if(((parseInt(design_image.is_inner) === 0 && $.inArray(parseInt(menu), design_data.SelectedOuterMix) !== -1) 
+                            || (parseInt(design_image.is_inner) === 1 && parseInt(menu_data.inner_contrast_support)=== 1 && $.inArray(parseInt(menu), design_data.SelectedInnerMix) !== -1))
+                            && parseInt(design_image.fabric_id) !== parseInt(design_data.mixFabric['id'])) 
+                        {
+                                          
+                            design_image.fabric_id = parseInt(design_data.mixFabric['id']);
 
-                            var blend_path = base_image_dir + "fabric/" + mix_fabric['name'];
+                            var blend_path = base_image_dir + "fabric/" + design_data.mixFabric['name'];
 
                             var curr_elem_id = "#option_".concat(option_id) + "_" + image_id;
                             
@@ -503,13 +485,14 @@
                             });
                         }
 
-                        if(((parseInt(design_image.is_inner) === 0 && !mix_fabric_check_status['mix_design_outer_' + menu]) 
-                            || (parseInt(design_image.is_inner) === 1 && parseInt(menu_data.inner_contrast_support) === 1 && !mix_fabric_check_status['mix_design_inner_' + menu] ))
-                            && parseInt(design_image.fabric_id) !== parseInt(default_fabric['id'])){
+                        if(((parseInt(design_image.is_inner) === 0 && $.inArray(parseInt(menu), design_data.SelectedOuterMix) === -1) 
+                            || (parseInt(design_image.is_inner) === 1 && parseInt(menu_data.inner_contrast_support) === 1 && $.inArray(parseInt(menu), design_data.SelectedInnerMix) === -1))
+                            && parseInt(design_image.fabric_id) !== parseInt(design_data.defaultFabric['id']))
+                        {
 
-                            design_image.fabric_id = parseInt(default_fabric['id']);
+                            design_image.fabric_id = parseInt(design_data.defaultFabric['id']);
 
-                            var blend_path = base_image_dir + "fabric/" + default_fabric['name'];
+                            var blend_path = base_image_dir + "fabric/" + design_data.defaultFabric['name'];
 
                             var curr_elem_id = "#option_".concat(option_id) + "_" + image_id;
                             
@@ -547,7 +530,7 @@
         elem.setAttribute("class", "preview-image " + class_name);
         elem.setAttribute("id", "option_" + item_id + "_" + image_id);
         elem.setAttribute("src", image);
-        document.getElementById("design-preview").appendChild(elem);
+        $(".design-preview").append($(elem));
         
         console.log("Added Image : " +  "option_" + item_id + "_" + image_id);
         
@@ -600,7 +583,7 @@
         
         var elem = document.createElement("img");
         elem.setAttribute("class", "preview-image " + class_name);
-        document.getElementById("design-preview").appendChild(elem);
+        $('.design-preview').append($(elem));
         
         return elem;
     }
@@ -627,13 +610,13 @@
     /**
     * This function chooses the fabric that should be used for a menu
     * design image
-    * @param {type} option_id
+    * @param {type} option_id   
     * @param {type} image_id
     * @param {type} type
     * @returns {undefined}     */    
     function choose_fabric(menu_index, image_id){
         
-        var use_fabric = default_fabric;
+        var use_fabric = design_data.defaultFabric;
         
         var menu_data = current_design_data['design'][menu_index];
                   
@@ -646,28 +629,24 @@
                 for(var image in option_data["images"]){
                     
                     console.log('Selecting fabric for menu : ' + menu_index);
-                    console.log(mix_fabric_check_status);
                     
                     var design_image = option_data["images"][image];
                     
                     if(parseInt(image) === parseInt(image_id)){
                         
-                        
                         if(parseInt(design_image.is_inner) === 1){
                             
-                            if(mix_fabric_check_status['mix_design_inner_' + menu_index] && parseInt(menu_data.inner_contrast_support) === 1){
-                                
-                                use_fabric = mix_fabric;
-                                
+                            if($.inArray(parseInt(menu_index), design_data.SelectedInnerMix) !== -1 && parseInt(menu_data.inner_contrast_support) === 1)
+                            {
+                                use_fabric = design_data.mixFabric;                               
                                 console.log('Mix fabric chosen for inner mix');
                             }
                         }
                         else{
                                                         
-                            if(mix_fabric_check_status['mix_design_outer_' + menu_index]){
-                                                                
-                                use_fabric = mix_fabric;
-                                
+                            if($.inArray(parseInt(menu_index), design_data.SelectedOuterMix) !== -1)
+                            {                               
+                                use_fabric = design_data.mixFabric;
                                 console.log('Mix fabric chosen for outer mix');
                             }
                         }
@@ -680,103 +659,188 @@
         return use_fabric;
     }
     
-    function option_selected(option_id, image_id, type){
+    /**
+     * 
+     * @param {type} option_id
+     * @param {type} type
+     * @returns {undefined}
+     */
+    function option_selected(option_id, type){
+       
+       MixDesignOptionSelected(option_id, type);
+       
+       DesignOptionSelected(option_id);
+       
+       FabricSelected(option_id);
+                           
+    }
+    
+    function MixDesignOptionSelected(option_id, type){
+    
+        if(parseInt(category_index) !== 3)
+            return;
+        
+        var design_mix_checked_val;
+        
+        
+        // This section is called when a mix is checked or unchecked
+        if(typeof type !== 'undefined'){
+
+            var selected_menu = option_id;
+
+            design_mix_checked_val = $("#design_mix_" + type + "_" + selected_menu).prop('checked');
+            
+            if(design_mix_checked_val){
                 
-       var design_mix_checked_val;
-           
-       if(parseInt(category_index) === 3 && typeof type !== 'undefined'){
-                      
-           var selected_menu = option_id;
-           
-           var id = 'mix_design_' + type + '_' + selected_menu;
-           
-           design_mix_checked_val = $("#" + id).prop('checked');
-                                                                                               
-           if(design_mix_checked_val){
-               
-               mix_fabric_check_status[id] = true;
-               
-               console.log("Checked Menu");
-                                                                          
-           }
-           else{
-               
-               mix_fabric_check_status[id] = false;
-               
-               console.log("Unchecked Menu");
-                                             
-           }
-           
-           apply_mix_fabrics();
-           
-           return;           
-       }
-                            
-       var xmlhttp = new XMLHttpRequest();
+                if(type.toString() === 'inner')
+                {
+
+                    if (!design_data.SelectedInnerMix)
+                    {
+                        design_data.SelectedInnerMix = [];
+                    }
+                    
+                    design_data.SelectedInnerMix.push(parseInt(selected_menu));
+                }
+                else
+                {                  
+                    
+                    if (!design_data.SelectedOuterMix)
+                    {
+                        design_data.SelectedOuterMix = [];
+                    }
+                    
+                    design_data.SelectedOuterMix.push(parseInt(selected_menu));
+                }
+                
+                console.log("Checked Menu");
+
+            }
+            else{
+                
+                if(type.toString() === 'inner')
+                {
+                    
+                    
+                    var index = design_data.SelectedInnerMix.indexOf(parseInt(selected_menu));
+                    
+                    if (index > -1) 
+                    {
+                        design_data.SelectedInnerMix.splice(index, 1);
+                    }
+
+                }
+                else
+                {
+                    
+                    var index = design_data.SelectedOuterMix.indexOf(parseInt(selected_menu));
+                    
+                    if (index > -1) 
+                    {
+                        design_data.SelectedOuterMix.splice(index, 1);
+                    }
+                }
+                
+                console.log("Unchecked Menu");
+            }
+
+            ApplyMixFabric();
+
+            return;           
+        }
+        
+        var xmlhttp = new XMLHttpRequest();
               
-       xmlhttp.onreadystatechange = function() {
+        xmlhttp.onreadystatechange = function() {
+
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) 
+            {
+                var newOption =  JSON.parse(xmlhttp.responseText);
+
+                design_data.mixFabric = newOption;
+
+                ApplyMixFabric();
+
+             }
+         };
+
+        
+        var site_url = "<?php echo site_url("Design/get_fabric"); ?>";   
+
+        site_url = site_url.concat("/").concat(option_id);
+              
+        xmlhttp.open("GET", site_url, true);
+
+        xmlhttp.send();
+
+    }
+    
+    function DesignOptionSelected(option_id){
+        
+        if(parseInt(category_index) !== 2)
+            return;
+        
+        var xmlhttp = new XMLHttpRequest();
+              
+        xmlhttp.onreadystatechange = function() {
 		
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                                 
                 var newOption =  JSON.parse(xmlhttp.responseText);
                 
                 var previousOption = current_design_data['design'][menu_index];
-                                                
-                if(parseInt(category_index) === 2){
-                    
-                    if(current_design_data['design'][menu_index].option === null)
-                        return;
 
-                    if(current_design_data['design'][menu_index].option !== null && parseInt(newOption["id"]) === parseInt(current_design_data['design'][menu_index].option.id)){
+                if(current_design_data['design'][menu_index].option === null)
+                    return;
 
-                        return;
-                    }
-
-                    ReplaceDesignOption(previousOption, newOption);                                                                                                                                                             
-
-                }   
-                else if(parseInt(category_index) === 1){
-                                        
-                    default_fabric = newOption;
-                                       
-                    LoadParametersToPreview();
-                    
+                if(current_design_data['design'][menu_index].option !== null && parseInt(newOption["id"]) === parseInt(current_design_data['design'][menu_index].option.id))
+                {
+                    return;
                 }
-                else if(parseInt(category_index) === 3){
-                                        
-                    mix_fabric = newOption;
-                                        
-                    apply_mix_fabrics();
-                                        
-                }
-                
+
+                ReplaceDesignOption(previousOption, newOption);                                                                                                                                                             
 
             }
 	};
         
-        var site_url = '';
+        console.log("Fetching option : " + option_id);
 
-        if(parseInt(category_index) === 1 || parseInt(category_index) === 3){
-        
-             site_url = "<?php echo base_url("index.php/admin/get_fabric"); ?>";   
-             
-             site_url = site_url.concat("/").concat(option_id);
-        }
-        
-        if(parseInt(category_index) === 2){
-            
-            console.log("Fetching option : " + option_id);
-            
-             site_url = "<?php echo base_url("index.php/admin/get_option"); ?>";
-             
-             site_url = site_url.concat("/").concat(option_id);
+        var site_url = "<?php echo site_url("Design/get_option"); ?>";
 
-        }
-        
+        site_url = site_url.concat("/").concat(option_id);
+
         xmlhttp.open("GET", site_url, true);
 
         xmlhttp.send();
-       
+    }
+    
+    function FabricSelected(option_id){
+        
+        if(parseInt(category_index) !== 1)
+            return;
+        
+        var xmlhttp = new XMLHttpRequest();
+              
+        xmlhttp.onreadystatechange = function() {
+		
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                                
+                var newOption =  JSON.parse(xmlhttp.responseText);
+                       
+                design_data.defaultFabric = newOption;
+
+                LoadParametersToPreview();
+
+            }
+	};
+
+        var site_url = "<?php echo site_url("Design/get_fabric"); ?>";   
+             
+        site_url = site_url.concat("/").concat(option_id);
+
+        xmlhttp.open("GET", site_url, true);
+
+        xmlhttp.send();
     }
     
     function ReplaceDesignOption(previousOption, newOption){
@@ -794,6 +858,9 @@
 
         // Set new option in design data
         current_design_data['design'][menu_index].option = newOption;
+        
+        // Reload Menus only after the new option has been set
+        LoadDesignMenus(category_index, false);
 
         var previousOptionElement = $(".preview-image.option_class_".concat(prev_option_id));
         
@@ -947,12 +1014,12 @@
                     
                     if(parseInt(category_index) === 1)
                     {
-                        function_string = "option_selected(" + json_array[key]['item_id'] + ", 0)";
+                        function_string = "option_selected(" + json_array[key]['item_id'] + ")";
                     }
                     
                     if(parseInt(category_index) === 2)
                     {
-                        function_string = "option_selected(" + json_array[key]['id'] + ", 0)";
+                        function_string = "option_selected(" + json_array[key]['id'] + ")";
                     }
                                         
                     list_element.setAttribute("onclick", function_string);
@@ -969,7 +1036,7 @@
             }
 	};
         
-        var site_url = "<?php echo base_url("index.php/admin/get_product_design_options"); ?>";
+        var site_url = "<?php echo site_url("Design/get_product_design_options"); ?>";
         	
 	site_url = site_url.toString() + "/" + menu_id.toString() + "/" + category_index + "/" + product_id ;
 		
@@ -977,6 +1044,8 @@
 	
 	xmlhttp.send();
     }
+    
+    
     
     /**
      * This function is called when the user clicks on the Design Mix Category. 
@@ -1022,7 +1091,7 @@
 
                     var list_element = document.createElement("li");
 
-                    var function_string = "option_selected(" + fabric.item_id + ", " + fabric.id + ")";
+                    var function_string = "option_selected(" + fabric.item_id + ")";
                     
                     list_element.setAttribute("onclick", function_string);
                     
@@ -1038,7 +1107,7 @@
             }
 	};
         
-        var site_url = "<?php echo base_url("index.php/admin/get_all_product_fabrics"); ?>";
+        var site_url = "<?php echo site_url("Design/get_all_product_fabrics"); ?>";
                
         site_url = site_url + "/" + product_id.toString();
         
@@ -1057,19 +1126,32 @@
         
         var container = $('<div>').prop('class', 'list-group-item' + ' ' + type).prop('id', id);
         
-        if(!mix_fabric_check_status.hasOwnProperty('mix_design_' + type + '_' + id)){
-            
-            mix_fabric_check_status['mix_design_' + type + '_' + id] = false;
-            
+        var value = false;
+        
+        if(type.toString() === 'inner')
+        {
+            if($.inArray(parseInt(id), design_data.SelectedInnerMix) !== -1)
+            {           
+                value = true;            
+            }  
+        }
+        else
+        {
+            if($.inArray(parseInt(id), design_data.SelectedOuterMix) !== -1)
+            {           
+                value = true;           
+            }
         }
         
+        
+        
         $('<input />', 
-        { checked : mix_fabric_check_status['mix_design_' + type + '_' + id], 
+        { checked : value, 
             type: 'checkbox', 
-            id: 'mix_design_' + type + '_' + id, 
+            id: "design_mix_" + type + "_" + id, 
             value: name, 
             style : 'margin-right : 5px;', 
-            onchange : 'option_selected(' + id + ', 0, "' + type + '")' }).appendTo(container);
+            onchange : 'option_selected(' + id + ', "' + type + '")' }).appendTo(container);
         
         $('<label />', { for: id, text: name }).appendTo(container);
         
@@ -1085,40 +1167,145 @@
      */
     function LoadMenus(selected_category) {
 	
-        // Here we shall load the two different options for measurement
-        if(parseInt(selected_category) === 4){
-              
-            document.getElementById('option-list').innerHTML = "";
+        category_index = selected_category;
+        
+        InvertFabric(selected_category);
+        
+        LoadMeasurementMenus(selected_category);
+        
+        LoadDesignMenus(selected_category, true);
+        
+        LoadButtonOptions(selected_category);
+        
+        LoadFabricMenus(selected_category);
+        
+        LoadMixFabricMenus(selected_category);
+
+    }
+    
+    function LoadMixFabricMenus(selected_category) {
+	
+        if(parseInt(selected_category) !== 3)
+            return;
+        
+        document.getElementById('option-list').innerHTML = "";
+        
+        var site_url = "";
+        
+        site_url = "<?php echo site_url("Design/get_product_design_menus"); ?>";
+        
+        $.post(site_url,{ selected_option_list : JSON.stringify(GetSelectedOptionsList()), product_id : <?php  echo $product_id;  ?>  },function(json_result){
+
+            var json_array =  JSON.parse(json_result);
             
             $('#sub_menu_list').empty();
-                                    
-            $('#sub_menu_list').append(
-                $('<a>').attr("data-toggle", "modal").attr("data-target", "#myMeasurementModal").attr('href', '#').attr('class', 'list-group-item').append(
-                    $('<span>').attr('class', 'tab').append("Enter Measurements")
-            )); 
+                
+            for (var key in json_array) {
+                                                 
+                var outer_div = createCheckboxDiv(json_array[key]['id'], 'Outer ' + json_array[key]['name'], 'outer');  
+
+                if(Boolean(parseInt(json_array[key]['mixed_fabric_support']))){
+
+                    $('#sub_menu_list').append(
+
+                        outer_div    
+                    );
+
+
+                    if(Boolean(parseInt(json_array[key]['inner_contrast_support']))){
+
+                        var inner_div = createCheckboxDiv(json_array[key]['id'], 'Inner ' + json_array[key]['name'], 'inner'); 
+
+                        $('#sub_menu_list').append(
+
+                            inner_div    
+                        );
+                    }
+                }
+
+            }
+
+            LoadAllFabrics();   
+                   
+        });
+        
+    }
     
-            $('#sub_menu_list').append(
-                $('<a>').attr("data-toggle", "modal").attr("data-target", "#requestMeasurementModal").attr('href', '#').attr('class', 'list-group-item').append(
-                    $('<span>').attr('class', 'tab').append("Request Tailor")
-            ));
-            
+    function LoadDesignMenus(selected_category, clearOptions) {
+	                
+        if (parseInt(selected_category) !== 2)
             return;
-        }
         
-        if(parseInt(selected_category) === 6){
+        if(clearOptions)
+            document.getElementById('option-list').innerHTML = "";
+                
+        var site_url = "<?php echo site_url("Design/get_product_design_menus/"); ?>";
+        
+        $.post(site_url,{ selected_option_list : JSON.stringify(GetSelectedOptionsList()), product_id : <?php  echo $product_id;  ?>  },function(json_result){
+
+            var json_array =  JSON.parse(json_result);
             
-            var temp_fabric = default_fabric;
+            $('#sub_menu_list').empty();
+                
+                for (var key in json_array) {
+                                               
+                    var on_click = 'return LoadOptions('.concat(json_array[key]['id']).concat(');');
+
+                    $('#sub_menu_list').append(
+                        $('<a>').attr('href', '#').attr('value', json_array[key]['id']).attr('onclick', on_click).attr('class', 'list-group-item').append(
+                            $('<span>').attr('class', 'tab').append(json_array[key]['name'])
+                    ));
+                                  
+            }
             
-            default_fabric = mix_fabric;
             
-            mix_fabric = temp_fabric;
-            
-            LoadParametersToPreview();
-            
+                    
+        });
+
+    }
+    
+    function LoadMeasurementMenus(selected_category){
+        
+        if(parseInt(selected_category) !== 4)
             return;
-        }
         
-        category_index = selected_category;
+        document.getElementById('option-list').innerHTML = "";
+
+        $('#sub_menu_list').empty();
+
+        $('#sub_menu_list').append(
+            $('<a>').attr("data-toggle", "modal").attr("data-target", "#myMeasurementModal").attr('href', '#').attr('class', 'list-group-item').append(
+                $('<span>').attr('class', 'tab').append("Enter Measurements")
+        )); 
+
+        $('#sub_menu_list').append(
+            $('<a>').attr("data-toggle", "modal").attr("data-target", "#userDataModal").attr('href', '#').attr('class', 'list-group-item').append(
+                $('<span>').attr('class', 'tab').append("Request Tailor")
+        ));
+
+    }
+    
+    function InvertFabric(selected_category){
+        
+        if(parseInt(selected_category) !== 6)
+            return;
+                 
+        var temp_fabric = design_data.defaultFabric;
+
+        design_data.defaultFabric = design_data.mixFabric;
+
+        design_data.mixFabric = temp_fabric;
+
+        LoadParametersToPreview();
+
+        return;
+        
+    }
+    
+    function LoadButtonOptions(selected_category){
+	
+        if(parseInt(selected_category) !== 5)
+            return;
         
         document.getElementById('option-list').innerHTML = "";
         
@@ -1133,106 +1320,91 @@
                 $('#sub_menu_list').empty();
                 
                 for (var key in json_array) {
-                     
-                    if(parseInt(category_index) === 3){
-                                                  
-                        var outer_div = createCheckboxDiv(json_array[key]['id'], 'Outer ' + json_array[key]['name'], 'outer');                      
-                        if(Boolean(parseInt(json_array[key]['mixed_fabric_support']))){
-                            
-                            $('#sub_menu_list').append(
-                                    
-                                outer_div    
-                            );
-                            
-                                                        
-                            if(Boolean(parseInt(json_array[key]['inner_contrast_support']))){
-                                
-                                var inner_div = createCheckboxDiv(json_array[key]['id'], 'Inner ' + json_array[key]['name'], 'inner'); 
-                                
-                                $('#sub_menu_list').append(
-                                    
-                                    inner_div    
-                                );
-                            }
-                        }
-                    }
-                    else if (parseInt(category_index) === 1 || parseInt(category_index) === 2){
-                                                
-                        var on_click = 'return LoadOptions('.concat(json_array[key]['id']).concat(');');
-                        
-                        $('#sub_menu_list').append(
-                            $('<a>').attr('href', '#').attr('value', json_array[key]['id']).attr('onclick', on_click).attr('class', 'list-group-item').append(
-                                $('<span>').attr('class', 'tab').append(json_array[key]['name'])
-                        ));
-                    }
-                    else if(parseInt(category_index) === 5){
-                        
-                        var button_data = json_array[key];
-                        
-                        console.log(button_data);
-                                                
-                        var image_element = document.createElement("img");                 
+                                            
+                    var button_data = json_array[key];
 
-                        var image_path = '<?php echo ASSETS_PATH; ?>'.concat('images/buttons/').concat(button_data.image_name);                        
+                    console.log(button_data);
 
-                        image_element.setAttribute("src", image_path);  
+                    var image_element = document.createElement("img");                 
 
-                        image_element.setAttribute("height", "100");
+                    var image_path = '<?php echo ASSETS_PATH; ?>'.concat('images/buttons/').concat(button_data.image_name);                        
 
-                        image_element.setAttribute("width", "96");
+                    image_element.setAttribute("src", image_path);  
 
-                        var link_element = document.createElement("a");
-                        
-                        // Handles opening the Modal dialog for buttons
-                        link_element.setAttribute("data-toggle", "modal");
-                        link_element.setAttribute("data-target", "#buttonsModal");
-                        
-                        link_element.appendChild(image_element);
+                    image_element.setAttribute("height", "100");
 
-                        var list_element = document.createElement("li");
+                    image_element.setAttribute("width", "96");
 
-                        list_element.appendChild(link_element);
-                        
-                        var function_string = "ButtonSelected(" + parseInt(button_data.id) + ")";
-                   
-                        list_element.setAttribute("onclick", function_string);
+                    var link_element = document.createElement("a");
 
-                        document.getElementById("option-list").appendChild(list_element);
+                    // Handles opening the Modal dialog for buttons
+                    link_element.setAttribute("data-toggle", "modal");
+                    link_element.setAttribute("data-target", "#buttonsModal");
 
-                        sly.reload();
-                        
-                        
-                        
-                    }
-                                        
-                }
-                
-                if(parseInt(category_index) === 3){
-                    
-                    
-                    LoadAllFabrics();
-                
+                    link_element.appendChild(image_element);
+
+                    var list_element = document.createElement("li");
+
+                    list_element.appendChild(link_element);
+
+                    var function_string = "ButtonSelected(" + parseInt(button_data.id) + ")";
+
+                    list_element.setAttribute("onclick", function_string);
+
+                    document.getElementById("option-list").appendChild(list_element);
+
+                    sly.reload();
+                  
                 }
 
             }
 	};
         
+        var site_url = "<?php echo site_url("Design/get_buttons"); ?>";
+        
+	xmlhttp.open("GET", site_url, true);
+	
+	xmlhttp.send();
+    
+    }
+    
+    function LoadFabricMenus(selected_category) {
+	
+        if(parseInt(selected_category) !== 1)
+            return;
+        
+        document.getElementById('option-list').innerHTML = "";
+        
+	var xmlhttp = new XMLHttpRequest();
+	
+	xmlhttp.onreadystatechange = function() {
+		
+            if (parseInt(xmlhttp.readyState) === 4 && parseInt(xmlhttp.status) === 200) {
+
+                var json_array =  JSON.parse(xmlhttp.responseText);
+                
+                $('#sub_menu_list').empty();
+                
+                for (var key in json_array) {
+                                              
+                    var on_click = 'return LoadOptions('.concat(json_array[key]['id']).concat(');');
+
+                    $('#sub_menu_list').append(
+                        $('<a>').attr('href', '#').attr('value', json_array[key]['id']).attr('onclick', on_click).attr('class', 'list-group-item').append(
+                            $('<span>').attr('class', 'tab').append(json_array[key]['name'])
+                    ));
+
+                }
+                
+            }
+	};
+        
         var site_url = "";
-        
-        
-        if(parseInt(category_index) === 5){
-        
-            site_url = "<?php echo base_url("index.php/admin/get_buttons"); ?>";
+
+        site_url = "<?php echo site_url("Design/get_product_menus"); ?>";
 		
-        }
-        else{
-        
-            site_url = "<?php echo base_url("index.php/admin/get_product_design_menus"); ?>";
-		
-            site_url = site_url.concat("/").concat(<?php  echo $product_id;  ?>).concat("/").concat(category_index);
-        }
-        
-		
+        site_url = site_url.concat("/").concat(<?php  echo $product_id;  ?>).concat("/").concat(selected_category);
+        	
 	xmlhttp.open("GET", site_url, true);
 	
 	xmlhttp.send();
@@ -1354,6 +1526,10 @@
         
         user.address_line_02 = $("#address_line_02").val();
         
+        user.city = $("#city").val();
+        
+        user.country = $("#country").val();
+        
         user.postal_code = $("#postal_code").val();
         
         user.email = $("#email").val();
@@ -1363,12 +1539,8 @@
     * Load buttons to product using the 
     * currentButton and CurrentThread
     * @returns void     */
-    function LoadButtons(){
-        
-        canvas_images = [];
-                        
-        var buttons_dir = "<?php echo ASSETS_PATH; ?>".concat("images/buttons/");
-                            
+    function LoadButtons(button_image){
+                                                            
         for(var image_key in current_design_data[current_side + '_images']){
             
             var base_image = current_design_data[current_side + '_images'][image_key];
@@ -1377,25 +1549,12 @@
                         
                 var button_data = base_image.buttons[button_key];
 
-                var button_path = buttons_dir  + button_data.image_name;
-
-                var bdata = {
-
-                    image_url: button_path,
-                    id : button_data.id,
-                    image_id : -1,
-                    button_item_id : button_data.item_id,
-                    depth : button_data.depth,
-                    pos_x : button_data.pos_x,
-                    pos_y : button_data.pos_y
-                };
-
-                canvas_images.push(bdata);
+                add_button_layer(button_image, button_data.id, button_data.pos_x, button_data.pos_y);
             }
 
         }
         
-        LoadDesignOptionButtons();
+        LoadDesignOptionButtons(button_image);
                      
     }
     
@@ -1423,17 +1582,17 @@
      * @type Threads|Array|Object|type
      */
     function ThreadSelected(thread_id){
-        
-        var threads_dir = "<?php echo ASSETS_PATH; ?>".concat("images/threads/");
-        
+                
         var threadData = GetThread(thread_id);
         
-        var threadColor = threads_dir + threadData.color;
+        tmpThread = threadData;
         
+        var threadColor = threadData.color;
+                
         ApplyThreadToButton(threadColor);
         
-        // Apply thread here
         
+                
     }
     
     /**
@@ -1453,7 +1612,7 @@
             
             if(parseInt(buttonData.id) === parseInt(button_id)){
                 
-                CurrentButton = buttonData;
+                design_data.currentButton = buttonData;
                 
                 return buttonData;
             }
@@ -1476,7 +1635,7 @@
                         
             if(parseInt(threadData.id) === parseInt(thread_id)){
                 
-                CurrentThread = threadData;
+                design_data.currentThread = threadData;
                 
                 return threadData;
             }
@@ -1488,10 +1647,8 @@
      * Loads buttons for different options
      * @returns {undefined}
      */
-    function LoadDesignOptionButtons(){
-        
-        var buttons_dir = "<?php echo ASSETS_PATH; ?>".concat("images/buttons/");
-        
+    function LoadDesignOptionButtons(button_image){
+
         for (var menu in current_design_data['design']) {
                     
             if(current_design_data['design'][menu].option !== null){
@@ -1516,20 +1673,7 @@
                         
                         var button_data = design_image.buttons[button_key];
                         
-                        var button_path = buttons_dir  + button_data.image_name;
-
-                        var bdata = {
-
-                            image_url: button_path,
-                            id : button_data.id,
-                            button_item_id : button_data.item_id,
-                            image_id : -1,
-                            depth : button_data.depth,
-                            pos_x : button_data.pos_x,
-                            pos_y : button_data.pos_y
-                        };
-                                                                       
-                        canvas_images.push(bdata);
+                        add_button_layer(button_image, button_data.id, button_data.pos_x, button_data.pos_y);
                     }
 
                 }
@@ -1537,7 +1681,6 @@
 
         }
         
-        BlendButtonImages();
     }
     
     /**
@@ -1550,7 +1693,62 @@
     
     function ApplyThreadToButton(threadColor){
         
+        $.post('<?= site_url("Design/BlendButtonThread/"); ?>',{ currentButton : JSON.stringify(design_data.currentButton), threadColor : threadColor  },function(json_result){
+
+            var image_data = JSON.parse(json_result);
+            
+            $("#design_button_image").attr("src", image_data.design_image_name);
+            
+            tmp_button_image = image_data.image_name;
+                    
+        });
+    }
+    
+    function ApplyThread()
+    {
         
+        ClearButtons();
+        
+        design_data.currentThread = tmpThread;
+        
+        button_image = tmp_button_image;
+        
+        LoadButtons(button_image);
+    }
+    
+    function updateUserData()
+    {
+        console.log("User : " + JSON.stringify(design_data['user']));
+        
+        $.post('<?= site_url("user/update_user_data/"); ?>',{ user : JSON.stringify(design_data['user'])},function(json_result){
+                         
+
+        });
+        
+        return false;
+    }
+    
+    function CheckOut()
+    {
+        if(!user_logged)
+        {
+            login_callbacks = $.Callbacks();
+            login_callbacks.add(CheckOut);
+            open_login();
+        }
+        else
+        {
+            $.post('<?= site_url("Design/SaveUserDesign/"); ?>',{ userDesign : JSON.stringify(design_data)},function(json_result){
+
+                var result = JSON.parse(json_result);
+                
+                $('#userDataModal').modal('show');
+
+                //alert('Pending Checkout Implementation');
+
+            });
+        }
+
     }
     
 
@@ -1564,7 +1762,7 @@
 
             <!-- MAIN MENUS  -->
 
-            <div id='' class=' design-menu col-sm-4'>
+            <div id='' class=' design-menu col-sm-2'>
                 <div id='main_menu' class='design-menu-header'>Design Menu</div>
                 <div id='main_menu_list' class="list-group">
                     <?php foreach ($categories->result() as $category) {?>
@@ -1576,13 +1774,18 @@
                     <?php }?>				
                 </div>
             </div>
-
+            
+            <!-- SUB MENUS  -->
             <div id='sub_menu_list' class="col-sm-2">
 
             </div>
 
-            <div id='design-preview' class='design-preview  col-sm-6'>
+            <div id='design-preview' class='col-sm-4 design-preview'>
 
+            </div>
+            
+            <div class='col-sm-4' style="float:right;">
+                <button onclick="CheckOut()" class="btn-primary">Checkout</button>
             </div>
 
         </div>
@@ -1590,18 +1793,17 @@
         <!-- END MAIN MENUS  -->
 
         <div class="wrap">  
-                <div class="scrollbar">
-                    <div class="handle">
-                            <div class="mousearea"></div>
-                    </div>
+            <div class="scrollbar">
+                <div class="handle">
+                        <div class="mousearea"></div>
                 </div>
+            </div>
 
-                <div class="frame" id="design_options">
-                    <ul class="clearfix" id="option-list">
+            <div class="frame" id="design_options">
+                <ul class="clearfix" id="option-list">
 
-                    </ul>
-                </div>
-
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -1651,14 +1853,14 @@
   </div>
 </div>
 
-<div id="requestMeasurementModal" class="modal fade" role="dialog">
+<div id="userDataModal" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Request Tailor for Measurement</h4>
+        <h4 class="modal-title">Confirm User Details</h4>
       </div>
       <div class="modal-body">
           <div style="width: 100%">
@@ -1682,13 +1884,21 @@
                 <input type="text" class="form-control" id="address_line_02" onchange="user_data_changed()">
               </div>
               <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" class="form-control" id="city" name="city" placeholder="City" onchange="user_data_changed()">
+              </div>
+              <div class="form-group">
+                <label for="country">Country</label>
+                <input type="text" class="form-control" id="country" name="country" placeholder="Country" onchange="user_data_changed()">
+              </div>
+              <div class="form-group">
                 <label for="postal_code">Postal Code:</label>
                 <input type="text" class="form-control" id="postal_code" onchange="user_data_changed()">
               </div>
           </div>
       </div>
       <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal" onclick="updateUserData()">Update</button>
       </div>
     </div>
 
@@ -1730,7 +1940,7 @@
             </div>
             
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="ApplyThread()">Apply</button>
             </div>
             
         </div>

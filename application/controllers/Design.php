@@ -10,27 +10,27 @@ class Design extends CI_Controller
 	
 	public function __construct()
 	{
-			parent::__construct();
+            parent::__construct();
 
-        	$this->load->helper('url');
-                
-                $this->load->helper('DesignData');
-        	
-        	$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-                
-                switch ($lang){
-                        case "fr":
-                        $current_language = "english";
-                        break;
-                        case "en":
-                        $current_language = "english";
-                        break;
-                default:
-                        $current_language = "english";
-                        break;
-                }
+            $this->load->helper('url');
 
-        	$this->lang->load('shmyde', $current_language);
+            $this->load->helper('DesignData');
+
+            $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+
+            switch ($lang){
+                    case "fr":
+                    $current_language = "english";
+                    break;
+                    case "en":
+                    $current_language = "english";
+                    break;
+            default:
+                    $current_language = "english";
+                    break;
+            }
+
+            $this->lang->load('shmyde', $current_language);
 
 	}
 	
@@ -41,7 +41,7 @@ class Design extends CI_Controller
 
 	public function product($target, $product)
 	{
-           
+            
             $data['categories'] = $this->admin_model->get_categories();
             
             $data['title'] = "DESIGN-SHIRT-SHMYDE";
@@ -54,13 +54,11 @@ class Design extends CI_Controller
             
             $design_data->LoadParameters($product_id);
             
-            $data['design_data'] = json_encode($design_data);
-
             $default_product_fabric = $this->admin_model->get_product_default_fabric($product_id);
                                                                  
-            $data['default_fabric'] = json_encode($default_product_fabric);
+            $design_data->defaultFabric = $default_product_fabric;
             
-            $data['mix_fabric'] = json_encode(array());
+            $design_data->mixFabric = array();
             
             $data['product_id'] = $product_id;
             
@@ -68,10 +66,29 @@ class Design extends CI_Controller
             
             $data['Threads'] = $this->GetThreads();
             
-            $data['currentButton'] = $this->GetProductDefaultButton($product_id);
+            $design_data->currentButton = $this->GetProductDefaultButton($product_id);
             
-            $data['currentThread'] = $this->GetProductDefaultThread($product_id);
+            $design_data->currentThread = $this->GetProductDefaultThread($product_id);
             
+            $data['design_data'] = json_encode($design_data);
+            
+            if($this->session->userdata('user_id') !== null)
+            {
+                $storedUserDesign = $this->GetUserDesign($this->session->userdata('user_id'));
+                // Override default design data with last stored user design
+                if($storedUserDesign != null)
+                {
+                    $data['design_data'] = $this->GetUserDesign($this->session->userdata('user_id'));
+                }
+            }
+
+            // Override design data with session data
+            if($this->session->userdata('userDesign') !== null)
+            {
+                $data['design_data'] = $this->session->userdata('userDesign');  
+                unset($_SESSION['userDesign']);
+            }
+      
             $this->load->view("pages/header.php",$data);
 
             $this->load->view('design/main');
@@ -107,6 +124,36 @@ class Design extends CI_Controller
             $json_result = json_encode($result);
             
             echo $json_result;
+            
+        }
+        
+        public function BlendButtonThread(){
+            
+            $this->load->helper('SimpleImage');
+                                    
+            $currentButton = json_decode($this->input->post('currentButton'));
+                        
+            $threadColor = $this->input->post('threadColor');
+                                    
+            $ButtonImage = new abeautifulsite\SimpleImage(ASSETS_DIR_PATH.'images/buttons/'.$currentButton->image_name);
+            
+            $ButtonDesignImage = new abeautifulsite\SimpleImage(ASSETS_DIR_PATH.'images/buttons/'.$currentButton->design_image_name);
+            
+            $ButtonImage = $ButtonImage->apply_color($threadColor);
+            
+            $ButtonDesignImage = $ButtonDesignImage->apply_color($threadColor);
+                        
+            $ButtonImage->brightness(0);
+            
+            $ButtonDesignImage->brightness(0);
+                    
+            $buttonData = new stdClass();
+            
+            $buttonData->image_name = $ButtonImage->output_base64('png');
+            
+            $buttonData->design_image_name = $ButtonDesignImage->output_base64('png');
+                                    
+            echo json_encode($buttonData);
             
         }
         
@@ -154,6 +201,39 @@ class Design extends CI_Controller
             echo json_encode($output);
         }
         
+        /**
+         * Saves the current front end design to the currently logged user
+         */
+        public function SaveUserDesign()
+        {
+            
+            $userDesign = $this->input->post('userDesign');
+            
+            $this->admin_model->SaveUserDesign($this->session->userdata('user_id'), $userDesign);
+            
+            echo json_encode("User Design Saved");
+        }
+        
+        public function SessionStoreUserDesign(){
+            
+
+            $userDesign = $this->input->post('userDesign');
+            
+            $currentUrl = $this->input->post('currentURL');
+            
+            $this->session->set_userdata('last_page', $currentUrl);
+            
+            $this->session->set_userdata('userDesign', $userDesign);
+            
+        }
+
+
+        public function GetUserDesign($user_id){
+            
+            return $this->admin_model->GetUserDesign($user_id);
+        }
+
+
         function cmp($a, $b)
         {
             if ($a["depth"] == $b["depth"]) {
@@ -198,7 +278,7 @@ class Design extends CI_Controller
          */
         private function GetProductDefaultButton($productID){
             
-            return json_encode($this->admin_model->GetProductDefaultButton($productID));
+            return $this->admin_model->GetProductDefaultButton($productID);
         }
         
         /**
@@ -207,9 +287,118 @@ class Design extends CI_Controller
          */
         private function GetProductDefaultThread($productID){
             
-            return json_encode($this->admin_model->GetProductDefaultThread($productID));
+            return $this->admin_model->GetProductDefaultThread($productID);
         }
         
         
+        public function get_fabric($fabric_id){
+              
+            $result = json_encode($this->admin_model->get_product_fabric($fabric_id));
+
+            if(isset($result)){
+
+                echo $result;
+            }
+        }
+        
+        public function get_option($id){
+			
+            $result = $this->admin_model->get_json_option($id);
+
+            if(isset($result)){
+
+                echo $result;
+            }
+        }
+        
+        public function get_product_design_options($menu_id, $category_id, $product_id){
+
+            $result = '';
+
+            if($category_id == 1)
+            {
+                $result = json_encode($this->admin_model->get_product_submenu_fabric_images($product_id, $menu_id));
+            }
+            else
+                {
+                $result = $this->admin_model->get_json_menu_options($menu_id);
+            }
+
+            if(isset($result)){
+
+                echo $result;
+            }
+        }
+
+        public function get_all_product_fabrics($product_id){
+        
+            $result = json_encode($this->admin_model->get_all_design_product_fabrics($product_id));
+
+            if(isset($result)){
+
+                echo $result;
+            }
+        }
+     
+        public function get_product_design_menus(){
+
+            $product_id = $this->input->post('product_id');
+
+            $selected_option_list = json_decode($this->input->post('selected_option_list'));
+
+            $menus = Array();
+
+            $result = $this->admin_model->get_product_design_menus($product_id, $selected_option_list);
+
+            if(isset($result)){
+
+                foreach($result as $row){
+
+                    $menus[$row->id]['name'] = $row->name;
+                    $menus[$row->id]['id'] = $row->id;
+                    $menus[$row->id]['mixed_fabric_support'] = $row->mixed_fabric_support;
+                    $menus[$row->id]['inner_contrast_support'] = $row->inner_contrast_support;
+
+                }
+
+                echo json_encode($menus);
+            }
+            else{
+
+                echo json_encode('');
+            }
+        }
+        
+        public function get_buttons()
+        {
+
+            echo json_encode($this->admin_model->get_buttons());
+        }
+        
+        public function get_product_menus($product_id, $category_id){
+
+            $menus = Array();
+
+            $result = $this->admin_model->get_product_category_menus($product_id, $category_id);
+
+            if(isset($result)){
+
+                foreach($result->result() as $row){
+
+                    $menus[$row->id]['name'] = $row->name;
+                    $menus[$row->id]['id'] = $row->id;
+                    $menus[$row->id]['mixed_fabric_support'] = $row->mixed_fabric_support;
+                    $menus[$row->id]['inner_contrast_support'] = $row->inner_contrast_support;
+
+                }
+
+                echo json_encode($menus);
+            }
+            else{
+
+                echo json_encode('');
+            }
+
+        }
 }
 ?>

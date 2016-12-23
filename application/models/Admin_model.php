@@ -194,7 +194,7 @@ class Admin_model extends CI_Model {
      * @return boolean return true if the product is edited
      */
     public function edit_product($id, $name, $url_name, $target, $price){
-    	
+    	        
     	$sql = "UPDATE shmyde_product SET name = ".$this->db->escape($name).", url_name = ".$this->db->escape($url_name).", target = ".$this->db->escape($target).", base_price = ".$this->db->escape($price)." WHERE id = ".$id;
 
         $this->db->query($sql);
@@ -224,6 +224,14 @@ class Admin_model extends CI_Model {
     public function get_design_menus(){
 	
         $query = $this->db->query("SELECT shmyde_design_main_menu.*, shmyde_product.name as product_name from shmyde_design_main_menu, shmyde_product where shmyde_design_main_menu.shmyde_product_id = shmyde_product.id AND shmyde_design_main_menu.shmyde_design_category_id = 2");
+
+        return $query;
+                
+    }
+    
+    public function get_design_dependent_menus(){
+	
+        $query = $this->db->query("SELECT shmyde_design_main_menu.*, shmyde_product.name as product_name from shmyde_design_main_menu, shmyde_product where shmyde_design_main_menu.shmyde_product_id = shmyde_product.id AND shmyde_design_main_menu.shmyde_design_category_id = 2 AND is_independent = 0");
 
         return $query;
                 
@@ -275,6 +283,43 @@ class Admin_model extends CI_Model {
     }
     
     /**
+     * This function gets the design menus based on the options
+     * that are currently selected
+     * @param type $product_id
+     * @param type $selected_option_list
+     * @return type
+     */
+    public function get_product_design_menus($product_id, $selected_option_list){
+        
+        $result = array();
+        
+        $sql = "SELECT * from shmyde_design_main_menu where shmyde_product_id = ".$product_id." AND shmyde_design_category_id = 2 AND is_independent = 1";
+        
+        $independent_menus = $this->db->query($sql);
+        
+        foreach ($independent_menus->result() as $menu) {
+            
+            array_push($result, $menu);
+        }
+        
+        foreach ($selected_option_list as $option_id) {
+            
+            $option_menus = $this->db->query("SELECT * FROM shmyde_option_dependent_menu WHERE shmyde_design_option_id = ".$option_id);
+            
+            foreach ($option_menus->result() as $option_dependent_menu) {
+                
+                $menu = $this->db->query("SELECT * FROM shmyde_design_main_menu WHERE shmyde_design_category_id = 2 AND id = ".$option_dependent_menu->shmyde_design_main_menu_id)->row();
+                
+                array_push($result, $menu);
+            }
+            
+        }
+                
+        return $result;
+    }
+
+
+    /**
      * This function deletes a menu given the menu id
      * @param type $id The id of the menu being deleted
      */
@@ -290,13 +335,22 @@ class Admin_model extends CI_Model {
      * @param type $product_id The product id to which this menu belongs
      * @return boolean
      */
-    public function create_menu($name, $product_id, $category_id, $mixed_fabric_support, $support_inner_contrast, $is_back_menu){
+    public function create_menu($name, $product_id, $category_id, $mixed_fabric_support, $support_inner_contrast, $is_back_menu, $is_independent){
     	
     	$insert_id = $this->get_table_next_id("shmyde_design_main_menu");
 		
-	$sql = "INSERT INTO shmyde_design_main_menu (id, name, shmyde_product_id, shmyde_design_category_id, mixed_fabric_support, inner_contrast_support, is_back_menu) 
-
-        VALUES (".$insert_id." , ".$this->db->escape($name).", ".$product_id.", ".$category_id.", ".$this->db->escape($mixed_fabric_support).", ".$this->db->escape($support_inner_contrast).", ".$is_back_menu.")";
+	$sql = "INSERT 
+            INTO 
+            shmyde_design_main_menu 
+            (id, name, shmyde_product_id, shmyde_design_category_id, mixed_fabric_support, inner_contrast_support, is_back_menu, is_independent) 
+            VALUES (
+            ".$insert_id." , "
+                . "".$this->db->escape($name).", "
+                . "".$product_id.", "
+                . "".$category_id.", "
+                . "".$this->db->escape($mixed_fabric_support).", "
+                . "".$this->db->escape($support_inner_contrast).", "
+                . "".$is_back_menu.", ".$is_independent.")";
 
         $this->db->query($sql);
 
@@ -310,17 +364,37 @@ class Admin_model extends CI_Model {
      * @param type $product_id
      * @return boolean
      */
-    public function edit_menu($id, $name, $product_id, $category_id, $mixed_fabric_support, $support_inner_contrast, $is_back_menu){
+    public function edit_menu($id, 
+            $name, 
+            $product_id, 
+            $category_id, 
+            $mixed_fabric_support, 
+            $support_inner_contrast, 
+            $is_back_menu,
+            $is_independent){
     	
-        $sql = "UPDATE shmyde_design_main_menu SET is_back_menu = ".$is_back_menu.", name = ".$this->db->escape($name).", shmyde_product_id = ".$product_id.", shmyde_design_category_id = ".$category_id.", mixed_fabric_support = ".$this->db->escape($mixed_fabric_support).", inner_contrast_support = ".$support_inner_contrast." WHERE id = ".$id;
+        $sql = "UPDATE "
+                . "shmyde_design_main_menu "
+                . "SET "
+                . "is_back_menu = ".$is_back_menu.", "
+                . "name = ".$this->db->escape($name).", "
+                . "shmyde_product_id = ".$product_id.", "
+                . "shmyde_design_category_id = ".$category_id.", "
+                . "mixed_fabric_support = ".$this->db->escape($mixed_fabric_support).", "
+                . "inner_contrast_support = ".$support_inner_contrast.", is_independent = ".$is_independent." "
+                . "WHERE id = ".$id;
 
         $this->db->query($sql);
+        
+        if($is_independent == 1)
+        {           
+            $this->db->query("DELETE from shmyde_option_dependent_menu WHERE shmyde_design_main_menu_id = ".$id);
+        }
 
         return true;
 
     }
    
-    
     //============================================================ OPTION ====================================================================
     
     /**
@@ -458,6 +532,55 @@ class Admin_model extends CI_Model {
         return $query;
     }
     
+    /**
+     * This function returns an array of all the dependent
+     * menu ID's of an option
+     * @param type $option_id
+     * @return type
+     */
+    public function get_option_dependent_menus($option_id){
+        
+        $result = $this->db->query("SELECT * from shmyde_option_dependent_menu WHERE shmyde_design_option_id = ".$option_id);
+        
+        $result_array = array();
+        
+        foreach ($result->result() as $menu) {
+            
+            $result_array[$menu->shmyde_design_main_menu_id] = $menu->shmyde_design_main_menu_id;
+            
+        }
+        
+        return $result_array;
+    }
+    
+    /**
+     * This function deletes all dependent menus associated with an option
+     * @param type $option_id
+     */
+    public function delete_option_dependent_menus($option_id){
+        
+        $this->db->query("DELETE from shmyde_option_dependent_menu WHERE shmyde_design_option_id = ".$option_id);
+
+    }
+    
+    /**
+     * THis function adds a new option dependent menu
+     * @param type $option_id
+     * @param type $menu_id
+     */
+    public function add_option_dependent_menu($option_id, $menu_id)
+    {
+        
+        $insert_id = $this->get_table_next_id("shmyde_option_dependent_menu");
+        
+        $this->db->query("INSERT INTO "
+                . "shmyde_option_dependent_menu(id, shmyde_design_main_menu_id, shmyde_design_option_id)"
+                . " VALUES(".$insert_id.", ".$menu_id.", ".$option_id.")");
+    }
+    
+    
+
+
     /**
      * This funtion gets a specific option based on an id
      * @param type $id The option id
@@ -884,6 +1007,11 @@ class Admin_model extends CI_Model {
         
         return $this->db->query('SELECT * from shmyde_threads WHERE id = '.$thread_id)->row();
     }
+    
+    public function get_button($button_id){
+        
+        return $this->db->query('SELECT * from shmyde_buttons WHERE id = '.$button_id)->row();
+    }
 
 
     /**
@@ -897,6 +1025,16 @@ class Admin_model extends CI_Model {
         $id = $this->get_table_next_id("shmyde_threads");
         
         $this->db->query("INSERT INTO shmyde_threads(id, image_name, color) VALUES (".$id.", ".$this->db->escape($image_name).", ".$this->db->escape($color).")");
+        
+        return true;
+    }
+    
+    public function create_button($image_name, $design_image_name, $name){
+        
+        $id = $this->get_table_next_id("shmyde_buttons");
+        
+        $this->db->query("INSERT INTO shmyde_buttons(id, image_name, design_image_name, name) "
+                . "VALUES (".$id.", ".$this->db->escape($image_name).", ".$this->db->escape($design_image_name).", ".$this->db->escape($name).")");
         
         return true;
     }
@@ -919,9 +1057,39 @@ class Admin_model extends CI_Model {
         
     }
     
+    public function delete_button($button_id){
+        
+        //Get the button to get the image name
+        $button = $this->get_button($button_id);
+        
+        $image_path = ASSETS_DIR_PATH.'images/buttons/'.$button->image_name;
+        
+        $large_image_path = ASSETS_DIR_PATH.'images/buttons/'.$button->design_image_name;
+            
+        if(file_exists($image_path)){
+            // Delete the image from directory
+            unlink($image_path);
+        }
+        
+        if(file_exists($large_image_path)){
+            // Delete the image from directory
+            unlink($large_image_path);
+        }
+        
+        // Delete the thread
+        $this->db->query("DELETE FROM shmyde_buttons WHERE id = ".$button_id);
+        
+    }
+    
     public function edit_thread($thread_id, $color){
             
         $this->db->query("UPDATE shmyde_threads SET color = ".$this->db->escape($color)." WHERE id = ".$thread_id);
+        
+    }
+    
+    public function edit_button($button_id, $name){
+            
+        $this->db->query("UPDATE shmyde_buttons SET name = ".$this->db->escape($name)." WHERE id = ".$button_id);
         
     }
 
@@ -1250,8 +1418,37 @@ class Admin_model extends CI_Model {
 
     //============================================================ OTHER ====================================================================
   
+    /**
+     * This function saves the current user design
+     * @param type $user_id
+     * @param type $userDesign
+     */
+    public function SaveUserDesign($user_id, $userDesign)
+    {
+        $id = $this->get_table_next_id("shmyde_user_designs");  
+        
+        $this->db->query("INSERT INTO shmyde_user_designs(id, user_id, design)"
+                . " VALUES (".$id.",".$user_id.", ".$this->db->escape($userDesign).")");
+    }
     
-     
+    public function GetUserDesign($id)
+    {
+        $design = $this->db->query("SELECT design FROM shmyde_user_designs WHERE user_id = ".$id." ORDER BY id DESC");  
+        
+        if($design->num_rows()> 0)
+        {
+            return $design->row()->design;
+        }
+        else
+        {
+            return null;
+        }
+         
+    }
+
+
+
+
     public function get_images($id, $table_name){
         
         $image_query = $this->db->query('SELECT * from '.$table_name.' where item_id = '.$id);
@@ -1551,4 +1748,9 @@ class Admin_model extends CI_Model {
     }
     
     
+    public function update_table($tableName, $columnName, $newValue, $condition)
+    {
+        $this->db->query("UPDATE ".$tableName." SET ".$columnName." = ".$this->db->escape($newValue)." WHERE ".$condition);
+    }
+ 
 }

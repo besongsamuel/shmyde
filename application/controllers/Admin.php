@@ -1,8 +1,6 @@
 <?php
 class Admin extends CI_Controller {
 
-
-
     public function __construct()
     {
         parent::__construct();
@@ -10,21 +8,31 @@ class Admin extends CI_Controller {
         $this->load->helper('url');
 
         $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-
-        switch ($lang){
-                case "fr":
-                $current_language = "french";
-                break;
-                case "en":
-                $current_language = "english";
-                break;
-        default:
-                $current_language = "english";
-                break;
+        
+        switch ($lang)
+        {
+            case "fr":
+            $current_language = "french";
+            break;
+            case "en":
+            $current_language = "english";
+            break;
+            default:
+            $current_language = "english";
+            break;
         }
 
         $this->lang->load('shmyde', $current_language);
-
+        
+        if(!$this->session->userdata('logged_in') || !$this->session->userdata('is_admin'))
+        {
+            $this->session->set_userdata('last_page', current_url());
+                        
+            redirect("invalid/invalid_login_user");  
+                        
+            return;
+        }
+        
     }
     
     public function button_editor($editor_type, $id){
@@ -33,10 +41,27 @@ class Admin extends CI_Controller {
         
         $data['id'] = json_encode($id);
         
+        $data['title'] = 'Button Editor';
+        
+        $data['cssLinks'] = array('admin');
+        
         $data['editor_type'] = json_encode($editor_type);
         
-        $this->load->view('admin/header');
+        $this->load->view('pages/header', $data);
         $this->load->view('admin/editor.php', $data);
+    }
+    
+    public function index(){
+        
+        $data['products'] = $this->admin_model->get_all_products();
+        
+        $data['title'] = ucfirst('product'); 
+
+        $this->lang->load('shmyde', CURRENT_LANGUAGE);
+
+        $this->load->view('pages/header');
+        
+        $this->load->view('admin/product', $data);
     }
 
     public function view($page = 'product_id', $product_id = -1, $menu_id = -1, $submenu_id = -1)
@@ -46,6 +71,8 @@ class Admin extends CI_Controller {
             // Whoops, we don't have a page for that!
             show_404();
         }
+        
+        $data['cssLinks'] = array('admin');
 
         if($page == 'product'){
 
@@ -115,6 +142,12 @@ class Admin extends CI_Controller {
                                            
             }
             
+            if($page == 'button'){
+                
+                $data['buttons'] = $this->admin_model->get_buttons();
+                                           
+            }
+            
             if($page == 'product_fabric'){
                 
                 $data['product_fabrics'] = $this->admin_model->get_all_product_fabrics_with_submenus();
@@ -124,7 +157,7 @@ class Admin extends CI_Controller {
 
             $this->lang->load('shmyde', CURRENT_LANGUAGE);
 
-                    $this->load->view('admin/header');
+            $this->load->view('pages/header', $data);
             $this->load->view('admin/'.$page, $data);
 
 
@@ -136,6 +169,8 @@ class Admin extends CI_Controller {
         {
             show_404();
         }
+        
+        
 
         if ($this->input->server('REQUEST_METHOD') == 'POST'){
 
@@ -169,11 +204,18 @@ class Admin extends CI_Controller {
 
                 $this->edit_thread($id);
             }
+            
+            if($page == 'button'){
+
+                $this->edit_button($id);
+            }
 
             return;
         }
         
         $data = Array();
+        
+        $data['cssLinks'] = array('admin');
         
         $data['is_edit'] = json_encode(true);
         
@@ -212,6 +254,12 @@ class Admin extends CI_Controller {
             
         }
         
+        if($page == 'button'){
+                            
+            $data = $this->begin_edit_button($id, $data);
+            
+        }
+        
         if($page == 'product_fabric'){
                             
             $data = $this->begin_edit_product_fabric($id, $data);
@@ -221,7 +269,7 @@ class Admin extends CI_Controller {
                 
         $this->lang->load('shmyde', CURRENT_LANGUAGE);
 
-        $this->load->view('admin/header');
+        $this->load->view('pages/header', $data);
 
         $this->load->view('admin/create_'.$page, $data);
         
@@ -231,7 +279,6 @@ class Admin extends CI_Controller {
 
     function edit_product($id){
         
-
         if($this->admin_model->edit_product(
                 $id, $this->input->post('name'),  
                 $this->input->post('url_name'), 
@@ -249,16 +296,54 @@ class Admin extends CI_Controller {
         //Image was changed
         if($_FILES["image"]["size"] > 0){
         
-            $this->admin_model->delete_thread($id);
+            $image_uploaded = $this->UploadImage("image", ASSETS_DIR_PATH.'images/threads/');
+            
+            $image_name = basename($_FILES["image"]["name"]);
+            
+            if($image_uploaded){
+                
+                $this->admin_model->update_table("shmyde_threads", "image_name", $image_name, "id = ".$id);
+            }
+        }
+          
+        $this->admin_model->edit_thread($id, $this->input->post('color'));
+
+        redirect('/admin/view/thread', 'refresh');
         
-            $this->create_thread('thread');
-        }
-        else{
+    }
+    
+    function edit_button($id){
+                
+        //Image was changed
+        if($_FILES["image"]["size"] > 0){
+                
+            $image_uploaded = $this->UploadImage("image", ASSETS_DIR_PATH.'images/buttons/');
             
-            $this->admin_model->edit_thread($id, $this->input->post('color'));
+            $image_name = basename($_FILES["image"]["name"]);
             
-            redirect('/admin/view/thread', 'refresh');
+            if($image_uploaded){
+                
+                $this->admin_model->update_table("shmyde_buttons", "image_name", $image_name, "id = ".$id);
+            }
         }
+        
+        if($_FILES["design_image"]["size"] > 0){
+                
+            $image_uploaded = $this->UploadImage("design_image", ASSETS_DIR_PATH.'images/buttons/');
+            
+            $image_name = basename($_FILES["design_image"]["name"]);
+            
+            if($image_uploaded){
+                
+                $this->admin_model->update_table("shmyde_buttons", "design_image_name", $image_name, "id = ".$id);
+            }
+        }
+        
+            
+        $this->admin_model->edit_button($id, $this->input->post('name'));
+
+        redirect('/admin/view/button', 'refresh');
+        
         
     }
     
@@ -281,7 +366,8 @@ class Admin extends CI_Controller {
                 $this->input->post('category'), 
                 $this->input->post('mixed_fabric_support') == null ? 0 : 1,
                 $this->input->post('inner_contrast_support') == null ? 0 : 1,
-                $this->input->post('is_back_menu') == null ? 0 : 1)){
+                $this->input->post('is_back_menu') == null ? 0 : 1,
+                $this->input->post('is_independent') == null ? 0 : 1)){
             
             redirect('/admin/view/menu', 'refresh');
         }
@@ -303,7 +389,7 @@ class Admin extends CI_Controller {
     
     
     function edit_option($id){
-                
+
         if($this->admin_model->edit_option(
                 $id, $this->input->post('name'), 
                 $this->input->post('menu'), 
@@ -311,7 +397,14 @@ class Admin extends CI_Controller {
                 $this->input->post('description'), 
                 $this->input->post('is_default'))){
             
-                    redirect('/admin/view/option/'.$this->input->post('product').'/'. $this->input->post('menu'), 'refresh');
+            $this->admin_model->delete_option_dependent_menus($id);
+        
+            foreach ($this->input->post('option_dependent_menu') as $key => $value) {
+
+                $this->admin_model->add_option_dependent_menu($id, $key);
+            }
+            
+            redirect('/admin/view/option/'.$this->input->post('product').'/'. $this->input->post('menu'), 'refresh');
         }
     }
     
@@ -407,18 +500,36 @@ class Admin extends CI_Controller {
         return $data;
         
     }
+    
+    function begin_edit_button($id, $data){
+        
+        $data['button'] = $this->admin_model->get_button($id);
+                             
+        return $data;
+        
+    }
+    
+    function begin_edit_buttons($id, $data){
+        
+        $data['button'] = $this->admin_model->get_button($id);
+                             
+        return $data;
+        
+    }
         
     function begin_edit_option($id, $data, $param0 = 0, $param1 = 0){
                 
         $data['option_id'] = $id;
         
-        $data['menus'] = $this->admin_model->get_design_menus();
+        $data['menus'] = $this->admin_model->get_design_dependent_menus();
 
         $data['products'] = $this->admin_model->get_all_products();
         
         $data['selected_product'] = $param0;
         
         $data['selected_menu'] = $param1;
+        
+        $data['option_dependent_menu'] = $this->admin_model->get_option_dependent_menus($id);
 
         $option_images = $this->admin_model->get_images($id, 'shmyde_images');
                 
@@ -513,6 +624,14 @@ class Admin extends CI_Controller {
                 redirect('/admin/view/thread', 'refresh');
 
             }
+            
+            if($page == 'button'){
+
+                $this->admin_model->delete_button($id);
+
+                redirect('/admin/view/button', 'refresh');
+
+            }
 
         }
     
@@ -529,7 +648,7 @@ class Admin extends CI_Controller {
         {
             show_404();
         }
-
+        
         if ($this->input->server('REQUEST_METHOD') == 'POST'){
 
 
@@ -545,10 +664,14 @@ class Admin extends CI_Controller {
             
             $this->create_thread($page);
             
+            $this->create_button($page);
+            
             return;
         }
         
         $data = Array();
+        
+        $data['cssLinks'] = array('admin');
                        
         $data = $this->view_create_product($page, $data);
                        
@@ -559,6 +682,8 @@ class Admin extends CI_Controller {
         $data = $this->view_create_menu($page, $data);
         
         $data = $this->view_create_thread($page, $data);
+        
+        $data = $this->view_create_button($page, $data);
                 
         $data = $this->view_create_option($page, $data, $param0, $param1);
                               
@@ -569,7 +694,7 @@ class Admin extends CI_Controller {
 
         $this->lang->load('shmyde', CURRENT_LANGUAGE);
 
-        $this->load->view('admin/header');
+        $this->load->view('pages/header', $data);
 
         $this->load->view('admin/create_'.$page, $data);
 
@@ -605,68 +730,136 @@ class Admin extends CI_Controller {
         
         if($page == 'thread'){
             
-            $target_dir = ASSETS_DIR_PATH.'images/threads/';
+            $image_name = basename($_FILES["image"]["name"]);
             
-            $target_file = $target_dir . basename($_FILES["image"]["name"]);
+            $image_uploaded = $this->UploadImage("image", ASSETS_DIR_PATH.'images/threads/');
             
-            $uploadOk = 1;
-            
-            $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
-            
-            // Check if image file is a actual image or fake image
-            if(isset($_POST["submit"])) {
+            if(!$image_uploaded){
                 
-                $check = getimagesize($_FILES["image"]["tmp_name"]);
-                
-                if($check !== false) 
-                {
-                    echo "File is an image - " . $check["mime"] . ".";
-                    $uploadOk = 1;
-                } 
-                else 
-                {
-                    echo "File is not an image.";
-                    $uploadOk = 0;
-                }
+                $image_name = '';
             }
-            // Check if file already exists
-            if (file_exists($target_file)) 
+                                    
+            if($this->admin_model->create_thread($image_name, $this->input->post('color')))
             {
-                unlink($target_file);
+                redirect('/admin/view/thread', 'refresh');
             }
-            // Check file size
-            if ($_FILES["image"]["size"] > 500000) 
+        }
+    }
+    
+    /**
+     * This function uploads an image in a directory
+     * @param type $name the name in the client
+     * @param type $base_dir the directory where the image is saved
+     * @param type $file_name the name of the file
+     * @return boolean
+     */
+    public function UploadImage($name, $base_dir, $file_name = null){
+                   
+        $target_file = $base_dir . basename($_FILES[$name]["name"]);
+        
+        if($file_name != null)
+        {
+            $target_file = $base_dir.$file_name;
+        }
+
+        $uploadOk = 1;
+        
+        $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+
+        // Check if image file is a actual image or fake image
+        if($this->input->server('REQUEST_METHOD') == 'POST') 
+        {
+            $check = getimagesize($_FILES[$name]["tmp_name"]);
+
+            if($check !== false) 
             {
-                echo "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-            // Allow certain file formats
-            //if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-            //&& $imageFileType != "gif" ) 
-            //{
-                //echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
-                //$uploadOk = 0;
-            //}
-            // Check if $uploadOk is set to 0 by an error
-            if ($uploadOk == 0) {
-                echo "Sorry, your file was not uploaded.";
-            // if everything is ok, try to upload file
+                $uploadOk = 1;
             } 
             else 
             {
-                if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) 
-                {                    
-                    if($this->admin_model->create_thread(basename($_FILES["image"]["name"]), $this->input->post('color')))
-                    {
-                        redirect('/admin/view/thread', 'refresh');
-                    }
-                    echo "The file ". basename( $_FILES["image"]["name"]). " has been uploaded.";
-                } 
-                else 
-                {
-                    $uploadOk = 0;
-                    echo "Sorry, there was an error uploading your file.";
+                $uploadOk = 0;
+            }
+        }
+        
+        // Check if file already exists
+        if (file_exists($target_file)) 
+        {
+            unlink($target_file);
+        }
+        // Check file size
+        if ($_FILES[$name]["size"] > 500000) 
+        {
+            $uploadOk = 0;
+        }
+        
+        // Allow certain file formats
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+        && $imageFileType != "gif" ) 
+        {
+            $uploadOk = 0;
+        }
+        // Check if $uploadOk is set to 0 by an error
+        if ($uploadOk == 0) 
+        {           
+            return false;
+        } 
+        else 
+        {
+            if (move_uploaded_file($_FILES[$name]["tmp_name"], $target_file)) 
+            {                    
+                return true;
+            } 
+            else 
+            {
+                return false;
+            }
+        }
+        
+        return true;
+
+    }
+
+
+    /**
+     * This function creates a button
+     * @param type $page
+     */
+    private function create_button($page){
+        
+        if($page == 'button'){
+            
+            $image_name = "";
+            
+            $design_image_name = "";
+            
+            //Image was changed
+            if($_FILES["image"]["size"] > 0){
+
+                $image_uploaded = $this->UploadImage("image", ASSETS_DIR_PATH.'images/buttons/');
+
+                $image_name = basename($_FILES["image"]["name"]);
+
+                if(!$image_uploaded){
+
+                    $image_name = "";
                 }
+            }
+
+            if($_FILES["design_image"]["size"] > 0){
+
+                $image_uploaded = $this->UploadImage("design_image", ASSETS_DIR_PATH.'images/buttons/');
+
+                $design_image_name = basename($_FILES["design_image"]["name"]);
+
+                if(!$image_uploaded){
+
+                    $design_image_name = "";
+                }
+            }
+               
+            if($this->admin_model->create_button($image_name, $design_image_name, $this->input->post('name')))
+            {
+                redirect('/admin/view/button', 'refresh');
             }
 
         }
@@ -733,7 +926,8 @@ class Admin extends CI_Controller {
                     $this->input->post('category'), 
                     $this->input->post('mixed_fabric_support') == null ? 0 : 1,
                     $this->input->post('inner_contrast_support') == null ? 0 : 1,
-                    $this->input->post('is_back_menu') == null ? 0 : 1)){
+                    $this->input->post('is_back_menu') == null ? 0 : 1,
+                    $this->input->post('is_independent') == null ? 0 : 1)){
 
                 redirect('/admin/view/menu', 'refresh');
             }
@@ -764,9 +958,10 @@ class Admin extends CI_Controller {
      */
     private function create_option($page){
         
+        
                 
         if($page == 'option'){
-
+            
             if($this->admin_model->create_option(
 
                 $this->input->post('name'), 
@@ -775,8 +970,15 @@ class Admin extends CI_Controller {
                 $this->input->post('description'),  
                 $this->input->post('is_default')
                 )){
+                    
+                $id = $this->admin_model->get_table_next_id("shmyde_design_option");
                 
-                    redirect('/admin/view/option/'.$this->input->post('menu').'/'.$this->input->post('product'), 'refresh');
+                foreach ($this->input->post('option_dependent_menu') as $key => $value) {
+
+                    $this->admin_model->add_option_dependent_menu($id, $key);
+                }
+                
+                redirect('/admin/view/option/'.$this->input->post('menu').'/'.$this->input->post('product'), 'refresh');
             }
         }
     }
@@ -862,6 +1064,11 @@ class Admin extends CI_Controller {
         return $data;
     }
     
+    private function view_create_button($page, $data){
+        
+        return $data;
+    }
+    
     
     /**
      * This function is used to generate the data required to create the page
@@ -872,7 +1079,7 @@ class Admin extends CI_Controller {
         
         if($page == 'option'){
             
-            $data['menus'] = $this->admin_model->get_design_menus();
+            $data['menus'] = $this->admin_model->get_design_dependent_menus();
 
             $data['products'] = $this->admin_model->get_all_products();
             
@@ -921,13 +1128,38 @@ class Admin extends CI_Controller {
         
         echo json_encode($this->admin_model->get_buttons());
     }
+    
+    public function get_product_design_menus(){
+        
+        $product_id = $this->input->post('product_id');
+        
+        $selected_option_list = json_decode($this->input->post('selected_option_list'));
+        
+        $menus = Array();
+        
+        $result = $this->admin_model->get_product_design_menus($product_id, $selected_option_list);
+        
+        if(isset($result)){
+            
+            foreach($result as $row){
+                
+                $menus[$row->id]['name'] = $row->name;
+                $menus[$row->id]['id'] = $row->id;
+                $menus[$row->id]['mixed_fabric_support'] = $row->mixed_fabric_support;
+                $menus[$row->id]['inner_contrast_support'] = $row->inner_contrast_support;
+                
+            }
+            
+            echo json_encode($menus);
+        }
+        else{
+            
+            echo json_encode('');
+        }
+    }
 
-    public function get_product_design_menus($product_id, $category_id){
-	
-        
-        if($category_id == 3)
-            $category_id = 2;
-        
+    public function get_product_menus($product_id, $category_id){
+	        
         $menus = Array();
         
         $result = $this->admin_model->get_product_category_menus($product_id, $category_id);

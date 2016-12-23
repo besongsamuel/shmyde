@@ -46,6 +46,7 @@ $lang['shmyde_left_logo_text'] = 'Wear what you design';
 $lang['shmyde_right_logo_text'] = 'Design what you wear';
 $lang['shmyde_login'] = 'Login';
 $lang['shmyde_logout'] = 'Logout';
+$lang['shmyde_register'] = 'Register';
 
 $lang['shmyde_about_us'] = 'ABOUT US';
 $lang['shmyde_contact_us'] = 'CONTACT US';

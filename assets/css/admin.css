@@ -1,0 +1,38 @@
+
+body
+{
+    font-family: sans-serif;
+    background-image: none;
+}
+
+body a
+{
+    color : #107896;
+}
+
+body
+a:hover
+{
+    text-decoration:underline;
+    color: #107896;
+}
+
+body
+a:active
+{
+    color:#43ABC9;
+}
+
+.container
+{
+    margin-bottom: 10px;
+}
+
+.preview-image
+{
+    position: absolute;
+    display: block;
+    margin: 0 auto;
+    height: 300px;
+    width: 230px;
+}

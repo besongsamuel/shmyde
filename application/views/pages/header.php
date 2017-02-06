@@ -38,6 +38,7 @@
     <script src="<?php echo ASSETS_PATH; ?>sly-master/dist/sly.js"></script>
     <script src="<?php echo ASSETS_PATH; ?>frameworks/bootstrap-3.3.6-dist/js/bootstrap.min.js"></script>
     <script src="<?php echo ASSETS_PATH; ?>color-picker/js/bootstrap-colorpicker.js"></script>
+    <script src="<?php echo ASSETS_PATH; ?>js/html2canvas.js"></script>
     <script>
         
         var login_callbacks = $.Callbacks();

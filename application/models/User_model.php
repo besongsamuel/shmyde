@@ -227,6 +227,8 @@ class User_model extends CI_Model {
             {
                 $data = array
                 (
+                    'first_name' => $data['first_name'],
+                    'last_name' => $data['last_name'],
                     'phone_number' => $data['phone_number'],
                     'address_line_1' => $data['address_line_1'],
                     'address_line_2' => $data['address_line_2'],

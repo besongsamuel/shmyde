@@ -138,6 +138,6 @@ $autoload['language'] = array();
 */
 $autoload['model'] = array(
 
-	'ion_auth_model', 'admin_model', 'user_model'
+	'ion_auth_model', 'admin_model', 'user_model', 'design_model'
     
 );

@@ -95,3 +95,19 @@ defined('CURRENT_LANGUAGE')	   OR define('CURRENT_LANGUAGE', 'english'); // The 
 defined('IMAGE_WIDTH')             OR define('IMAGE_WIDTH', 230); 
 defined('IMAGE_HEIGHT')            OR define('IMAGE_HEIGHT', 300); 
 
+
+// Table Names
+defined('OPTION_TABLE')                 OR define('OPTION_TABLE', "shmyde_design_option"); 
+defined('OPTION_IMAGE_TABLE')           OR define('OPTION_IMAGE_TABLE', "shmyde_images"); 
+defined('OPTION_THUMBNAIL_TABLE')       OR define('OPTION_THUMBNAIL_TABLE', "shmyde_option_thumbnail"); 
+defined('OPTION_DEPENDENT_MENU_TABLE')  OR define('OPTION_DEPENDENT_MENU_TABLE', "shmyde_option_dependent_menu"); 
+defined('MENU_TABLE')                   OR define('MENU_TABLE', "shmyde_design_main_menu"); 
+defined('PRODUCT_TABLE')                OR define('PRODUCT_TABLE', "shmyde_product"); 
+defined('OPTION_BUTTON_TABLE')          OR define('OPTION_BUTTON_TABLE', "shmyde_style_buttons");
+defined('THREADS_TABLE')                OR define('THREADS_TABLE', "shmyde_threads");
+defined('BUTTONS_TABLE')                OR define('BUTTONS_TABLE', "shmyde_buttons");
+defined('FABRICS_TABLE')                OR define('FABRICS_TABLE', "shmyde_fabrics");
+defined('FABRIC_IMAGES_TABLE')          OR define('FABRIC_IMAGES_TABLE', "shmyde_fabric_images");
+defined('PRODUCT_FABRC_MENU_TABLE')     OR define('PRODUCT_FABRC_MENU_TABLE', "shmyde_product_submenu_fabric");
+
+

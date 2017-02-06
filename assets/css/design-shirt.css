@@ -68,6 +68,15 @@
     width: 230px;
 }
 
+.design-page .design-preview .button-image 
+{
+    position: absolute;
+    display: block;
+    margin: 0 auto;
+    width: 10px;
+    height: 10px;
+}
+
 .inline
 {
     display: inline-block;
@@ -90,8 +99,51 @@
     height: 99px;
 }
 
+.designer-menu {
+    
+    display: block;
+    margin: auto;
+    height: 300px;
+    width: 230px;
+    top: 0;
+    left: 0;
+}
 
+.designer-option {
+    
+    display: block;
+    margin: auto;
+    height: 300px;
+    width: 230px;
+    top: 0;
+    left: 0;
+}
 
+/* Section for Mix Design */
+
+.form-group input[type="checkbox"] {
+    display: none;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span {
+    width: 20px;
+}
+
+.form-group input[type="checkbox"] + .btn-group > label span:first-child {
+    display: none;
+}
+.form-group input[type="checkbox"] + .btn-group > label span:last-child {
+    display: inline-block;   
+}
+
+.form-group input[type="checkbox"]:checked + .btn-group > label span:first-child {
+    display: inline-block;
+}
+.form-group input[type="checkbox"]:checked + .btn-group > label span:last-child {
+    display: none;   
+}
+
+/* */
 
 
 

@@ -1,12 +1,34 @@
 
-
-
-
-
 function Product(product_object)
 {
     
     this.product = product_object;
+    
+    this.tmp_base_64_button_image;
+    
+    this.tmp_selected_thread;
+    
+    this.total_price = 0;
+    
+    /**
+     * An array of strings representing
+     * the product details
+     */
+    this.product_details = [];
+    
+    /**
+     * This is the ID of the menu list item. 
+     * Menu items are appended here
+     */
+    this.sub_menu_list_id = "#sub_menu_list";
+    
+    this.options_list_id = "#option-list";
+    
+    this.measurment_modal_id = "#myMeasurementModal";
+    
+    this.user_modal_id = "#userDataModal";
+    
+    this.measurements_container_id = "#my_measurements";
     
     /**
     * This is the current side being drawn
@@ -102,6 +124,37 @@ function Product(product_object)
         }).init();
     };
     
+    this.setProductDetails = function()
+    {
+        this.product_details = [];
+                
+        this.total_price = parseInt(this.product.price);
+        
+        for(var key in this.product.product_menus)
+        {
+            var menu = this.product.product_menus[key];
+
+            if(parseInt(menu.category) === 2)
+            {
+                for(var option_key in menu.design_options)
+                {
+                    var option_object = menu.design_options[option_key];
+                    
+                    if(parseInt(option_object.selected) === 1)
+                    {
+                        if(parseInt(option_object.price) > 0)
+                        {
+                            this.product_details.push(" - " + option_object.name + " : " +  option_object.price + " FCFA");
+                            this.total_price += parseInt(option_object.price);
+                        }
+                    }
+                }
+            }                 
+        }
+        
+        
+    };
+    
     this.draw = function(domElementID, side)
     {
         this.designDomElementID = domElementID;
@@ -154,11 +207,13 @@ function Product(product_object)
     {
         if(fabric === null)
         {
-            return imageObject.base_64_image;
+            return imageObject.original_base_64_image;
         }
         
+        fabric.base_64_image = fabric.original_base_64_image;
+        
         var designImage = document.createElement("img");
-        designImage.setAttribute('src', imageObject.base_64_image);
+        designImage.setAttribute('src', imageObject.original_base_64_image);
         designImage.setAttribute('class', 'preview-image');
         
         var fabricImage = document.createElement("img");
@@ -178,7 +233,7 @@ function Product(product_object)
         for (var i = 0; i < designData.length; i += 4) 
         {
             
-            if(designData[i + 3] > 240)
+            if(designData[i + 3] > 240 && designData[i] > 200 && designData[i + 1] > 200 && designData[i + 2] > 200)
             {
                 designData[i]     = fabricData[i];     
                 designData[i + 1] = fabricData[i + 1]; 
@@ -189,6 +244,49 @@ function Product(product_object)
         designImageContext.putImageData(designImageData, 0, 0);
         return designImageCanvas.toDataURL();
                 
+    };
+    
+    this.blendThreadToButton = function(buttonObject, threadObject)
+    {
+        if(threadObject === null)
+        {
+            return buttonObject.original_base_64_image;
+        }
+        
+        var rbgaColor = this.hexToRgbA(threadObject.color);
+        
+        var designImage = document.createElement("img");
+        designImage.setAttribute('src', buttonObject.original_base_64_image);
+        designImage.setAttribute('class', 'preview-image');
+                
+        var designImageCanvas = this.create_canvas_for_image(designImage, 230, 300);
+        var designImageContext = designImageCanvas.getContext('2d');
+        var designImageData = designImageContext.getImageData(0, 0, designImageCanvas.width, designImageCanvas.height);
+        var designData = designImageData.data;
+                
+        for (var i = 0; i < designData.length; i += 4) 
+        {
+            if(designData[i + 3] > 240 && designData[i] < 50 && designData[i + 1] < 50 && designData[i + 2] < 50)
+            {              
+                designData[i]     = rbgaColor[0];     
+                designData[i + 1] = rbgaColor[1]; 
+                designData[i + 2] = rbgaColor[2]; 
+            }
+        }
+        
+        designImageContext.putImageData(designImageData, 0, 0);
+        return designImageCanvas.toDataURL();
+                
+    };
+    
+    this.hexToRgbA = function(hex)
+    {
+        hex = hex.replace('#','');
+        r = parseInt(hex.substring(0,2), 16);
+        g = parseInt(hex.substring(2,4), 16);
+        b = parseInt(hex.substring(4,6), 16);
+        var rgbaArr = [r, g, b, 255];
+        return rgbaArr;
     };
     
     this.selectOption = function(option_selected)
@@ -331,6 +429,76 @@ function Product(product_object)
         });
     };
     
+    this.loadMeasurementMenus = function()
+    {
+        $(this.options_list_id).empty();
+
+        $(this.sub_menu_list_id).empty();
+
+        $('#' + this.sub_menu_list_id).append(
+            $('<a>').attr("data-toggle", "modal").attr("data-target", this.measurment_modal_id).attr('href', '#').attr('class', 'list-group-item').append(
+                $('<span>').attr('class', 'tab').append("Enter Measurements")
+        )); 
+
+        $('#' + this.sub_menu_list_id).append(
+            $('<a>').attr("data-toggle", "modal").attr("data-target", this.user_modal_id).attr('href', '#').attr('class', 'list-group-item').append(
+                $('<span>').attr('class', 'tab').append("Request Tailor")
+        ));
+    };
+    
+    this.LoadMeasurementsIntoModal = function()
+    {
+        
+        var Instance = this;
+        
+        $(this.measurements_container_id).empty();
+        
+        for(var key in this.product.measurements){
+            
+            var measurement = this.product.measurements[key];
+            
+            var measurement_input_element = $('<input>')
+                            .attr('type', 'number')
+                            .attr('class', 'form-control')
+                            .attr('id', measurement.id);;
+                    
+            measurement_input_element.val(measurement.default_value);
+            
+            measurement_input_element.change(function()
+            {
+                Instance.product.measurements[this.id].default_value = this.value;
+            });
+            
+            measurement_input_element.mousedown(function()
+            {
+                var measurement_object = Instance.product.measurements[this.id];
+                var iFrame = $("#youtube_frame");
+                
+                if(parseInt(iFrame.val()) === parseInt(measurement_object.id))
+                {
+                    return;
+                }
+                
+                iFrame.attr("src", measurement_object.youtube_link.replace("watch?v=", "v/"));
+                iFrame.val(measurement_object.id);
+                $("#measurement_description").html(measurement_object.description);
+                
+            });
+            
+            $(this.measurements_container_id).append(
+                $('<tr>').append(
+                    $('<td>').append(                       
+                        $('<div>').attr('class', 'form-group')
+                        .append(
+                            $('<label>').attr('for', measurement.id).text(measurement.name)
+                        )
+                        .append(measurement_input_element)
+                    )
+                )
+            );
+        }
+    };
+        
     this.createMixElement = function(menu, type)
     {
         var Instance = this;
@@ -432,7 +600,9 @@ function Product(product_object)
                 {
                     continue;
                 }
-
+                
+                design_option_image.base_64_image = design_option_image.original_base_64_image;
+                
                 // Apply Inner Contrast if applicable
                 if (parseInt(design_option_image.is_inner) === 1 
                         && parseInt(menu.inner_contrast_support) === 1
@@ -457,7 +627,7 @@ function Product(product_object)
                 else if(parseInt(design_option_image.is_inner) === 1)
                 {
                     design_option_image.base_64_image 
-                        = design_option_image.client_path;
+                        = design_option_image.original_base_64_image;
                 }
 
                 // Create Image element
@@ -473,6 +643,7 @@ function Product(product_object)
                 for(var button_key in design_option_image.buttons)
                 {
                     var button = design_option_image.buttons[button_key];
+
                     $('<img />', 
                     { 
                         id: 'image_' + button.id,
@@ -486,6 +657,65 @@ function Product(product_object)
             }
 
         }
+    };
+    
+    /**
+     * Gets the design parameters that will be saved
+     * @returns {Product.getDesignParameters.designParameters}
+     */
+    this.getDesignParameters = function()
+    {
+        var designParameters = 
+        {
+            product_id : this.product.id,
+            fabric_id : -1,
+            mix_fabric_id : -1,
+            button_id : -1,
+            thread_id : -1,
+            mix_menus : [],
+            options : []
+        };
+        
+        designParameters.fabric_id = this.product.default_fabric !== null ? this.product.default_fabric.fabric_id : -1;
+        designParameters.mix_fabric_id = this.product.mix_fabric !== null ? this.product.mix_fabric.fabric_id : -1;
+        designParameters.button_id = this.product.default_button !== null ? this.product.default_button.id : -1;
+        designParameters.thread_id = this.product.default_thread !== null ? this.product.default_thread.id : -1;
+        
+        for(var key in this.product.product_menus)
+        {
+            var menu = this.product.product_menus[key];
+            
+            var menu_object = 
+            {
+                id : menu.id,
+                inner_mix_selected : menu.inner_mix_selected,
+                outer_mix_selected : menu.outer_mix_selected                   
+            };
+            
+            designParameters.mix_menus[menu_object.id] = menu_object;
+            
+            // Interested only in saving design options
+            if(parseInt(menu.category) !== 2)
+            {
+                continue;
+            }
+            
+            for(var option_key in menu.design_options)
+            {
+                var option = menu.design_options[option_key];
+                
+                var option_object = 
+                {
+                    id : option.id,
+                    selected : option.selected                   
+                };
+                
+                designParameters.options[option_object.id] = option_object;               
+            }
+        }
+        
+        return designParameters;
+               
     };
     
     this.capitalizeFirstLetter = function(string) 
@@ -509,7 +739,7 @@ function Product(product_object)
         for(var key in this.product.fabrics)
         {
             var design_fabric = this.product.fabrics[key];
-                
+            design_fabric.base_64_image = design_fabric.original_base_64_image;    
             var link_element = $('<a>');
 
             $('<img>').attr("src", design_fabric.base_64_image)
@@ -556,7 +786,7 @@ function Product(product_object)
                 
                 var link_element = $('<a>');
                 
-                $('<img>').attr("src", design_option.base_64_image)
+                $('<img>').attr("src", design_option.original_base_64_image)
                         .attr("height", "100")
                         .attr("width", "96").appendTo(link_element);
                 
@@ -604,10 +834,189 @@ function Product(product_object)
                     Instance.selectOption(this.value);
                 });
                 
-                $("#option-list").append(list_element);
-
-                Instance.optionsSly.reload();
+                $("#option-list").append(list_element); 
             }
+            
+            Instance.optionsSly.reload();
         }
+    };
+    
+    this.LoadThreadsToSly = function()
+    {
+        var Instance = this;
+        
+        $("#button-design-threads-list").empty();
+        
+        for (var key in this.product.threads) 
+        {
+
+            var thread_object = this.product.threads[key];
+            
+            thread_object.base_64_image = thread_object.original_base_64_image;
+            
+            var link_element = $('<a>');
+            
+            $('<img>').attr("src", thread_object.base_64_image)
+                    .attr("height", "100")
+                    .attr("width", "96").appendTo(link_element);
+
+            var list_element = $('<li>').append(link_element);
+            list_element.val(thread_object.id);
+
+            list_element.click(function()
+            {
+                Instance.selectThread(this.value);
+            });
+
+            $("#button-design-threads-list").append(list_element);
+        }
+        
+        Instance.threadsSly.reload();
+    };
+    
+    this.LoadButtonOptions = function()
+    {
+        var Instance = this;
+        
+        $("#option-list").empty();
+        
+        for(var key in this.product.buttons)
+        {
+            var button_object = this.product.buttons[key];
+                       
+            var link_element = $('<a>').attr("data-toggle", "modal").attr("data-target", "#buttonsModal");
+            
+            $('<img>').attr("src", button_object.base_64_image)
+                    .attr("height", "100")
+                    .attr("width", "96").appendTo(link_element);
+
+            var list_element = $('<li>').append(link_element);
+            list_element.val(button_object.id);
+
+            list_element.click(function()
+            {
+                Instance.selectButton(this.value);
+            });
+            
+            $("#option-list").append(list_element);   
+        }
+        
+        Instance.optionsSly.reload();
+    };
+    
+    this.selectButton = function(button_id)
+    {
+        
+        var button_object = this.product.buttons[button_id];
+        
+        $("#design_button_image").attr("src", button_object.base_64_image);
+        
+        $("#selected-button-name").text(button_object.name);
+    };
+    
+    this.selectThread = function(thread_id)
+    {
+        var thread_object = this.product.threads[thread_id];
+        
+        // These values are stored in the product after the user confirms his selection
+        this.tmp_selected_thread = thread_object;       
+        this.tmp_base_64_button_image = this.blendThreadToButton(this.product.default_button, thread_object);
+        
+        $("#design_button_image").attr("src", this.tmp_base_64_button_image);
+        
+    };
+    
+    this.applySelectedThread = function()
+    {
+        this.product.default_thread = this.tmp_selected_thread;
+        this.product.default_button.base_64_image = this.tmp_base_64_button_image;
+        this.product.buttons[this.product.default_button.id].base_64_image = this.tmp_base_64_button_image;
+        // Redraw product with new buttons. 
+        // Further optimization would require a separate
+        // function to draw/refresh buttons
+        this.draw(this.designDomElementID, this.current_side);
+        
+    };
+}
+
+function User(user_object)
+{
+    this.user = user_object;
+    
+    this.checking_out = false;
+    
+    this.base_url = "";
+    
+    this.updateUser = function()
+    {
+        this.user.first_name = $("#userDataModal #first_name").val();
+        
+        this.user.last_name = $("#userDataModal #last_name").val();
+        
+        this.user.phone_number = $("#userDataModal #contact_phone").val();
+        
+        this.user.address_line_1 = $("#userDataModal #address_line_01").val();
+        
+        this.user.address_line_2 = $("#userDataModal #address_line_02").val();
+        
+        this.user.city = $("#userDataModal #city").val();
+        
+        this.user.country = $("#userDataModal #country").val();
+        
+        this.user.postcode = $("#userDataModal #postal_code").val();
+        
+        this.user.email = $("#userDataModal #user_email").val();
+        
+    };
+    
+    this.setUserToModal = function()
+    {
+        $("#userDataModal #last_name").val(this.user.last_name);
+
+        $("#userDataModal #first_name").val(this.user.first_name);
+
+        $("#userDataModal #contact_phone").val(this.user.phone_number);
+
+        $("#userDataModal #address_line_01").val(this.user.address_line_1);
+
+        $("#userDataModal #address_line_02").val(this.user.address_line_2);
+        
+        $("#userDataModal #city").val(this.user.city);
+        
+        $("#userDataModal #country").val(this.user.country);
+
+        $("#userDataModal #postal_code").val(this.user.postcode);
+
+        $("#userDataModal #user_email").val(this.user.email);
+        
+        
+    };
+    
+    this.CheckOut = function(productManager)
+    {
+        if(parseInt(this.user) > 0)
+        {
+            login_callbacks = $.Callbacks();
+            login_callbacks.add(this.CheckOut);
+            open_login();
+        }
+        else
+        {
+            Instance = this;
+            var designParameters = productManager.getDesignParameters();
+            $.ajax({
+                url : this.base_url.concat('Design/SaveTmpUserDesign'),
+                data : {designParameters : JSON.stringify(designParameters)},
+                async : true,
+                type : 'POST',
+                success : function()
+                {
+                    window.location.href = Instance.base_url.concat('checkout/checkout');
+                }
+            });
+                        
+            
+        }
+
     };
 }

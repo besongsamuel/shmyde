@@ -275,9 +275,9 @@ class User_model extends CI_Model {
         public function get_user_data($user_id)
         {
             $this->db->select('shmyde_user_data.*, email, avatar');
-            $this->db->from('users');
-            $this->db->join('shmyde_user_data', 'shmyde_user_data.user_id = users.id');
-            $this->db->where('user_id', $user_id, 'left');
+            $this->db->from(USERS_TABLE);
+            $this->db->join(USER_DATA_TABLE, USER_DATA_TABLE.'.user_id = '.USERS_TABLE.'.id', 'left');
+            $this->db->where('user_id', $user_id);
             
             return $this->db->get()->row();
         }

@@ -8,3 +8,60 @@ and open the template in the editor.
     Author     : beson
 */
 
+.preview-image
+{
+    position: absolute;
+    display: block;
+    margin: 0 auto;
+    height: 300px;
+    width: 230px;
+}
+
+.button-image 
+{
+    position: absolute;
+    display: block;
+    margin: 0 auto;
+    width: 10px;
+    height: 10px;
+}
+
+.section
+{
+    width : 100%;
+    background-color: lightgray;
+    border-radius: 10px;
+    border: 1px solid gray;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+.section-title
+{
+    text-align: center;
+}
+
+.section-header
+{
+    border-bottom: 1px solid gray;
+}
+
+.input-group
+{
+    margin : 10px;
+}
+
+.section-body
+{
+    
+}
+
+.checkout-button
+{
+    margin: 15px;
+    float : right;
+}
+

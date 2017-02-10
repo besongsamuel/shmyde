@@ -1,40 +1,43 @@
 
 <html lang="en">
-    <script src="<?php echo ASSETS_PATH; ?>/js/shmyde_design.js" type="text/javascript"></script>
+
     <script src="<?php echo ASSETS_PATH; ?>/js/designer.js" type="text/javascript"></script>
 
     <script>
         
         var designObject;
         var productManager;
-        
-        var threadsSly;
-        var optionsSly;
-        
+        var userManager;
+                
         $(document).ready(function(){
             
-            var my_product = JSON.parse('<?php echo $my_product;  ?>');
+            var my_product = JSON.parse('<?php echo $product;  ?>');
             
+            var user = JSON.parse('<?php echo $user;  ?>');
+            
+            userManager = new User(user);
+            userManager.base_url = '<?= site_url("/"); ?>';
             productManager = new Product(my_product);
             productManager.InitOptionsContainer($('#design_options'));
             productManager.InitThreadsContainer($('#button-design-threads'));
+            productManager.LoadThreadsToSly();
             productManager.draw("design-preview-sim", "front");
             
-            var design_parameters = 
-            {
-                design_data : <?php echo $design_data;  ?>,
-                buttons : JSON.parse(<?php echo json_encode($Buttons); ?>),
-                threads : JSON.parse(<?php echo json_encode($Threads); ?>),
-                assets_dir : "<?php echo ASSETS_PATH; ?>",
-                product_id : <?php echo json_encode($product_id); ?>,
-                base_url : "<?= site_url("/"); ?>"
-
-            }; 
-
-            designObject = new DesignObject(design_parameters);
-
-            //designObject.LoadInitialDesign();
+            $('#buttonsModal').on('shown.bs.modal', function() 
+            {            
+                productManager.LoadThreadsToSly();
+            });
             
+            $('#myMeasurementModal').on('shown.bs.modal', function() {
+            
+                productManager.LoadMeasurementsIntoModal();
+            });
+        
+            $('#userDataModal').on('shown.bs.modal', function() {
+
+                LoadUserDataIntoModal();
+            });
+                        
         });
         
         function OnDesignCategorySelected(category_selected)
@@ -53,24 +56,41 @@
             
             if(parseInt(category_selected) === 4)
             {
-                
+                productManager.loadMeasurementMenus();
             }
             
             if(parseInt(category_selected) === 5)
             {
-                
+                productManager.LoadButtonOptions();
             }
                         
             if(parseInt(category_selected) === 6)
             {
                 productManager.invertFabric();
-            }
-            
-            
-            
-             //OnDesignCategoryChanged(category_selected, designObject, $("#design-preview"));
+            }            
         }
-
+        
+        function ApplyThread()
+        {
+            productManager.applySelectedThread();
+        }
+        
+        function LoadUserDataIntoModal()
+        {
+            userManager.setUserToModal();   
+        }
+        
+        function updateUserData()
+        {
+            userManager.updateUser();
+        }
+        
+        function CheckOut()
+        {
+            userManager.CheckOut(productManager);
+        }
+        
+        
     </script>
 
 <!-- Design Page -->
@@ -189,36 +209,36 @@
           <div style="width: 100%">
               <div class="form-group">
                   <label for="last_name">Last Name:</label>
-                <input type="text" class="form-control" id="last_name" onchange="user_data_changed()">
+                <input type="text" class="form-control" id="last_name">
                 <label for="first_name">First Name:</label>
-                <input type="text" class="form-control" id="first_name" onchange="user_data_changed()">
+                <input type="text" class="form-control" id="first_name">
               </div>
               <div class="form-group">
                 <label for="contact_phone">Phone Number:</label>
-                <input type="tel" class="form-control" id="contact_phone" onchange="user_data_changed()">
+                <input type="tel" class="form-control" id="contact_phone">
               </div>
               <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email" onchange="user_data_changed()">
+                <label for="user_email">Email:</label>
+                <input type="user_email" class="form-control" id="user_email">
               </div>
               <div class="form-group">
                 <label for="address_line_01">Address:</label>
-                <input type="text" class="form-control" id="address_line_01" onchange="user_data_changed()">
+                <input type="text" class="form-control" id="address_line_01">
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" id="address_line_02" onchange="user_data_changed()">
+                <input type="text" class="form-control" id="address_line_02">
               </div>
               <div class="form-group">
                 <label for="city">City</label>
-                <input type="text" class="form-control" id="city" name="city" placeholder="City" onchange="user_data_changed()">
+                <input type="text" class="form-control" id="city" name="city" placeholder="City">
               </div>
               <div class="form-group">
                 <label for="country">Country</label>
-                <input type="text" class="form-control" id="country" name="country" placeholder="Country" onchange="user_data_changed()">
+                <input type="text" class="form-control" id="country" name="country" placeholder="Country">
               </div>
               <div class="form-group">
                 <label for="postal_code">Postal Code:</label>
-                <input type="text" class="form-control" id="postal_code" onchange="user_data_changed()">
+                <input type="text" class="form-control" id="postal_code">
               </div>
           </div>
       </div>

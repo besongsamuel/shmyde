@@ -217,6 +217,22 @@ class Design_model extends CI_Model
         
         return null;
     }
+    
+    public function get_product_measurements($product_id) 
+    {
+        $this->db->select('*');
+        $this->db->from(MEASUREMENTS_TABLE);
+        $this->db->where('shmyde_product_id', $product_id);
+        $measurements = $this->db->get();
+        $this->db->reset_query();
+        
+        if(isset($measurements))
+        {
+            return $measurements;
+        }
+        
+        return null;
+    }
         
     /**
      * 

@@ -667,12 +667,7 @@
 
                 this.LoadUserDataIntoModal();
             });
-        
-            $('#buttonsModal').on('shown.bs.modal', function() 
-            {
-                this.LoadThreadsToSly();;
-            });
-            
+                    
             if(!this.design_data.currentButton || !this.design_data.currentThread)
             {
                 this.button_image = this.assets_dir.concat("images/buttons/") + this.design_data.currentButton.image_name;

@@ -1423,26 +1423,35 @@ class Admin_model extends CI_Model {
      * @param type $user_id
      * @param type $userDesign
      */
-    public function SaveUserDesign($user_id, $userDesign)
-    {
-        $id = $this->get_table_next_id("shmyde_user_designs");  
+    public function SaveTmpUserDesign($user_id, $userDesign)
+    {        
+        $this->db->where('user_id', $user_id);
+        $this->db->delete(USER_TMP_DESIGN_TABLE);
         
-        $this->db->query("INSERT INTO shmyde_user_designs(id, user_id, design)"
-                . " VALUES (".$id.",".$user_id.", ".$this->db->escape($userDesign).")");
+        $data = array(
+            
+            'user_id' => $user_id,
+            'product_design' => $userDesign
+        );
+        
+        $this->db->insert(USER_TMP_DESIGN_TABLE, $data);
+        
     }
     
-    public function GetUserDesign($id)
+    public function GetTmpUserDesign($user_id)
     {
-        $design = $this->db->query("SELECT design FROM shmyde_user_designs WHERE user_id = ".$id." ORDER BY id DESC");  
+        $this->db->select('*');
+        $this->db->from(USER_TMP_DESIGN_TABLE);
+        $this->db->where('user_id', $user_id);
+        $user_product_design = $this->db->get()->row();
+        $this->db->reset_query();
         
-        if($design->num_rows()> 0)
+        if(isset($user_product_design))
         {
-            return $design->row()->design;
+            return $user_product_design->product_design;
         }
-        else
-        {
-            return null;
-        }
+        
+        return null;
          
     }
 

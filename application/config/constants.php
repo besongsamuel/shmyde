@@ -109,5 +109,9 @@ defined('BUTTONS_TABLE')                OR define('BUTTONS_TABLE', "shmyde_butto
 defined('FABRICS_TABLE')                OR define('FABRICS_TABLE', "shmyde_fabrics");
 defined('FABRIC_IMAGES_TABLE')          OR define('FABRIC_IMAGES_TABLE', "shmyde_fabric_images");
 defined('PRODUCT_FABRC_MENU_TABLE')     OR define('PRODUCT_FABRC_MENU_TABLE', "shmyde_product_submenu_fabric");
+defined('MEASUREMENTS_TABLE')           OR define('MEASUREMENTS_TABLE', "shmyde_measurement");
+defined('USERS_TABLE')                  OR define('USERS_TABLE', "users");
+defined('USER_DATA_TABLE')              OR define('USER_DATA_TABLE', "shmyde_user_data");
+defined('USER_TMP_DESIGN_TABLE')        OR define('USER_TMP_DESIGN_TABLE', "shmyde_temp_user_design");
 
 

@@ -36,6 +36,7 @@
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
+include dirname(__DIR__).'\..\application\helpers\shmyde_objects.php';
 
 /**
  * Application Controller Class
@@ -57,6 +58,8 @@ class CI_Controller {
 	 * @var	object
 	 */
 	private static $instance;
+        
+        protected $userObject;
 
 	/**
 	 * Class constructor
@@ -100,11 +103,17 @@ class CI_Controller {
                 
                 $cookie_user = $this->rememberme->verifyCookie();
                 
+                $this->userObject = new UserObject(null);
+                
                 if ($cookie_user) 
                 {
                     $user_id = $this->user_model->get_user_id_from_email($cookie_user);
                     $user    = $this->user_model->get_user($user_id);
+                    
 
+                    $user_data = $this->user_model->get_user_data($user_id);
+                    $this->userObject = new UserObject($user_data);
+                    
                     // find user id of cookie_user stored in application database
                     // set session if necessary
                     if (!$this->session->userdata('user_id')) 

@@ -97,6 +97,10 @@ class CI_Controller {
 
                 $this->lang->load('shmyde', $current_language);
 		log_message('info', 'Controller Class Initialized');
+		
+		// Always record our current page. 
+		// This will enable us to redirect here after login if needed
+		$this->rememberme->recordOrigPage();
                 
                 $cookie_user = $this->rememberme->verifyCookie();
                 

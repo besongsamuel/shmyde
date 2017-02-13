@@ -2,6 +2,8 @@
 function Product(product_object)
 {
     
+    this.base_url = '';
+    
     this.product = product_object;
     
     this.tmp_base_64_button_image;
@@ -41,13 +43,7 @@ function Product(product_object)
     * @type type
     */
    var menu_selected;
-   
-   /**
-    * 
-    * @type type
-    */
-   var option_selected;
-   
+      
    /**
     * 
     * @type type
@@ -297,19 +293,19 @@ function Product(product_object)
         // Its a design menu if the category is 2
         if(parseInt(menu.category) === 2)
         {       
-            var prev_option_selected = this.option_selected;                
-            this.option_selected = option_selected;
+            var prev_option_selected = menu.option_selected;                
+            menu.option_selected = option_selected;
             
-            if(parseInt(prev_option_selected) ===  parseInt(this.option_selected))
+            if(parseInt(prev_option_selected) ===  parseInt(menu.option_selected))
             {
                 return;
             }
             
             menu.design_options[prev_option_selected].selected = 0;
-            menu.design_options[this.option_selected].selected = 1;
+            menu.design_options[menu.option_selected].selected = 1;
             
             var id_menu = "#menu_" + menu.id;
-            var id_option = "#option_" + this.option_selected;
+            var id_option = "#option_" + menu.option_selected;
 
             var previ_id_option = "#option_" + prev_option_selected;
 
@@ -435,12 +431,12 @@ function Product(product_object)
 
         $(this.sub_menu_list_id).empty();
 
-        $('#' + this.sub_menu_list_id).append(
+        $(this.sub_menu_list_id).append(
             $('<a>').attr("data-toggle", "modal").attr("data-target", this.measurment_modal_id).attr('href', '#').attr('class', 'list-group-item').append(
                 $('<span>').attr('class', 'tab').append("Enter Measurements")
         )); 
 
-        $('#' + this.sub_menu_list_id).append(
+        $(this.sub_menu_list_id).append(
             $('<a>').attr("data-toggle", "modal").attr("data-target", this.user_modal_id).attr('href', '#').attr('class', 'list-group-item').append(
                 $('<span>').attr('class', 'tab').append("Request Tailor")
         ));
@@ -577,7 +573,7 @@ function Product(product_object)
 
             if(parseInt(design_option.selected) === 1)
             {
-                Instance.option_selected = design_option.id;
+                menu.option_selected = design_option.id;
                 Instance.menu_selected = menu.id;
             }
 
@@ -672,6 +668,7 @@ function Product(product_object)
             mix_fabric_id : -1,
             button_id : -1,
             thread_id : -1,
+            measurements : -1,
             mix_menus : [],
             options : []
         };
@@ -680,6 +677,7 @@ function Product(product_object)
         designParameters.mix_fabric_id = this.product.mix_fabric !== null ? this.product.mix_fabric.fabric_id : -1;
         designParameters.button_id = this.product.default_button !== null ? this.product.default_button.id : -1;
         designParameters.thread_id = this.product.default_thread !== null ? this.product.default_thread.id : -1;
+        designParameters.measurements = this.product.measurements;
         
         for(var key in this.product.product_menus)
         {
@@ -936,87 +934,5 @@ function Product(product_object)
         // function to draw/refresh buttons
         this.draw(this.designDomElementID, this.current_side);
         
-    };
-}
-
-function User(user_object)
-{
-    this.user = user_object;
-    
-    this.checking_out = false;
-    
-    this.base_url = "";
-    
-    this.updateUser = function()
-    {
-        this.user.first_name = $("#userDataModal #first_name").val();
-        
-        this.user.last_name = $("#userDataModal #last_name").val();
-        
-        this.user.phone_number = $("#userDataModal #contact_phone").val();
-        
-        this.user.address_line_1 = $("#userDataModal #address_line_01").val();
-        
-        this.user.address_line_2 = $("#userDataModal #address_line_02").val();
-        
-        this.user.city = $("#userDataModal #city").val();
-        
-        this.user.country = $("#userDataModal #country").val();
-        
-        this.user.postcode = $("#userDataModal #postal_code").val();
-        
-        this.user.email = $("#userDataModal #user_email").val();
-        
-    };
-    
-    this.setUserToModal = function()
-    {
-        $("#userDataModal #last_name").val(this.user.last_name);
-
-        $("#userDataModal #first_name").val(this.user.first_name);
-
-        $("#userDataModal #contact_phone").val(this.user.phone_number);
-
-        $("#userDataModal #address_line_01").val(this.user.address_line_1);
-
-        $("#userDataModal #address_line_02").val(this.user.address_line_2);
-        
-        $("#userDataModal #city").val(this.user.city);
-        
-        $("#userDataModal #country").val(this.user.country);
-
-        $("#userDataModal #postal_code").val(this.user.postcode);
-
-        $("#userDataModal #user_email").val(this.user.email);
-        
-        
-    };
-    
-    this.CheckOut = function(productManager)
-    {
-        if(parseInt(this.user) > 0)
-        {
-            login_callbacks = $.Callbacks();
-            login_callbacks.add(this.CheckOut);
-            open_login();
-        }
-        else
-        {
-            Instance = this;
-            var designParameters = productManager.getDesignParameters();
-            $.ajax({
-                url : this.base_url.concat('Design/SaveTmpUserDesign'),
-                data : {designParameters : JSON.stringify(designParameters)},
-                async : true,
-                type : 'POST',
-                success : function()
-                {
-                    window.location.href = Instance.base_url.concat('checkout/checkout');
-                }
-            });
-                        
-            
-        }
-
     };
 }

@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') or die('No direct script access allowed');
-include dirname(__DIR__).'\helpers\shmyde_objects.php';
 /**
 * Design
 * Loads appropriate design pages.
@@ -12,27 +11,6 @@ class Design extends CI_Controller
 	public function __construct()
 	{
             parent::__construct();
-
-            $this->load->helper('url');
-            
-            $this->load->helper('DesignData');
-
-            $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-
-            switch ($lang){
-                    case "fr":
-                    $current_language = "english";
-                    break;
-                    case "en":
-                    $current_language = "english";
-                    break;
-            default:
-                    $current_language = "english";
-                    break;
-            }
-
-            $this->lang->load('shmyde', $current_language);
-
 	}
 	
 	
@@ -47,7 +25,7 @@ class Design extends CI_Controller
             
             $data['title'] = "DESIGN-SHIRT-SHMYDE";
 
-            $data['cssLinks'] = array('design-shirt');
+            $data['cssLinks'] = array('design');
             
             $product_id = $this->admin_model->get_product_id($target, $product);
             
@@ -56,22 +34,10 @@ class Design extends CI_Controller
             
             $data['product'] = json_encode($my_product);
             
-            $user = new UserObject(null);
+            $data['user'] = json_encode($this->userObject);
             
-            if($this->session->userdata('user_id') !== null)
-            {
-                $user_id = $this->session->userdata('user_id');
-                $user = $this->user_model->get_user_data($user_id);  
-            }
-            
-            $user_object = new UserObject($user);
-            $data['user'] = json_encode($user_object);
+            $this->template->load('shmyde', 'design/main', $data);
 
-            $this->load->view("pages/header.php",$data);
-
-            $this->load->view('design/main');
-
-            $this->load->view("pages/footer.php");
 	}
         
         

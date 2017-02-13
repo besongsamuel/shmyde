@@ -72,4 +72,19 @@ if ( ! function_exists('lang'))
 
 		return $line;
 	}
+		
+}
+
+if (! function_exists('get_browser_language'))
+{
+	/**
+	*
+	* Gets the current browser window
+	*/
+	function get_browser_language()
+	{
+		$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+		
+		return $lang;
+	}
 }

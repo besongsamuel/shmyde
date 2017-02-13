@@ -65,3 +65,13 @@ and open the template in the editor.
     float : right;
 }
 
+.checkout-container
+{
+    background-color: white;
+}
+
+#checkout-container .row
+{
+    margin: 10px;
+}
+

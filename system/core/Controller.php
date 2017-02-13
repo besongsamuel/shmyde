@@ -80,10 +80,8 @@ class CI_Controller {
 
 		$this->load =& load_class('Loader', 'core');
 		$this->load->initialize();
-                $this->load->library(array('session'));
-                $this->load->helper(array('url'));
-                $this->load->model('user_model');
-                $lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+		
+                $lang = get_browser_language();
                 
                 switch ($lang)
                 {
@@ -99,15 +97,18 @@ class CI_Controller {
                 }
 
                 $this->lang->load('shmyde', $current_language);
+		
 		log_message('info', 'Controller Class Initialized');
+		
+		// Always record our current page. 
+		// This will enable us to redirect here after login if needed
+		$this->rememberme->recordOrigPage();
                 
-                $cookie_user = $this->rememberme->verifyCookie();
+                $user_email = $this->rememberme->verifyCookie();
                 
-                $this->userObject = new UserObject(null);
-                
-                if ($cookie_user) 
+                if ($user_email && ($this->session->userdata('email') !== $user_email)) 
                 {
-                    $user_id = $this->user_model->get_user_id_from_email($cookie_user);
+                    $user_id = $this->user_model->get_user_id_from_email($user_email);
                     $user    = $this->user_model->get_user($user_id);
                     
 
@@ -118,12 +119,17 @@ class CI_Controller {
                     // set session if necessary
                     if (!$this->session->userdata('user_id')) 
                     {
-                        // set session user datas
-                        $_SESSION['user_id']      = (int)$user->id;
-                        $_SESSION['email']     = (string)$user->email;
-                        $_SESSION['logged_in']    = (bool)true;
-                        $_SESSION['is_confirmed'] = (bool)$user->is_confirmed;
-                        $_SESSION['is_admin']     = (bool)$user->is_admin;
+			 $newdata = array(
+				'user_id'       => (int)$user->id,
+				'email'     	=> (string)$user->email,
+				'logged_in' 	=> TRUE,
+				'is_confirmed' 	=> (bool)$user->is_confirmed,
+				'is_admin' 	=>(bool)$user->is_admin
+			); 
+			
+		    	// set session user datas
+			$this->session->set_userdata($newdata);    
+                        
                     }
                     
                 }

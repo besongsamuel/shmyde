@@ -59,13 +59,17 @@ class DesignProduct
         {
             $this->default_thread = $this->threads[(int)$user_design['thread_id']];
         }
+        
+        foreach ($this->measurements as $key => $value) 
+        {
+            $this->measurements[$key]->default_value = (int)$user_design['measurements'][$key]['default_value'];
+        }
                 
         foreach ($this->product_menus as $key => $value) 
         {
             $this->product_menus[$key]->inner_mix_selected = (int)$user_design['mix_menus'][$key]['inner_mix_selected'];
             $this->product_menus[$key]->outer_mix_selected = (int)$user_design['mix_menus'][$key]['outer_mix_selected'];
-            
-            
+
             if($this->product_menus[$key]->category == 2)
             {
                 foreach ($this->product_menus[$key]->design_options as $option_key => $value) 
@@ -276,6 +280,13 @@ class DesignMenu
      */
     public $outer_fabric;
     
+    /**
+     * This represents the menu option selected
+     * @var type 
+     */
+    public $option_selected = -1;
+
+
     public function LoadMenu($model, $menu_id) 
     {
         $menu_object = $model->get_menu($menu_id);

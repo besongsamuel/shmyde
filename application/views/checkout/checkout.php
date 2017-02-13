@@ -1,44 +1,26 @@
-<html lang="en">
-    <head>
-        <script src="<?php echo ASSETS_PATH; ?>/js/designer.js" type="text/javascript"></script>
-        <script src="<?php echo ASSETS_PATH; ?>/js/angular.min.js" type="text/javascript"></script>
-        <script src="<?php echo ASSETS_PATH; ?>/js/country-picker.js" type="text/javascript"></script>
-        <link href="<?php echo ASSETS_PATH; ?>/css/product-checkout.css" rel="stylesheet" type="text/css"/>
-        <script>
-            var productManager;
-            var userManager;
-            var product = JSON.parse('<?php echo $productManager; ?>');
-            var user = JSON.parse('<?php echo $user;  ?>');
-            productManager = new Product(product);
-            productManager.setProductDetails();
-            userManager = new User(user);
-            userManager.base_url = '<?= site_url("/"); ?>';
-        </script>
-        <script src="<?php echo ASSETS_PATH; ?>/js/checkout.js" type="text/javascript"></script>
-        <script src="<?php echo ASSETS_PATH; ?>/js/html2canvas.js" type="text/javascript"></script>
-        <script>
-        
-        
-        
+
+    <script src="<?php echo ASSETS_PATH; ?>/js/designer.js" type="text/javascript"></script>       
+    <link href="<?php echo ASSETS_PATH; ?>/css/product-checkout.css" rel="stylesheet" type="text/css"/>
+    <script>
+            
+        var userManager;
+        var user = JSON.parse('<?php echo $user;  ?>');
+        userManager = new User(user);
+        userManager.base_url = '<?= site_url("/"); ?>';
+
+        var productManager;
+        var product = JSON.parse('<?php echo $productManager; ?>');        
+        productManager = new Product(product);
+        productManager.base_url = '<?= site_url("/"); ?>';
+        productManager.setProductDetails();
+
         $(document).ready(function(){
-            
-            
+
             productManager.draw("design-preview", 'front');  
-            
-            setPorductToScope();
-            
         });
-        
-        function setPorductToScope() {
-            
-            var appElement = document.querySelector('[ng-app=checkout]');
-            var $scope = angular.element(appElement).scope();
-            $scope.$apply(function() {
-                $scope.product = productManager;
-            });
-        }
-        
-        $('#agreeButton, #disagreeButton').on('click', function() {
+
+        $('#agreeButton, #disagreeButton').on('click', function() 
+        {
             var whichButton = $(this).attr('id');
 
             $('#registrationForm')
@@ -46,17 +28,16 @@
                     .val(whichButton === 'agreeButton' ? 'yes' : 'no')
                     .end();
         });
-        
-        </script>
-    </head>
+    </script>
+    <script src="<?php echo ASSETS_PATH; ?>/js/html2canvas.js" type="text/javascript"></script>
     
-    <div id="checkout-container" class="container" ng-app="checkout" ng-controller="CheckoutController as checkout">
+    <div id="checkout-container" class="container" ng-controller="CheckoutController as checkout">
         
         <!-- Product Category -->
-        <div class="row" id="table">
-            <div class="col-sm-12 section">
+        <div class="row">
+            <div class="col-sm-12 container  checkout-container">
                 <div class="section-header">
-                    <h2 class="section-title">Design Type</h2>
+                    <h3 class="text-center">Product Type</h3>
                 </div>
                 <div class="section-body">
                     <div class="form-group">
@@ -71,11 +52,10 @@
         </div>
         
         <!-- Order Details -->
-        <div class="row">
-            
-            <div class="col-sm-12 section">
+        <div class="row">           
+            <div class="col-sm-12 container checkout-container">
                 <div class="section-header">
-                    <h2 class="section-title">Order Details</h2>
+                    <h3 class="text-center">Order Details</h3>
                 </div>
                 <table class="table table-bordered">
                   <thead>
@@ -93,6 +73,7 @@
                       <td>
                           <p ng-bind-html="checkout.product_name"></p>
                           <p ng-repeat="detail in checkout.productManager.product_details">{{detail}}</p>
+                          <a href="#"  data-toggle="modal" data-target="#myMeasurementModal">Measurements</a>
                       </td>
                       <td><input type="number" ng-model="checkout.quantity" style="width: 50px;" /></td>
                       <td>{{checkout.price * checkout.quantity }} FCFA</td>
@@ -104,9 +85,9 @@
         
         <!-- User Details -->
         <div class="row">
-            <div class="col-sm-12 section">
+            <div class="col-sm-12 container checkout-container">
                 <div class="section-header">
-                    <h2 class="section-title">User Details</h2>
+                    <h3 class="text-center">User Details</h3>
                 </div>
                 
                 <div class="input-group">
@@ -146,7 +127,7 @@
             
             <div class="form-group  checkout-button">
                 <div class="col-xs-9 col-xs-offset-3">
-                    <button type="button" class="btn btn-default" ng-disabled="checkout.agree_to_terms === false">Checkout</button>
+                    <button type="button" class="btn btn-default" ng-click="checkout.checkout()" ng-disabled="checkout.agree_to_terms === false">Checkout</button>
                 </div>
             </div>
             
@@ -178,13 +159,50 @@
                 </div>
             </div>
         </div>
-        
-        
-        
-        
+         
     </div>
     
-</html>
+        <!-- Measurements Modal -->
+    <div id="myMeasurementModal" class="modal fade" role="dialog" ng-controller="CheckoutController as checkout">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Your Measurements</h4>
+          </div>
+          <div class="modal-body">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="measurement in checkout.productManager.product.measurements">
+                        <td>{{measurement.name}}</td>
+                        <td>{{measurement.description}}</td>
+                        <td style="width: 90px;"><input type="number" ng-model="measurement.default_value" style="width: 50px; text-align: center;" /> cm</td>
+                      </tr>
+                    </tbody>
+                  </table>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    
+        
+
+    
 
 
 

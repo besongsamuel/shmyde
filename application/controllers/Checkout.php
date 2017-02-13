@@ -58,6 +58,7 @@ class Checkout extends CI_Controller
             // Perform Checkout
             if($this->checkout_model->checkout($this->userObject->id, $quantity, $price, $design_data))
             {
+                $this->send_order_confirmation();
                 echo json_encode(true);
             }
             else
@@ -65,6 +66,44 @@ class Checkout extends CI_Controller
                 echo json_encode(false);
             }
         }
+    }
+    
+    
+    private function send_order_confirmation()
+    {
+        $subject = "Thanks for Placing an order on Shmyde";
+        $headers = "From: admin@shmyde.com \r\n";
+        $headers .= "Reply-To: no-reply@shmyde.com \r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+        $message = '<html><body>';
+        $message.='<div style="width:550px; background-color:#CC6600; padding:15px; font-weight:bold;">';
+        $message.='Shmyde Order';
+        $message.='</div>';
+        $message.='
+        <div style="font-family: Arial;">
+        <p>Hi '.$this->userObject->first_name.', </p>
+        <p>This mail is a confirmation that we have recieved your order. </p>
+        <br/>
+        <p>Your current order is pending payment. Please pay via Mobile Money using the following code for reference.</p>
+        <p>Once We recieve payment, your order will be shipped to the tailor. Once your order is complete, we shall contact</p>
+        <p>you you diliver the product that the address provided below. </p>
+        <br/>
+        <p>'.$this->userObject->address_line_1.'</p>
+        <p>'.$this->userObject->address_line_2.'</p>
+        <p>'.$this->userObject->city.'</p>
+        <p>'.$this->userObject->country.'</p>
+        <p>'.$this->userObject->phone_number.'</p>
+        <br/>
+        <p>You can check the status of your order by accessing your account page on Shmyde. </p>
+        <br/>
+        <br/>
+        <p>Best Regards</p>
+        <p>Shmyde</p>
+        ';
+        $message.='</div>';
+        $message.='</body></html>';
+        mail($this->userObject->email,$subject,$message,$headers);
     }
 
 

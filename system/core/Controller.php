@@ -60,6 +60,13 @@ class CI_Controller {
 	private static $instance;
         
         protected $userObject;
+	
+	/**
+	*
+	* This represents the data object
+	* that is passed unto the view
+	*/
+	protected $data;
 
 	/**
 	 * Class constructor
@@ -69,6 +76,8 @@ class CI_Controller {
 	public function __construct()
 	{
 		self::$instance =& $this;
+		
+		$this->data = array();
 
 		// Assign all the class objects that were instantiated by the
 		// bootstrap file (CodeIgniter.php) to local class variables
@@ -114,6 +123,7 @@ class CI_Controller {
 
                     $user_data = $this->user_model->get_user_data($user_id);
                     $this->userObject = new UserObject($user_data);
+		    $this->data['user'] = $this->userObject;	
                     
                     // find user id of cookie_user stored in application database
                     // set session if necessary
@@ -133,6 +143,12 @@ class CI_Controller {
                     }
                     
                 }
+		else
+		{
+			$this->userObject = new UserObject(null);
+		}
+		
+		$this->data['user'] = $this->userObject;
                 
 	}
 

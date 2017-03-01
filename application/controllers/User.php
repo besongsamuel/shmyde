@@ -24,10 +24,13 @@ class User extends CI_Controller {
 	/**
          * The default page
          */
-	public function index() {
-		
-
-		
+	public function index() 
+        {
+            $this->data['title'] = "Login or Register";
+            
+            $this->data['login_error'] = json_encode('false');
+            
+            $this->template->load('shmyde', 'user/login/login', $this->data);
 	}
         
         public function choose_password() 
@@ -87,43 +90,62 @@ class User extends CI_Controller {
          * 
          */
         public function forgot_password() 
-        {
-            $data = array();
-            
-            $data['title'] = "Forgot Password";
-            
-            $data['cssLinks'] = array('forgot_password');
-            
+        {                        
             $result['success'] = false;
+            
+            $this->data['title'] = "Forgot Password";
             
             $email = $this->input->post('email');
             
             if ($this->input->server('REQUEST_METHOD') == 'POST')
             {
-                $result['success'] = true;
+                $this->data['cssLinks'] = array('product-checkout');
                 
                 $user_id = $this->user_model->get_user_id_from_email($email);
                 
                 if($user_id)
                 {
                     $password_reset_token = $this->user_model->create_reset_password_code($email);
-                    $this->send_reset_password($user_id, $password_reset_token, $email);
-                    $result['message'] = 'We sent you you an email with an activation link.';
-                }
-                else
-                {
-                    $result['message'] = 'Email doesn\'t exist in our database.';
+                    
+                    try
+                    {
+                        $this->send_reset_password($user_id, $password_reset_token, $email);
+                        
+                        $this->data['message_title'] = 'Email Sent';
+        
+                        $this->data['message'] = array();
+                        
+                        array_push($this->data['message'], 'We sent you you an email with an activation link.');
+
+                        $this->data['user'] = json_encode($this->userObject);
+                        
+                        $this->template->load('shmyde', 'message/message', $this->data);
+                    }
+                    catch (Exception $e)
+                    {
+                        $this->data['message_title'] = 'An Error Occured';
+        
+                        $this->data['message'] = array();
+                        
+                        array_push($this->data['message'], 'The following error occured while sending trying to send the mail.');
+                        
+                        array_push($this->data['message'], $e->getMessage());
+
+                        $this->data['user'] = json_encode($this->userObject);
+                        
+                        $this->template->load('shmyde', 'message/message', $this->data);
+                    }
+                    
+                    
                 }
                 
-                echo json_encode($result);
-                
+                                
                 return;
             }
             
+                        
+            $this->template->load('shmyde', 'user/forgot_password', $this->data);
             
-            $this->load->view('pages/header', $data);
-            $this->load->view('user/forgot_password', $data);
-            $this->load->view('pages/footer', $data);
         }
 	
 	/**
@@ -180,6 +202,16 @@ class User extends CI_Controller {
             
 	}
         
+        /**
+         * This function checks if an email exists and returns true if 
+         * it does and false if it doesnt. 
+         * @param type $email
+         */
+        public function checkemail($email)
+        {
+            echo json_encode($this->user_model->check_if_email_exists($email));
+        }
+                
         function send_resitration_confirmation($id,$rand,$email)
         {
             $subject = "Thanks for joining Shmyde";
@@ -248,10 +280,12 @@ class User extends CI_Controller {
             
             // set variables from the form
             $email = $this->input->post('email');
+            
             $password = $this->input->post('password');
-
+            
             if ($this->user_model->resolve_user_login($email, $password)) 
             {
+
                 if($this->input->post('remember_me') == 'on')
                 {
                     $this->rememberme->setCookie($this->input->post('email'));
@@ -273,18 +307,20 @@ class User extends CI_Controller {
                 $result['logged_in']    = (bool)true;
                 $result['is_confirmed'] = (bool)$user->is_confirmed;
                 $result['is_admin']     = (bool)$user->is_admin;
-
-                echo json_encode($result);
-
-            } 
-            else 
-            {
-
-                $result['success'] = false;
-                $result['error_heading'] = 'Wrong username or password.';
-
-                echo json_encode($result);
+                
+                header("Location: ". site_url("/").$this->rememberme->getOrigPage());
+            
             }
+            else
+            {
+                
+                $this->data['title'] = "Login or Register";
+                
+                $this->data['login_error'] = json_encode('true');
+            
+                $this->template->load('shmyde', 'user/login/login', $this->data);
+            }
+                                 
 	}
 	
 	/**
@@ -295,7 +331,8 @@ class User extends CI_Controller {
 	 */
 	public function logout() {
 		
-            if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+            if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) 
+            {
 
                 // remove session datas
                 foreach ($_SESSION as $key => $value) 
@@ -304,8 +341,11 @@ class User extends CI_Controller {
                 }
                 
                 $this->rememberme->deleteCookie();
-
-            } 
+                
+                header("Location: ".  site_url('home'));
+                exit;
+            }
+            
 		
 	}
         

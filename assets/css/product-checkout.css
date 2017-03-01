@@ -70,8 +70,20 @@ and open the template in the editor.
     background-color: white;
 }
 
+.checkout-message
+{
+    background-color: white;
+    margin-top: 55px;
+    margin-bottom: 55px;
+}
+
 #checkout-container .row
 {
     margin: 10px;
+}
+
+.center-button
+{
+    text-align: center;
 }
 

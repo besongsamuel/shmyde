@@ -117,7 +117,7 @@
                     <select  class="form-control"  ng-model="checkout.user.country" pvp-country-picker>
 
                     </select>
-              </div>
+                </div>
                                 
             </div>
         </div>

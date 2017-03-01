@@ -88,8 +88,30 @@ class User_model extends CI_Model {
             return $this->db->get()->row('id');
 		
 	}
-	
-	/**
+        
+        /**
+         * This function checks in the database if an email
+         * exists. 
+         * @param type $email
+         */
+        public function check_if_email_exists($email)
+        {
+            $this->db->select('*');
+            $this->db->from(USERS_TABLE);
+            $this->db->where('email', $email);
+            $user_object = $this->db->get()->row();
+            $this->db->reset_query();
+
+            if(isset($user_object))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+
+        /**
 	 * get_user function.
 	 * 
 	 * @access public

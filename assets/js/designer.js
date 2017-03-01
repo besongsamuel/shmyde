@@ -229,11 +229,19 @@ function Product(product_object)
         for (var i = 0; i < designData.length; i += 4) 
         {
             
-            if(designData[i + 3] > 240 && designData[i] > 200 && designData[i + 1] > 200 && designData[i + 2] > 200)
+            var avgColor = (designData[i] + designData[i + 1] + designData[i + 2]) / 3;
+            
+            if(designData[i + 3] > 0 && avgColor > 150)
             {
-                designData[i]     = fabricData[i];     
-                designData[i + 1] = fabricData[i + 1]; 
-                designData[i + 2] = fabricData[i + 2]; 
+                designData[i]     = (fabricData[i]);     
+                designData[i + 1] = (fabricData[i + 1]); 
+                designData[i + 2] = (fabricData[i + 2]); 
+            }
+            else if(designData[i + 3] > 0)
+            {
+                designData[i] = 44;
+                designData[i + 1] = 44;
+                designData[i + 2] = 44;
             }
         }
         

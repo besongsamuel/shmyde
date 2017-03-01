@@ -21,7 +21,7 @@ class Checkout extends CI_Controller
     
     public function index()
     {
-        $data['title'] = "Product Checkout";
+        $this->data['title'] = "Product Checkout";
         $user_design = null;
           
         if($this->session->userdata('user_id') !== null)
@@ -34,14 +34,12 @@ class Checkout extends CI_Controller
                     $this->design_model, 
                     $user_design['product_id']);
             $productManager->LoadUserDesign($user_design);
-            $data['productManager'] = json_encode($productManager);
+            $this->data['productManager'] = json_encode($productManager);
         }
 
-        $data['cssLinks'] = array('product-checkout');
-        
-        $data['user'] = json_encode($this->userObject);
-            
-        $this->template->load('shmyde', 'checkout/checkout', $data);
+        $this->data['cssLinks'] = array('product-checkout');
+                    
+        $this->template->load('shmyde', 'checkout/checkout', $this->data);
                
     }
     
@@ -58,7 +56,7 @@ class Checkout extends CI_Controller
             // Perform Checkout
             if($this->checkout_model->checkout($this->userObject->id, $quantity, $price, $design_data))
             {
-                $this->send_order_confirmation();
+                //$this->send_order_confirmation();
                 echo json_encode(true);
             }
             else
@@ -104,6 +102,45 @@ class Checkout extends CI_Controller
         $message.='</div>';
         $message.='</body></html>';
         mail($this->userObject->email,$subject,$message,$headers);
+    }
+    
+    /**
+     * A type of 0 means there were no errors
+     * A type of 1 means some errors did occur
+     * @param type $type
+     */
+    public function message($type)
+    {
+        $this->data['title'] = "Checkout Confirmation";
+        
+        if($type == 0)
+        {
+            $this->data['message_title'] = 'Order Confirmation Sent';
+            
+            $this->data['message'] = array();
+            
+            array_push($this->data['message'], 'Your order has been submitted');
+            array_push($this->data['message'], 'An email has been sent to '.$this->userObject->email.' with instructions');
+            array_push($this->data['message'], 'on how to make a payment. ');
+            array_push($this->data['message'], 'Your order will be in pending status till after the reciept of payment.');
+            array_push($this->data['message'], 'Thank you.');
+            array_push($this->data['message'], 'Best Regards ');
+            array_push($this->data['message'], 'SHMYDE SARL');
+            
+            
+        }
+        else
+        {
+            $this->data['message_title'] = 'A network error occured';           
+            $this->data['message'] = array();
+        }
+        
+        $this->data['cssLinks'] = array('product-checkout');
+        $this->data['user'] = json_encode($this->userObject);
+        $this->data['message_title'] = json_encode($this->data['message_header']);
+        $this->data['message'] = json_encode($this->data['message']);
+
+        $this->template->load('shmyde', 'message/message', $this->data);
     }
 
 

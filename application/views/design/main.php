@@ -119,7 +119,7 @@
 
                 </div>
 
-                <div id='design-preview' class='col-sm-4 design-preview'>
+                <div id='design-preview' class='col-sm-4 design-preview' style="width: 230px; height: 300px;">
 
                 </div>
 

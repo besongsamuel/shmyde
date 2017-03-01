@@ -15,6 +15,7 @@
     <link href="<?php echo ASSETS_PATH; ?>/css/uploader.css" rel="stylesheet">
     <link href="<?php echo ASSETS_PATH; ?>color-picker/css/bootstrap-colorpicker.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Calligraffitti" />
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
     <!-- additional CSS files -->   
     <?php
@@ -32,7 +33,7 @@
     <script src="<?php echo ASSETS_PATH; ?>frameworks/jquery/jquery-1.11.3.min.js"></script>
     <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js'></script>
     <script src="<?php echo ASSETS_PATH; ?>js/jquery.validate.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+    <script src="<?php echo ASSETS_PATH; ?>js/bootstrap.min.js"></script> 
     <script src="<?php echo ASSETS_PATH; ?>/js/angular.min.js" type="text/javascript"></script>     
     <script src="<?php echo ASSETS_PATH; ?>/js/country-picker.js" type="text/javascript"></script>
     <script src="<?php echo ASSETS_PATH; ?>js/modernizr.js"></script>    
@@ -42,11 +43,14 @@
     <script src="<?php echo ASSETS_PATH; ?>js/user-object.js"></script>
     <script>
         
+        // Initialize global controller variables
         var user = JSON.parse('<?php echo $user;  ?>');
         userObject = new User(user);
         userObject.base_url = '<?= site_url("/"); ?>';
-        var controller = '<?= $this->router->fetch_class(); ?>';
-        var method = '<?= $this->router->fetch_method(); ?>';
+        var controller = '<?= $ci_class; ?>';
+        var method = '<?= $ci_method; ?>';
+        var home_url = '<?= $home_url; ?>';
+        var site_url = '<?= site_url("/"); ?>';
         
         $(document).ready(function()
         {
@@ -83,7 +87,7 @@
       
     <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">
 
-    <nav class="navbar navbar-default navbar-fixed-top" ng-controller="UserController as user">
+    <nav class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController as header">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -91,42 +95,46 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>                        
           </button>
-          <a class="navbar-brand" href="#myPage">SHMYDE</a>
+            <span>                
+                <img src="<?php echo ASSETS_PATH ?>/images/logo_shmyde_old.png" alt="Shmyde Corp." class="site-logo" > 
+                <a class="navbar-brand site-name" href="#myPage" ng-click="header.gotoHome()">Shmyde</a>
+            </span>
+          
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
-              <li><a href="#myPage" ng-show="user.controller.toString() === 'home'">HOME</a></li>
-            <li><a href="#myPage">DESIGN</a></li>
-            <li><a href="#about-us" ng-show="user.controller.toString() === 'home'">ABOUT US</a></li>
-            <li><a href="#contact">CONTACT</a></li>
+            <li><a href="#myPage" ng-show="header.homeMenuVisible()">HOME</a></li>
+            <li><a href="#design-section" ng-show="header.designMenuVisible()">DESIGN</a></li>
+            <li><a href="#about-us" ng-show="header.aboutUsVisible()">ABOUT US</a></li>
+            <li><a href="#contact" ng-show="header.contactUsVisible()">CONTACT</a></li>
             <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" ng-show="user.is_logged()">{{user.email}}
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" ng-show="header.user_logged()">{{header.user_email}}
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#">Account Page</a></li>
-                <li><a href="#">Logout</a></li> 
+                <li><a href="#" ng-click="header.logout()">Logout</a></li> 
               </ul>
             </li>
-            <li ng-hide="user.is_logged()"><a href="#"><span class="glyphicon glyphicon-user"></span></a></li>
+            <li ng-hide="header.user_logged()" ng-click="header.login()"><a href="#"><span class="glyphicon glyphicon-user"></span></a></li>
           </ul>
         </div>
       </div>
     </nav>  
     
-<?php if($this->router->class == 'admin') :  ?>
-    <div class="container" style="margin-top: 10px;">
-        <span>
-            <a href="<?php echo site_url('admin/view/product'); ?>">PRODUCTS</a> |
-            <a href="<?php echo site_url('admin/view/menu'); ?>">MENUS</a> |
-            <a href="<?php echo site_url('admin/view/measurement'); ?>">MEASUREMENTS</a> |
-            <a href="<?php echo site_url('admin/view/product_fabric'); ?>">PRODUCT FABRICS</a> |
-            <a href="<?php echo site_url('admin/view/option'); ?>">OPTIONS</a> |
-            <a href="<?php echo site_url('admin/view/thread'); ?>">THREADS</a> |
-            <a href="<?php echo site_url('admin/view/button'); ?>">BUTTONS</a>
-        </span>
-    </div>
-<?php endif; ?>  
+    <?php if($this->router->class == 'admin') :  ?>
+        <div class="container" style="margin-top: 10px;">
+            <span>
+                <a href="<?php echo site_url('admin/view/product'); ?>">PRODUCTS</a> |
+                <a href="<?php echo site_url('admin/view/menu'); ?>">MENUS</a> |
+                <a href="<?php echo site_url('admin/view/measurement'); ?>">MEASUREMENTS</a> |
+                <a href="<?php echo site_url('admin/view/product_fabric'); ?>">PRODUCT FABRICS</a> |
+                <a href="<?php echo site_url('admin/view/option'); ?>">OPTIONS</a> |
+                <a href="<?php echo site_url('admin/view/thread'); ?>">THREADS</a> |
+                <a href="<?php echo site_url('admin/view/button'); ?>">BUTTONS</a>
+            </span>
+        </div>
+    <?php endif; ?>  
     
     <!-- Login Modal Dialog -->
     <div id="loginModal" class="modal fade" role="dialog" style="margin-top : 30px;">
@@ -235,10 +243,10 @@
              
     </div>
     
-    </body>
+</body>
 
 <!-- Container (Contact Section) -->
-<div id="contact" class="container">
+<div id="contact" class="container" ng-controller="HeaderController as header" ng-show="header.aboutUsVisible()">
     <h3 class="text-center">Contact</h3>
     <p class="text-center"><em>We love our fans!</em></p>
     <div class="row">
@@ -271,14 +279,14 @@
     <br>
 </div>
 
-    <!-- Footer -->
-    <footer class="text-center">
-        <a class="up-arrow" href="#myPage" data-toggle="tooltip" title="TO TOP">
-        <span class="glyphicon glyphicon-chevron-up"></span>
-        </a>
-        <br>
-        <br>
-        <p>Powered by Shmyde Copyright <?= date('Y'); ?> <a href='#'>Shmyde.com</a>. All Rights Reserved</p> 
-    </footer>   
+<!-- Footer -->
+<footer class="text-center">
+    <a class="up-arrow" href="#myPage" data-toggle="tooltip" title="TO TOP">
+    <span class="glyphicon glyphicon-chevron-up"></span>
+    </a>
+    <br>
+    <br>
+    <p>Powered by Shmyde Copyright <?= date('Y'); ?> <a href='#'>Shmyde.com</a>. All Rights Reserved</p> 
+</footer>   
 
 </html>

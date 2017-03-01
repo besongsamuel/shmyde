@@ -59,7 +59,15 @@ class CI_Controller {
 	 */
 	private static $instance;
         
+        
         protected $userObject;
+        
+        /**
+         * This is a global object holding 
+         * controller data that is sent to the view
+         * @var type 
+         */
+        protected $data = array();
 
 	/**
 	 * Class constructor
@@ -100,18 +108,29 @@ class CI_Controller {
 		
 		log_message('info', 'Controller Class Initialized');
 		
-		// Always record our current page. 
-		// This will enable us to redirect here after login if needed
-		$this->rememberme->recordOrigPage();
-                
+                if($this->router->fetch_class() != 'user')
+                {
+                    // Always record our current page. 
+                    // This will enable us to redirect here after login if needed
+                    $this->rememberme->recordOrigPage();
+                }
+		                
                 $user_email = $this->rememberme->verifyCookie();
                 
-                if ($user_email && ($this->session->userdata('email') !== $user_email)) 
+                
+                if(!$user_email)
+                {
+                    if($this->session->userdata('email'))
+                    {
+                        $user_email = $this->session->userdata('email');
+                    }
+                }
+                                                
+                if ($user_email) 
                 {
                     $user_id = $this->user_model->get_user_id_from_email($user_email);
                     $user    = $this->user_model->get_user($user_id);
                     
-
                     $user_data = $this->user_model->get_user_data($user_id);
                     $this->userObject = new UserObject($user_data);
                     
@@ -130,10 +149,18 @@ class CI_Controller {
 		    	// set session user datas
 			$this->session->set_userdata($newdata);    
                         
-                    }
-                    
+                    }  
+                }
+                else
+                {
+                    $this->userObject = new UserObject(null);
                 }
                 
+                
+                $this->data['user'] = json_encode($this->userObject);  
+                $this->data['ci_class'] = $this->router->fetch_class();
+                $this->data['ci_method'] = $this->router->fetch_method();
+                $this->data['home_url'] = site_url().'/home/';
 	}
 
 	// --------------------------------------------------------------------

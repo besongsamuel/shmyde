@@ -18,25 +18,25 @@ class Design extends CI_Controller
             
         }
 
-	public function product($target, $product)
+	public function product()
 	{
+         
             
-            $data['categories'] = $this->admin_model->get_categories();
+            $this->data['categories'] = $this->admin_model->get_categories();
             
-            $data['title'] = "DESIGN-SHIRT-SHMYDE";
+            $this->data['title'] = "DESIGN-SHIRT-SHMYDE";
 
-            $data['cssLinks'] = array('design');
+            $this->data['cssLinks'] = array('design');
             
-            $product_id = $this->admin_model->get_product_id($target, $product);
+            $product_id = $this->input->post('product_id');
             
             $my_product = new DesignProduct();
+            
             $my_product->LoadProduct($this->design_model, $product_id);
             
-            $data['product'] = json_encode($my_product);
-            
-            $data['user'] = json_encode($this->userObject);
-            
-            $this->template->load('shmyde', 'design/main', $data);
+            $this->data['product'] = json_encode($my_product);
+                        
+            $this->template->load('shmyde', 'design/main', $this->data);
 
 	}
         

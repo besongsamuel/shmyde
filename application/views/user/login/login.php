@@ -11,14 +11,12 @@
         {
             userScope.login_error = JSON.parse('<?php echo $login_error;  ?>').toString() === 'true';
         });
-        
-        
-        
+               
     });
     
 </script>
 
-<div class="container white-background" style="margin-top: 50px;" ng-controller="UserController as user" id="login-registration-container">
+<div class="container white-background" style="margin-top: 50px;" ng-controller="UserController" id="login-registration-container">
   <h3 class="text-center">Login or Register</h3>
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#login">Login</a></li>
@@ -53,21 +51,22 @@
                 </form>
             </div>
         </div>
+        
         <div id="register" class="tab-pane fade">
             <div class="tab-pane fade in active">
                 
                 <div class="row">
                     <div class="alert alert-info col-lg-6 col-lg-offset-3" style="margin-top: 10px;" ng-show="registerForm.email.$pending.isUniqueEmail">
                         <span>Checking if this name is available...</span>
+                        
                     </div>
-                    <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;" ng-show="registerForm.email.$invalid">
+                    <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;" ng-show="registerForm.email.$error.isUniqueEmail">
                         <span>This username is already taken!</span>
                     </div>
                     <form  action="<?php echo site_url('user/register'); ?>" method="POST" name="registerForm" class="shmyde-form  col-lg-6 col-lg-offset-3 text-center" novalidate>
                         <div class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                            <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="user.email" required is-unique-email>
-                            
+                            <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="email" required is-unique-email>          
                             <span class="form_hint">Proper format "name@something.com"</span>
                         </div>
 
@@ -86,24 +85,30 @@
 
                         <div class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-flag"></i></span>
-                            <select  class="form-control"  ng-model="user.country" pvp-country-picker>
+                            <select  class="form-control"  ng-model="country" name="country" pvp-country-picker>
 
                             </select>
-                            <input  type="text" class="form-control" placeholder="City">
+                            <input  type="text" class="form-control" name="city" placeholder="City">
                         </div>
                         
                         <div class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
-                            <input  type="text" class="form-control" placeholder="Address Line 1">
-                            <input  type="text" class="form-control" placeholder="Address Line 2">
+                            <input  type="text" class="form-control" placeholder="Address Line 1" name="address_line_1">
+                            <input  type="text" class="form-control" placeholder="Address Line 2" name="address_line_2">
                         </div>
                         
                         <div class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                            <input  type="password" name="password" class="form-control" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required>
+                            <input  type="password" name="password" id="password" class="form-control" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"  pw-check='confirm_password'  ng-model="password" required>
                             <span class="form_hint">The password must contain 8 or more characters, at least one number, and one uppercase and lowercase letter</span>
                         </div>
-                                                                        
+                        
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+                            <input  type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" ng-model="confirm_password" pw-check='password'>
+                            <span class="form_hint">Passwords must match</span>
+                        </div>
+                                                                                                
                         <div class="input-group">
                             <button type="submit" class="btn btn-block">Register</button>
                         </div>                   

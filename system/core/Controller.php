@@ -77,6 +77,8 @@ class CI_Controller {
 	public function __construct()
 	{
 		self::$instance =& $this;
+		
+		$this->data = array();
 
 		// Assign all the class objects that were instantiated by the
 		// bootstrap file (CodeIgniter.php) to local class variables
@@ -125,14 +127,17 @@ class CI_Controller {
                         $user_email = $this->session->userdata('email');
                     }
                 }
-                                                
+                                
                 if ($user_email) 
                 {
+                    
                     $user_id = $this->user_model->get_user_id_from_email($user_email);
                     $user    = $this->user_model->get_user($user_id);
                     
                     $user_data = $this->user_model->get_user_data($user_id);
                     $this->userObject = new UserObject($user_data);
+		    $this->data['user'] = $this->userObject;	
+
                     
                     // find user id of cookie_user stored in application database
                     // set session if necessary
@@ -154,10 +159,13 @@ class CI_Controller {
                 else
                 {
                     $this->userObject = new UserObject(null);
+                    
                 }
-                
-                
+		
+                               
                 $this->data['user'] = json_encode($this->userObject);  
+                
+                                
                 $this->data['ci_class'] = $this->router->fetch_class();
                 $this->data['ci_method'] = $this->router->fetch_method();
                 $this->data['home_url'] = site_url().'/home/';

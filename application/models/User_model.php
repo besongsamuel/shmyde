@@ -29,7 +29,7 @@ class User_model extends CI_Model {
 	 * @param mixed $password
 	 * @return bool true on success, false on failure
 	 */
-	public function create_user($email, $password) 
+	public function create_user($email, $password, $user_data) 
         {
 		
             $query = $this->db->query("select * from users where email = ".$this->db->escape($email));
@@ -42,12 +42,17 @@ class User_model extends CI_Model {
 
             $data = array(
                     'email'      => $email,
-                    'confirm_id'      => rand(100000,100000000),
+                    'confirm_id' => rand(100000,100000000),
                     'password'   => $this->hash_password($password),
                     'created_at' => date('Y-m-j H:i:s'),
             );
 
-            return $this->db->insert('users', $data);
+            $this->db->insert(USERS_TABLE, $data);
+            
+            $user_data['last_modified'] = date('Y-m-j H:i:s');
+            $user_data['user_id'] = $this->get_user_id_from_email($email);
+                       
+            return $this->db->insert(USER_DATA_TABLE, $user_data);
 		
 	}
 	

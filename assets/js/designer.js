@@ -126,6 +126,16 @@ function Product(product_object)
                 
         this.total_price = parseInt(this.product.price);
         
+        html2canvas(document.getElementById("design-preview"), 
+        {
+            onrendered : function(canvas)
+            {
+                document.body.appendChild(canvas);
+            },
+            width : 200,
+            height : 320
+        });
+        
         for(var key in this.product.product_menus)
         {
             var menu = this.product.product_menus[key];

@@ -68,23 +68,40 @@ class User extends CI_Controller {
             $this->load->view('pages/footer', $data);
         }
         
-        /**
-         * This is a page that displays a user message
-         */
-        public function message()
-        {
-            $data = array();
-            
-            $data['title'] = "Message";
-            
-            $data['cssLinks'] = array('message');
-            
-            $data['message'] = '';
-            
-            $this->load->view('pages/header', $data);
-            $this->load->view('user/message', $data);
-            $this->load->view('pages/footer', $data);
-        }
+        
+       private function post_registration($success)
+       {
+           $this->data['title'] = "Registration";
+
+           if($success)
+           {
+               $this->data['message_title'] = 'Registration Complete';
+
+               $this->data['message'] = array();
+
+               array_push($this->data['message'], 'Your account has been created sucessfully');
+               array_push($this->data['message'], 'A confirmation email has been sent to '.$this->userObject->email.' with instructions');
+               array_push($this->data['message'], 'on how to activate your account. ');
+               array_push($this->data['message'], 'WELCOME TO SHMYDE.');
+               array_push($this->data['message'], 'Thank you.');
+               array_push($this->data['message'], 'Best Regards ');
+               array_push($this->data['message'], 'SHMYDE SARL');
+
+
+           }
+           else
+           {
+               $this->data['message_title'] = 'A network error occured';           
+               $this->data['message'] = array();
+           }
+
+           $this->data['cssLinks'] = array('product-checkout');
+           $this->data['user'] = json_encode($this->userObject);
+           $this->data['message_title'] = json_encode($this->data['message_title']);
+           $this->data['message'] = json_encode($this->data['message']);
+
+           $this->template->load('shmyde', 'message/message', $this->data);
+       }
 
         /**
          * 
@@ -168,8 +185,19 @@ class User extends CI_Controller {
             // set variables from the form
             $email    = $this->input->post('email');
             $password = $this->input->post('password');
+            
+            $user_data = array(
+                
+                'last_name' => $this->input->post('lastname'),
+                'first_name' => $this->input->post('lastname'),
+                'phone_number' => $this->input->post('phonenumber'),
+                'address_line_1' => $this->input->post('address_line_1'),
+                'address_line_2' => $this->input->post('address_line_2'),
+                'country' => $this->input->post('country'),
+                'city' => $this->input->post('city')                
+            );
 
-            if ($this->user_model->create_user($email, $password)) 
+            if ($this->user_model->create_user($email, $password, $user_data)) 
             {
                 $result['success'] = true;
 
@@ -183,21 +211,14 @@ class User extends CI_Controller {
                 $_SESSION['is_confirmed'] = (bool)$user->is_confirmed;
                 $_SESSION['is_admin']     = (bool)$user->is_admin;
 
-                $result['success'] = true;
-                $result['user_id']      = (int)$user->id;
-                $result['email']     = (string)$user->email;
-                $result['logged_in']    = (bool)true;
-                $result['is_confirmed'] = (bool)$user->is_confirmed;
-                $result['is_admin']     = (bool)$user->is_admin;
                 $this->send_resitration_confirmation($user_id, $user->confirm_id, $email);
-                $result['message'] = 'We sent you you an email with an activation link.';
-                echo json_encode($result);
+                
+                $this->post_registration(true);
             } 
             else
             {
                 // user creation failed, this should never happen
-                $result['error_heading'] = 'A user with that email already exists in our database.';
-                echo json_encode($result);
+                $this->post_registration(false);
             }
             
 	}

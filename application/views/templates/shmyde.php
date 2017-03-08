@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"ng-app="shmyde">
+<html lang="en"ng-app="shmyde" id="shmyde-application">
 
   <head>
     <meta charset="utf-8">
@@ -41,19 +41,40 @@
     <script src="<?php echo ASSETS_PATH; ?>color-picker/js/bootstrap-colorpicker.js"></script>
     <script src="<?php echo ASSETS_PATH; ?>js/html2canvas.js"></script>
     <script src="<?php echo ASSETS_PATH; ?>js/user-object.js"></script>
+    <script src="<?php echo ASSETS_PATH; ?>js/shmyde-angular.js" type="text/javascript"></script>
+
     <script>
-        
-        // Initialize global controller variables
-        var user = JSON.parse('<?php echo $user;  ?>');
-        userObject = new User(user);
-        userObject.base_url = '<?= site_url("/"); ?>';
-        var controller = '<?= $ci_class; ?>';
-        var method = '<?= $ci_method; ?>';
-        var home_url = '<?= $home_url; ?>';
-        var site_url = '<?= site_url("/"); ?>';
-        
+
         $(document).ready(function()
         {
+                        
+            var rootScope = angular.element("#shmyde-application").scope();
+                       
+            /* Apply these values to the root scope */
+            rootScope.$apply(function()
+            {
+                rootScope.is_initialized = false;
+                
+                rootScope.user = JSON.parse('<?php echo $user;  ?>');
+
+                rootScope.userObject = new User(rootScope.user);
+                
+                rootScope.userObject.base_url = '<?= site_url("/"); ?>';
+
+                rootScope.controller = '<?= $ci_class; ?>';
+
+                rootScope.method = '<?= $ci_method; ?>';
+
+                rootScope.home_url = '<?= $home_url; ?>';
+
+                rootScope.site_url = '<?= site_url("/"); ?>';
+                
+                rootScope.user_email = rootScope.user.email;
+                
+                rootScope.is_initialized = true;
+
+            });
+            
             // Initialize Tooltip
             $('[data-toggle="tooltip"]').tooltip(); 
   
@@ -81,13 +102,12 @@
             });
         });
     </script>
-    <script src="<?php echo ASSETS_PATH; ?>js/shmyde-angular.js" type="text/javascript"></script>
 
   </head>
       
     <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">
 
-    <nav class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController as header">
+    <nav class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -97,26 +117,26 @@
           </button>
             <span>                
                 <img src="<?php echo ASSETS_PATH ?>/images/logo_shmyde_old.png" alt="Shmyde Corp." class="site-logo" > 
-                <a class="navbar-brand site-name" href="#myPage" ng-click="header.gotoHome()">Shmyde</a>
+                <a class="navbar-brand site-name" href="#myPage" ng-click="gotoHome()">Shmyde</a>
             </span>
           
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#myPage" ng-show="header.homeMenuVisible()">HOME</a></li>
-            <li><a href="#design-section" ng-show="header.designMenuVisible()">DESIGN</a></li>
-            <li><a href="#about-us" ng-show="header.aboutUsVisible()">ABOUT US</a></li>
-            <li><a href="#contact" ng-show="header.contactUsVisible()">CONTACT</a></li>
+            <li><a href="#myPage" ng-show="homeMenuVisible()">HOME</a></li>
+            <li><a href="#design-section" ng-show="designMenuVisible()">DESIGN</a></li>
+            <li><a href="#about-us" ng-show="aboutUsVisible()">ABOUT US</a></li>
+            <li><a href="#contact" ng-show="contactUsVisible()">CONTACT</a></li>
             <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" ng-show="header.user_logged()">{{header.user_email}}
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" ng-show="user_logged()">{{user_email}}
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#">Account Page</a></li>
-                <li><a href="#" ng-click="header.logout()">Logout</a></li> 
+                <li><a href="#" ng-click="logout()">Logout</a></li> 
               </ul>
             </li>
-            <li ng-hide="header.user_logged()" ng-click="header.login()"><a href="#"><span class="glyphicon glyphicon-user"></span></a></li>
+            <li ng-hide="user_logged()" ng-click="login()"><a href="#"><span class="glyphicon glyphicon-user"></span></a></li>
           </ul>
         </div>
       </div>
@@ -136,107 +156,6 @@
         </div>
     <?php endif; ?>  
     
-    <!-- Login Modal Dialog -->
-    <div id="loginModal" class="modal fade" role="dialog" style="margin-top : 30px;">
-        <div class="container login-box modal-content">
-
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Login</h4>
-            </div>
-
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <?= form_open('user/login',array('id'=>'login_form','method'=>'post')) ?>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="text" class="form-control" id="email" name="email" placeholder="Your email address">
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Your password">
-                            </div>
-                            <div class="form-group">
-                                <label for="remember_me">Remember me</label>
-                                <input type="checkbox" class="form-control" id="remember_me" name="remember_me" value="on" style="height: 22px; width: 22px;">
-                            </div>
-
-                            <div class="col-md-12">
-                                <div id="login_alert_heading" class="alert alert-danger" role="alert" hidden="true">
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <input type="submit" class="btn btn-default" value="Login">
-                                <p style="margin-top: 5px;">Don't have an account? <a href="#" onclick="switch_to_register()">Register</a></p>
-                            </div>
-                            <div class="form-group">
-                                <a href="#" onclick="forgot_password_clicked();">Forgot your password</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-
-        </div>    
-    </div>
-    
-    <!-- Register Modal Dialog -->
-    <div id="registerModal" class="modal fade" role="dialog" style="margin-top : 30px;">
-        <div class="container register-box modal-content">
-
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Register</h4>
-            </div>
-
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <?= form_open('user/register',array('id'=>'register_form','method'=>'post')) ?>
-                            <div class="form-group">
-                                <label for="email">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
-                                <p class="help-block">A valid email address</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="register_password" name="password" placeholder="Enter a password">
-                                <p class="help-block">At least 6 characters</p>
-                            </div>
-                            <div class="form-group">
-                                <label for="password_confirm">Confirm password</label>
-                                <input type="password" class="form-control" id="password_confirm" name="password_confirm" placeholder="Confirm your password">
-                                <p class="help-block">Must match your password</p>
-                            </div>
-
-                            <div class="col-md-12">
-                                <div id="register_alert_heading" class="alert alert-danger" role="alert"  hidden="true">
-
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <input type="submit" class="btn btn-default" value="Register">
-                                <p style="margin-top: 5px;">Already have an account? <a href="#" onclick="switch_to_login();">Login</a></p>
-                            </div>
-                        </form>
-                    </div>
-                </div><!-- .row -->
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-
-        </div>  
-    </div>
-
     <div class="wrapper">
              
         <?php echo $body; ?>
@@ -246,7 +165,7 @@
 </body>
 
 <!-- Container (Contact Section) -->
-<div id="contact" class="container" ng-controller="HeaderController as header" ng-show="header.aboutUsVisible()">
+<div id="contact" class="container" ng-controller="HeaderController" ng-show="aboutUsVisible()">
     <h3 class="text-center">Contact</h3>
     <p class="text-center"><em>We love our fans!</em></p>
     <div class="row">

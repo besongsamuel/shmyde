@@ -9,7 +9,7 @@
     <!-- Wrapper for slides -->
     <div class="carousel-inner" role="listbox">
       <div class="item active">
-          <img src="<?php echo ASSETS_PATH ?>/images/home/1.jpg" alt="New York" width="1200" height="700">
+          <img src="<?php echo ASSETS_PATH ?>/images/home/1.jpg" alt="New York">
         <div class="carousel-caption">
           <h3>Your Design at Your Door</h3>
           <p>We deliver your design right where you are.</p>
@@ -17,7 +17,7 @@
       </div>
 
       <div class="item">
-        <img src="<?php echo ASSETS_PATH ?>/images/home/2.jpg" alt="Chicago" width="1200" height="700">
+        <img src="<?php echo ASSETS_PATH ?>/images/home/2.jpg" alt="Chicago">
         <div class="carousel-caption">
           <h3>Think it, Wear it</h3>
           <p>Think it, Design it, We deliver it.</p>
@@ -25,7 +25,7 @@
       </div>
     
       <div class="item">
-        <img src="<?php echo ASSETS_PATH ?>/images/home/3.jpg" alt="LA" width="1200" height="700">
+        <img src="<?php echo ASSETS_PATH ?>/images/home/3.jpg" alt="LA">
         <div class="carousel-caption">
           <h3>Choose your tailor</h3>
           <p>Your design! Your product! Your Tailor!</p>
@@ -78,7 +78,7 @@
 </div>
 
 <!-- Container (Design Section) -->
-<div id="design-section" class="bg-1" ng-controller="DesignSectionController as designSection">
+<div id="design-section" class="bg-1" ng-controller="DesignSectionController">
   <div class="container bg-1">
     <h3 class="text-center">Design</h3>
     <p class="text-center">For a quick design<br> Select one of our popular templates!</p>

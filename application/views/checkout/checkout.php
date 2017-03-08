@@ -3,20 +3,20 @@
     <link href="<?php echo ASSETS_PATH; ?>/css/product-checkout.css" rel="stylesheet" type="text/css"/>
     <script>
             
-        var userManager;
-        var user = JSON.parse('<?php echo $user;  ?>');
-        userManager = new User(user);
-        userManager.base_url = '<?= site_url("/"); ?>';
-
-        var productManager;
-        var product = JSON.parse('<?php echo $productManager; ?>');        
-        productManager = new Product(product);
-        productManager.base_url = '<?= site_url("/"); ?>';
-        productManager.setProductDetails();
-
-        $(document).ready(function(){
-
-            productManager.draw("design-preview", 'front');  
+        $(document).ready(function()
+        {
+            var checkoutScope = angular.element("#checkout-container").scope();
+            
+            checkoutScope.$apply(function()
+            {                              
+                checkoutScope.product = JSON.parse('<?php echo $productManager; ?>');        
+                checkoutScope.productManager = new Product(checkoutScope.product);
+                checkoutScope.productManager.base_url = '<?= site_url("/"); ?>';
+                checkoutScope.productManager.setProductDetails();     
+                checkoutScope.productManager.draw("design-preview", 'front');
+            });
+            
+              
         });
 
         $('#agreeButton, #disagreeButton').on('click', function() 
@@ -28,10 +28,12 @@
                     .val(whichButton === 'agreeButton' ? 'yes' : 'no')
                     .end();
         });
+        
+        
     </script>
     <script src="<?php echo ASSETS_PATH; ?>/js/html2canvas.js" type="text/javascript"></script>
     
-    <div id="checkout-container" class="container" ng-controller="CheckoutController as checkout">
+    <div id="checkout-container" class="container" ng-controller="CheckoutController">
         
         <!-- Product Category -->
         <div class="row">
@@ -43,7 +45,7 @@
                     <div class="form-group">
                     <label for="design-types">Design Type:</label>
                     <select class="form-control" id="design-types">
-                        <option ng-repeat="type in checkout.designTypes">{{type}}</option>
+                        <option ng-repeat="type in designTypes">{{type}}</option>
                     </select>
                   </div>                  
                 </div>
@@ -60,7 +62,7 @@
                 <table class="table table-bordered">
                   <thead>
                     <tr>
-                        <th ng-repeat="tableHeader in checkout.orderDetailsTableHeader">{{tableHeader}}</th>
+                        <th ng-repeat="tableHeader in orderDetailsTableHeader">{{tableHeader}}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -71,12 +73,12 @@
                           </div>
                       </td>
                       <td>
-                          <p ng-bind-html="checkout.product_name"></p>
-                          <p ng-repeat="detail in checkout.productManager.product_details">{{detail}}</p>
+                          <p ng-bind-html="product_name"></p>
+                          <p ng-repeat="detail in productManager.product_details">{{detail}}</p>
                           <a href="#"  data-toggle="modal" data-target="#myMeasurementModal">Measurements</a>
                       </td>
-                      <td><input type="number" ng-model="checkout.quantity" style="width: 50px;" /></td>
-                      <td>{{checkout.price * checkout.quantity }} FCFA</td>
+                      <td><input type="number" ng-model="quantity" style="width: 50px;" /></td>
+                      <td>{{price * quantity }} FCFA</td>
                     </tr>
                   </tbody>
                 </table>
@@ -92,29 +94,28 @@
                 
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                    <input  type="email" class="form-control" placeholder="Email"ng-model="checkout.user.email">
+                    <input  type="email" class="form-control" placeholder="Email"ng-model="userObject.user.email">
                 </div>
                 
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                    <input  type="text" class="form-control" placeholder="Lastname"ng-model="checkout.user.last_name">
-                    <input  type="text" class="form-control" placeholder="Lastname"ng-model="checkout.user.first_name">
+                    <input  type="text" class="form-control" placeholder="Lastname"ng-model="userObject.user.last_name">
+                    <input  type="text" class="form-control" placeholder="Lastname"ng-model="userObject.user.first_name">
                 </div>
                 
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-earphone"></i></span>
-                    <input  type="text" class="form-control" placeholder="Mobile Phone Number"ng-model="checkout.user.phone_number">
+                    <input  type="text" class="form-control" placeholder="Mobile Phone Number"ng-model="userObject.user.phone_number">
                 </div>
                 
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
-                    <input  type="text" class="form-control" placeholder="Address Line 1"ng-model="checkout.user.address_line_1">
-                    <input  type="text" class="form-control" placeholder="Address Line 2"ng-model="checkout.user.address_line_2">
+                    <input  type="text" class="form-control" placeholder="Address Line 1"ng-model="userObject.user.address_line_1">
+                    <input  type="text" class="form-control" placeholder="Address Line 2"ng-model="userObject.user.address_line_2">
                 </div>
-                
                 <div class="input-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-flag"></i></span>
-                    <select  class="form-control"  ng-model="checkout.user.country" pvp-country-picker>
+                    <select  class="form-control"  ng-model="userObject.user.country" pvp-country-picker>
 
                     </select>
                 </div>
@@ -127,7 +128,7 @@
             
             <div class="form-group  checkout-button">
                 <div class="col-xs-9 col-xs-offset-3">
-                    <button type="button" class="btn btn-default" ng-click="checkout.checkout()" ng-disabled="checkout.agree_to_terms === false">Checkout</button>
+                    <button type="button" class="btn btn-default" ng-click="checkout()" ng-disabled="agree_to_terms === false">Checkout</button>
                 </div>
             </div>
             
@@ -163,7 +164,7 @@
     </div>
     
         <!-- Measurements Modal -->
-    <div id="myMeasurementModal" class="modal fade" role="dialog" ng-controller="CheckoutController as checkout">
+    <div id="myMeasurementModal" class="modal fade" role="dialog" ng-controller="CheckoutController">
       <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -182,7 +183,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="measurement in checkout.productManager.product.measurements">
+                        <tr ng-repeat="measurement in productManager.product.measurements">
                         <td>{{measurement.name}}</td>
                         <td>{{measurement.description}}</td>
                         <td style="width: 90px;"><input type="number" ng-model="measurement.default_value" style="width: 50px; text-align: center;" /> cm</td>

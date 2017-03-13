@@ -17,6 +17,8 @@
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Calligraffitti" />
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+    <link href="<?php echo ASSETS_PATH; ?>css/intlTelInput.css" rel="stylesheet">
+    
     <!-- additional CSS files -->   
     <?php
     //Just to permit dynamic load of other css files to this header
@@ -33,9 +35,13 @@
     <script src="<?php echo ASSETS_PATH; ?>frameworks/jquery/jquery-1.11.3.min.js"></script>
     <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js'></script>
     <script src="<?php echo ASSETS_PATH; ?>js/jquery.validate.js"></script>
+    <script src="<?php echo ASSETS_PATH; ?>/js/intlTelInput.js" type="text/javascript"></script>
+    <script src="<?php echo ASSETS_PATH; ?>/js/utils.js" type="text/javascript"></script>
     <script src="<?php echo ASSETS_PATH; ?>js/bootstrap.min.js"></script> 
-    <script src="<?php echo ASSETS_PATH; ?>/js/angular.min.js" type="text/javascript"></script>     
-    <script src="<?php echo ASSETS_PATH; ?>/js/country-picker.js" type="text/javascript"></script>
+    <script src="<?php echo ASSETS_PATH; ?>/js/angular.min.js" type="text/javascript"></script> 
+    <script src="<?php echo ASSETS_PATH; ?>/js/country-picker.js" type="text/javascript"></script> 
+    <script src="<?php echo ASSETS_PATH; ?>/js/angular-messages.js" type="text/javascript"></script>  
+    <script src="<?php echo ASSETS_PATH; ?>/js/international-phone-number.js" type="text/javascript"></script>
     <script src="<?php echo ASSETS_PATH; ?>js/modernizr.js"></script>    
     <script src="<?php echo ASSETS_PATH; ?>sly-master/dist/sly.js"></script>
     <script src="<?php echo ASSETS_PATH; ?>color-picker/js/bootstrap-colorpicker.js"></script>

@@ -1,21 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-<script>
-    
-    
-    $(document).ready(function(){
-        
-        var userScope = angular.element("#login-registration-container").scope();
-        
-        userScope.$apply(function() 
-        {
-            userScope.login_error = JSON.parse('<?php echo $login_error;  ?>').toString() === 'true';
-        });
-               
-    });
-    
-</script>
-
 <div class="container white-background" style="margin-top: 50px;" ng-controller="UserController" id="login-registration-container">
   <h3 class="text-center">Login or Register</h3>
     <ul class="nav nav-tabs">
@@ -25,17 +9,17 @@
     <div class="tab-content">
         <div id="login" class="tab-pane fade in active">
             <div class="row">
-                <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;" ng-show="login_error">
+                <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;" ng-show="loginError">
                     <span><strong>Login Error: </strong>Incorrect email or password. </span>
                 </div>
-                <form name="loginForm" class="shmyde-form col-lg-6 col-lg-offset-3 text-center" novalidate>
+                <form name="loginForm" class="shmyde-form col-lg-6 col-lg-offset-3 text-center" ng-submit='loginForm.$valid && login()' novalidate>
                     
                         <!-- Email control -->
                         <div class="row">
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                    <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="userObject.user.email"
+                                    <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="loginObject.email"
                                              ng-required='required' is-unique-email>
                                     <span class="form_hint" ng-hide="loginForm.email.valid">                                      
                                         <p ng-show="loginForm.email.$error.required">This field is required. </p>
@@ -52,7 +36,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                                    <input  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' ng-minlength='8' ng-model="userObject.user.password">
+                                    <input  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' ng-minlength='8' ng-model="loginObject.password">
                                     <span class="form_hint" ng-hide="loginForm.password.valid">                                      
                                         <p ng-show="loginForm.password.$error.required">A password is required to register. </p>
                                         <p ng-show="loginForm.password.$error.minlength">The password entered is too short. </p>
@@ -65,7 +49,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <label for="remember_me">Remember me</label>
-                                    <input type="checkbox" class="form-control" id="remember_me" name="remember_me" value="on" ng-model='userObject.user.remember_me'>
+                                    <input type="checkbox" class="form-control" id="remember_me" name="remember_me" value="on" ng-model='loginObject.remember_me'>
                                 </div>
                             </div>
                         </div>
@@ -98,7 +82,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                    <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="userObject.user.email"
+                                    <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="registrationObject.email"
                                              ng-required='required' is-unique-email>
                                     <span class="form_hint" ng-hide="registerForm.email.valid">                                      
                                         <p ng-show="registerForm.email.$error.required">This field is required. </p>
@@ -115,7 +99,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                    <input  type="text" name="lastname" ng-model="userObject.user.last_name" class="form-control" placeholder="Last Name" ng-required='required'>
+                                    <input  type="text" name="lastname" ng-model="registrationObject.last_name" class="form-control" placeholder="Last Name" ng-required='required'>
                                     <span class="form_hint" ng-hide="registerForm.lastname.valid">                                      
                                         <p ng-show="registerForm.lastname.$error.required">At least a last name is required. </p>
                                     </span>
@@ -127,7 +111,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                    <input  type="text" name="firstname" ng-model="userObject.user.first_name" class="form-control" placeholder="First Name">                                    
+                                    <input  type="text" name="firstname" ng-model="registrationObject.first_name" class="form-control" placeholder="First Name">                                    
                                 </div>                                
                             </div>
                         </div>
@@ -138,7 +122,7 @@
                                 <!-- Phone number control -->
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
-                                    <input  type="text" name="phonenumber" ng-model="userObject.user.phone_number" class="input-group" international-phone-number ng-focus="phone_number_focus()" ng-blur="phone_number_blur()">
+                                    <input  type="text" name="phonenumber" ng-model="registrationObject.phone_number" class="input-group" international-phone-number ng-focus="phone_number_focus()" ng-blur="phone_number_blur()">
                                     <span class="phone_number_hint" ng-show="phone_number_has_focus && registerForm.phonenumber.$error.internationalPhoneNumber">                                      
                                         <p ng-show="registerForm.phonenumber.$error.internationalPhoneNumber">The phone number entered is invalid. </p>
                                     </span>
@@ -151,7 +135,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-flag"></i></span>
-                                    <select  class="form-control"  ng-model="userObject.user.country" name="country" pvp-country-picker>
+                                    <select  class="form-control"  ng-model="registrationObject.country" name="country" pvp-country-picker>
 
                                     </select>
                                 </div>
@@ -163,7 +147,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
-                                    <input  type="text" class="form-control" name="city"   ng-model="userObject.user.city" placeholder="City">
+                                    <input  type="text" class="form-control" name="city"   ng-model="registrationObject.city" placeholder="City">
                                 </div>
                             </div>
                         </div>
@@ -174,7 +158,7 @@
                                 <!-- Address controls -->
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
-                                    <input  type="text" class="form-control" placeholder="Address Line 1" name="address_line_1" ng-model="userObject.user.address_line_1">
+                                    <input  type="text" class="form-control" placeholder="Address Line 1" name="address_line_1" ng-model="registrationObject.address_line_1">
                                 </div>
                             </div>
                         </div>
@@ -184,7 +168,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
-                                    <input  type="text" class="form-control" placeholder="Address Line 2" name="address_line_2" ng-model="userObject.user.address_line_2">
+                                    <input  type="text" class="form-control" placeholder="Address Line 2" name="address_line_2" ng-model="registrationObject.address_line_2">
                                 </div>
                             </div>
                         </div>
@@ -194,7 +178,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                                    <input  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" ng-model="userObject.user.password">
+                                    <input  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" ng-model="registrationObject.password">
                                     <span class="form_hint" ng-hide="registerForm.password.valid">                                      
                                         <p ng-show="registerForm.password.$error.required">A password is required to register. </p>
                                         <p ng-show="registerForm.password.$error.pattern">The password must contain 8 or more characters that are of at least one number, and one uppercase and lowercase letter. </p>
@@ -208,7 +192,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                                    <input  type="password" id="confirm_password" name="confirm_password" class="form-control" ng-required='required' placeholder="Confirm Password" ng-model="confirm_password" pw-check='password'>
+                                    <input  type="password" id="confirm_password" name="confirm_password" class="form-control" ng-required='required' placeholder="Confirm Password" ng-model="registrationObject.confirm_password" pw-check='password'>
                                     <span class="form_hint" ng-hide="registerForm.confirm_password.valid">     
                                         <p ng-show="registerForm.confirm_password.$error.required">A password is required to register. </p>
                                         <p ng-show="registerForm.confirm_password.$error.pwmatch">The passwords entered don't match. </p>

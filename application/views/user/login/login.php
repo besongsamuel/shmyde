@@ -28,26 +28,58 @@
                 <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;" ng-show="login_error">
                     <span><strong>Login Error: </strong>Incorrect email or password. </span>
                 </div>
-                <form action="<?php echo site_url('user/login'); ?>" method="POST" class="shmyde-form col-lg-6 col-lg-offset-3 text-center" novalidate>
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                        <input  type="email" name="email" class="form-control" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
-                            <span class="form_hint">Proper format "name@something.com"</span>
-                    </div>
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                        <input  type="password" name="password" class="form-control" placeholder="Password" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="remember_me">Remember me</label>
-                        <input type="checkbox" class="form-control" id="remember_me" name="remember_me" value="on" style="height: 22px; width: 22px; margin: 5px;">
-                    </div>
-                    <div class="input-group">
-                        <a href="<?php echo site_url('user/forgot_password'); ?>">Forgot Password? </a>
-                    </div>
-                    <div class="input-group">
-                        <button type="submit" class="btn btn-block">Login</button>
-                    </div>                   
+                <form name="loginForm" class="shmyde-form col-lg-6 col-lg-offset-3 text-center" novalidate>
+                    
+                        <!-- Email control -->
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                                    <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="userObject.user.email"
+                                             ng-required='required' is-unique-email>
+                                    <span class="form_hint" ng-hide="loginForm.email.valid">                                      
+                                        <p ng-show="loginForm.email.$error.required">This field is required. </p>
+                                        <p ng-show="loginForm.email.$error.email">The email entered is invalid. </p>
+                                        <div class="loader" ng-show="loginForm.email.$pending"></div>
+                                        <p ng-show="loginForm.email.$error.isUniqueEmail">This email address is already taken. </p>
+                                    </span>
+                                </div>
+                            </div>                           
+                        </div>
+                    
+                        <!-- Password  -->
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+                                    <input  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' ng-minlength='8' ng-model="userObject.user.password">
+                                    <span class="form_hint" ng-hide="loginForm.password.valid">                                      
+                                        <p ng-show="loginForm.password.$error.required">A password is required to register. </p>
+                                        <p ng-show="loginForm.password.$error.minlength">The password entered is too short. </p>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2">
+                                <div class="input-group">
+                                    <label for="remember_me">Remember me</label>
+                                    <input type="checkbox" class="form-control" id="remember_me" name="remember_me" value="on" ng-model='userObject.user.remember_me'>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2">
+                                <a href="<?php echo site_url('user/forgot_password'); ?>">Forgot Password? </a>
+                            </div>
+                        </div>                    
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2">
+                                <button type="submit" class="btn btn-default pull-right">Login</button>
+                            </div>
+                        </div>                   
                 </form>
             </div>
         </div>
@@ -56,7 +88,7 @@
             <div class="tab-pane fade in active">
                 
                 <div class="row">
-                    <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;">
+                    <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;"  ng-show="register_error">
                         <span>There are errors in the form!</span>
                     </div>
                     <form name="registerForm" class="shmyde-form  col-lg-12 text-center"  novalidate ng-submit="registerForm.$valid && register()">

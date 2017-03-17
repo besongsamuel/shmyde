@@ -197,26 +197,45 @@
         
         $scope.register = function()
         {
-            
-            var xsrf = $.param({
-                });
-                
             $http({
-            method: 'POST',
-            url: $scope.site_url.concat('user/register'),
-            data : xsrf,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-            }).then(function successCallback(response) {
-              // this callback will be called asynchronously
-              // when the response is available
-              console.log(response);
-            }, function errorCallback(response) {
-              // called asynchronously if an error occurs
-              // or server returns response with an error status.
-              console.log(response);
-            });
+                  method  : 'POST',
+                  url     : $scope.site_url.concat('user/register'),
+                  data    : $.param($scope.registerationObject),  
+                  headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+                 })
+                  .success(function(data) {
+                    console.log(data);
+
+                    if (!data.success) {
+                      // if not successful, bind errors to error variables
+                      $scope.registrationError = true;
+                    } else {
+                      // if successful, bind success message to message
+                      
+                    }
+                  });
         };
-        
+     
+        $scope.login = function()
+        {
+            $http({
+                  method  : 'POST',
+                  url     : $scope.site_url.concat('user/login'),
+                  data    : $.param($scope.loginObject),  
+                  headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+                 })
+                  .success(function(data) {
+                    console.log(data);
+
+                    if (!data.success) {
+                      // if not successful, bind errors to error variables
+                      $scope.loginError = true;
+                    } else {
+                      // if successful, bind success message to message
+                      
+                    }
+                  });
+        };
        
     }]);
     

@@ -176,8 +176,7 @@ class User extends CI_Controller {
             $result = array();
             
             $result['success'] = false;
-		   
-            
+		               
             // load form helper and validation library
             $this->load->helper('form');
             $this->load->library('form_validation');

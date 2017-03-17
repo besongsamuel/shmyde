@@ -58,13 +58,12 @@
                 <div class="row">
                     <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;">
                         <span>There are errors in the form!</span>
-                        <pre>{{userObject.user | json}}</pre>
                     </div>
                     <form name="registerForm" class="shmyde-form  col-lg-12 text-center"  novalidate ng-submit="registerForm.$valid && register()">
                                                 
                         <!-- Email control -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
                                     <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="userObject.user.email"
@@ -81,7 +80,7 @@
                         
                         <!-- Last name and First name input controls -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                                     <input  type="text" name="lastname" ng-model="userObject.user.last_name" class="form-control" placeholder="Last Name" ng-required='required'>
@@ -93,7 +92,7 @@
                         </div>
                         
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                                     <input  type="text" name="firstname" ng-model="userObject.user.first_name" class="form-control" placeholder="First Name">                                    
@@ -103,7 +102,7 @@
                         
                         <!-- Phone number controls -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <!-- Phone number control -->
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
@@ -117,7 +116,7 @@
                         
                         <!-- Country -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-flag"></i></span>
                                     <select  class="form-control"  ng-model="userObject.user.country" name="country" pvp-country-picker>
@@ -129,7 +128,7 @@
                         
                         <!-- City -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
                                     <input  type="text" class="form-control" name="city"   ng-model="userObject.user.city" placeholder="City">
@@ -139,7 +138,7 @@
                         
                         <!-- Address Line 01 -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <!-- Address controls -->
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
@@ -150,7 +149,7 @@
                         
                         <!-- Address Line 02 -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
                                     <input  type="text" class="form-control" placeholder="Address Line 2" name="address_line_2" ng-model="userObject.user.address_line_2">
@@ -160,7 +159,7 @@
                                               
                         <!-- Password  -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
                                     <input  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" ng-model="userObject.user.password">
@@ -174,7 +173,7 @@
                         
                         <!-- Confirm Password -->
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
                                     <input  type="password" id="confirm_password" name="confirm_password" class="form-control" ng-required='required' placeholder="Confirm Password" ng-model="confirm_password" pw-check='password'>
@@ -185,10 +184,13 @@
                                 </div>
                             </div>
                         </div>
-                                                                                          
-                        <div class="input-group">
-                            <button type="submit" class="btn btn-block">Register</button>
-                        </div>                   
+                        
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2">
+                                <button type="submit" class="btn btn-default pull-right">Register</button>
+                            </div>
+                        </div>
+                        
                     </form>
                 </div>
             </div>

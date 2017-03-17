@@ -328,17 +328,22 @@ class User extends CI_Controller {
                 $result['is_confirmed'] = (bool)$user->is_confirmed;
                 $result['is_admin']     = (bool)$user->is_admin;
                 
+	    	// Go to previous page. 
+	    	// Login was successful
                 header("Location: ". site_url("/").$this->rememberme->getOrigPage());
             
             }
             else
             {
                 
-                $this->data['title'] = "Login or Register";
-                
-                $this->data['login_error'] = json_encode('true');
-            
-                $this->template->load('shmyde', 'user/login/login', $this->data);
+		$response = array();
+	    	$response['invalid'] = true;
+	    	$response['valid'] = false;
+	    	$response['message'] = 'Username or password incorrect. ';
+		   
+	    	// Send error messages to client
+	    	echo json_encode($response);
+		    
             }
                                  
 	}

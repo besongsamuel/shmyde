@@ -171,14 +171,30 @@
     
     app.controller('UserController', ['$scope', '$http', function($scope, $http)
     {
-        $scope.emailpattern = '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$'; 
+        $scope.registrationObject = 
+        {
+            country : 'CM',
+            email : '',
+            last_name : '',
+            first_name : '',
+            phone_number : '',
+            city : '',
+            address_line_1 : '',
+            address_line_2 : '',
+            password : ''
+        };
         
-        $scope.phonepattern = '[+3]?[0-9]*';
+        $scope.loginObject = 
+        {
+            email : '',
+            password : '',
+            remember_me : false
+            
+        };
+        
         
         $scope.required = true;
-        
-        $scope.country = 'CM';
-        
+                
         $scope.phone_number_has_focus = false;
         
         $scope.phone_number_focus = function(){
@@ -197,54 +213,86 @@
         
         $scope.register = function()
         {
-            $http({
-                  method  : 'POST',
-                  url     : $scope.site_url.concat('user/register'),
-                  data    : $.param($scope.registerationObject),  
-                  headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
-                 })
-                  .success(function(data) {
-                    console.log(data);
-
-                    if (!data.success) {
-                      // if not successful, bind errors to error variables
-                      $scope.registrationError = true;
-                    } else {
-                      // if successful, bind success message to message
-                      
-                    }
-                  });
+            if($scope.registerForm.$invalid)
+            {
+                if($scope.registerForm.confirm_password.$invalid)
+                {
+                    $("#r_confirm_password").focus();
+                }
+                
+                if($scope.registerForm.password.$invalid)
+                {
+                    $("#r_password").focus();
+                }
+                
+                if($scope.registerForm.phonenumber.$invalid)
+                {
+                    $("#r_phonenumber").focus();
+                }
+                
+                if($scope.registerForm.lastname.$invalid)
+                {
+                    $("#r_lastname").focus();
+                }
+                                
+                if($scope.registerForm.email.$invalid)
+                {
+                    $("#r_email").focus();
+                }
+            }
+            else
+            {
+                $http({
+                method  : 'POST',
+                url     : $scope.site_url.concat('user/register'),
+                data    : $.param($scope.registrationObject),  
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+                }).then(function successCallback(response) 
+                {
+                    $scope.register_error = response.data.invalid;
+                    
+                    window.location =  $scope.site_url.concat('user/post_registration/' + response.data.valid.toString()); 
+                    
+                }, function errorCallback(response) 
+                {
+                    window.location =  $scope.site_url.concat('user/post_registration/false'); 
+                });
+            }
+            
+            
         };
      
         $scope.login = function()
         {
-            $http({
+            
+            if($scope.loginForm.$invalid)
+            {
+                if($scope.loginForm.password.$invalid)
+                {
+                    $("#password").focus();
+                }
+                                
+                if($scope.loginForm.email.$invalid)
+                {
+                    $("#email").focus();
+                }
+            }
+            else
+            {
+                $http({
                   method  : 'POST',
                   url     : $scope.site_url.concat('user/login'),
                   data    : $.param($scope.loginObject),  
                   headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
-                 })
-                  .success(function(data) {
-                
-                    console.log(data);
+                }).then(function successCallback(response) 
+                {
+                    $scope.loginError = response.data.invalid;
 
-                    if (!data.success) {
-                        
-                        // if not successful, bind errors to error variables
-                        $scope.loginError = true;
-                        
-                    } else {
-                      
-                        // if successful, bind success message to message
-                        var responseObject = JSON.parse(data.data);
-                        
-                        if(data.invalid)
-                        {
-                            $scope.loginError = true;
-                        }
-                      
-                    }
-                  });
+                }, function errorCallback(response) 
+                {
+                    $scope.loginError = true;
+                });
+            }
         };
        
     }]);

@@ -12,20 +12,18 @@
                 <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;" ng-show="loginError">
                     <span><strong>Login Error: </strong>Incorrect email or password. </span>
                 </div>
-                <form name="loginForm" class="shmyde-form col-lg-6 col-lg-offset-3 text-center" ng-submit='loginForm.$valid && login()' novalidate>
+                <form name="loginForm" class="shmyde-form col-lg-12 text-center" ng-submit='login()' novalidate>
                     
                         <!-- Email control -->
                         <div class="row">
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                    <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="loginObject.email"
-                                             ng-required='required' is-unique-email>
+                                    <input  id="email" type="email" name="email" class="form-control" placeholder="Email" ng-model="loginObject.email"
+                                             ng-required='required'>
                                     <span class="form_hint" ng-hide="loginForm.email.valid">                                      
                                         <p ng-show="loginForm.email.$error.required">This field is required. </p>
                                         <p ng-show="loginForm.email.$error.email">The email entered is invalid. </p>
-                                        <div class="loader" ng-show="loginForm.email.$pending"></div>
-                                        <p ng-show="loginForm.email.$error.isUniqueEmail">This email address is already taken. </p>
                                     </span>
                                 </div>
                             </div>                           
@@ -36,7 +34,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                                    <input  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' ng-minlength='8' ng-model="loginObject.password">
+                                    <input type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' ng-minlength='8' ng-model="loginObject.password">
                                     <span class="form_hint" ng-hide="loginForm.password.valid">                                      
                                         <p ng-show="loginForm.password.$error.required">A password is required to register. </p>
                                         <p ng-show="loginForm.password.$error.minlength">The password entered is too short. </p>
@@ -75,14 +73,14 @@
                     <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;"  ng-show="register_error">
                         <span>There are errors in the form!</span>
                     </div>
-                    <form name="registerForm" class="shmyde-form  col-lg-12 text-center"  novalidate ng-submit="registerForm.$valid && register()">
+                    <form name="registerForm" class="shmyde-form  col-lg-12 text-center"  novalidate ng-submit="register()">
                                                 
                         <!-- Email control -->
                         <div class="row">
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                                    <input  type="email" name="email" class="form-control" placeholder="Email" ng-model="registrationObject.email"
+                                    <input id="r_email"  type="email" name="email" class="form-control" placeholder="Email" ng-model="registrationObject.email"
                                              ng-required='required' is-unique-email>
                                     <span class="form_hint" ng-hide="registerForm.email.valid">                                      
                                         <p ng-show="registerForm.email.$error.required">This field is required. </p>
@@ -99,7 +97,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                    <input  type="text" name="lastname" ng-model="registrationObject.last_name" class="form-control" placeholder="Last Name" ng-required='required'>
+                                    <input  id="r_lastname"  type="text" name="lastname" ng-model="registrationObject.last_name" class="form-control" placeholder="Last Name" ng-required='required'>
                                     <span class="form_hint" ng-hide="registerForm.lastname.valid">                                      
                                         <p ng-show="registerForm.lastname.$error.required">At least a last name is required. </p>
                                     </span>
@@ -122,7 +120,7 @@
                                 <!-- Phone number control -->
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
-                                    <input  type="text" name="phonenumber" ng-model="registrationObject.phone_number" class="input-group" international-phone-number ng-focus="phone_number_focus()" ng-blur="phone_number_blur()">
+                                    <input id="r_phonenumber"  type="text" name="phonenumber" ng-model="registrationObject.phone_number" class="input-group" international-phone-number ng-focus="phone_number_focus()" ng-blur="phone_number_blur()">
                                     <span class="phone_number_hint" ng-show="phone_number_has_focus && registerForm.phonenumber.$error.internationalPhoneNumber">                                      
                                         <p ng-show="registerForm.phonenumber.$error.internationalPhoneNumber">The phone number entered is invalid. </p>
                                     </span>
@@ -178,7 +176,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                                    <input  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" ng-model="registrationObject.password">
+                                    <input id="r_password"  type="password" name="password" id="password" class="form-control" placeholder="Password" ng-required='required' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" ng-model="registrationObject.password">
                                     <span class="form_hint" ng-hide="registerForm.password.valid">                                      
                                         <p ng-show="registerForm.password.$error.required">A password is required to register. </p>
                                         <p ng-show="registerForm.password.$error.pattern">The password must contain 8 or more characters that are of at least one number, and one uppercase and lowercase letter. </p>
@@ -192,7 +190,7 @@
                             <div class="col-lg-8 col-lg-offset-2">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
-                                    <input  type="password" id="confirm_password" name="confirm_password" class="form-control" ng-required='required' placeholder="Confirm Password" ng-model="registrationObject.confirm_password" pw-check='password'>
+                                    <input  type="password" id="r_confirm_password" name="confirm_password" class="form-control" ng-required='required' placeholder="Confirm Password" ng-model="registrationObject.confirm_password" pw-check='r_password'>
                                     <span class="form_hint" ng-hide="registerForm.confirm_password.valid">     
                                         <p ng-show="registerForm.confirm_password.$error.required">A password is required to register. </p>
                                         <p ng-show="registerForm.confirm_password.$error.pwmatch">The passwords entered don't match. </p>

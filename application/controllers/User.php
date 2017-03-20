@@ -69,7 +69,7 @@ class User extends CI_Controller {
         }
         
         
-       private function post_registration($success)
+        public function post_registration($success)
        {
            $this->data['title'] = "Registration";
 
@@ -172,7 +172,7 @@ class User extends CI_Controller {
 	 * @return void
 	 */
 	public function register() {
-		
+		            
             $result = array();
             
             $result['success'] = false;
@@ -187,9 +187,9 @@ class User extends CI_Controller {
             
             $user_data = array(
                 
-                'last_name' => $this->input->post('lastname'),
-                'first_name' => $this->input->post('lastname'),
-                'phone_number' => $this->input->post('phonenumber'),
+                'last_name' => $this->input->post('last_name'),
+                'first_name' => $this->input->post('last_name'),
+                'phone_number' => $this->input->post('phone_number'),
                 'address_line_1' => $this->input->post('address_line_1'),
                 'address_line_2' => $this->input->post('address_line_2'),
                 'country' => $this->input->post('country'),
@@ -212,12 +212,25 @@ class User extends CI_Controller {
 
                 $this->send_resitration_confirmation($user_id, $user->confirm_id, $email);
                 
-                $this->post_registration(true);
+                $response = array();
+	    	$response['invalid'] = false;
+	    	$response['valid'] = true;
+		   
+	    	// Send error messages to client
+	    	echo json_encode($response);
+                
+                //$this->post_registration(true);
             } 
             else
             {
+                $response = array();
+	    	$response['invalid'] = true;
+	    	$response['valid'] = false;
+		   
+	    	// Send error messages to client
+	    	echo json_encode($response);
                 // user creation failed, this should never happen
-                $this->post_registration(false);
+                //$this->post_registration(false);
             }
             
 	}

@@ -1,13 +1,15 @@
 
-<!-- Profile Header -->
+<div style="background-color: white">
+    
+    <!-- Profile Header -->
 <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 <div class="container">
     <div class="shmyde-profile">
         <img align="left" class="shmyde-image-lg" ng-src="<?php echo ASSETS_PATH; ?>images/account/background.png" alt="Profile image"/>
-        <img align="left" class="shmyde-image-profile thumbnail" ng-src="<?php echo ASSETS_PATH; ?>images/account/{{userObject.user.profile_image}}" alt="Profile image example"/>
+        <img align="left" class="shmyde-image-profile thumbnail" ng-src="<?php echo ASSETS_PATH; ?>images/account/{{userObject.user.avatar}}" alt="Profile image example"/>
         <div class="shmyde-profile-text">
             <h1>{{userObject.user.last_name + ", " + userObject.user.first_name}}</h1>
-            <p>userObject.user.email.</p>
+            <p>{{userObject.user.email}}.</p>
         </div>
     </div>
 </div> 
@@ -136,3 +138,6 @@
       </form>
     </div><!-- /.col-lg-12 -->
 </div><!-- /.row -->
+</div>
+
+

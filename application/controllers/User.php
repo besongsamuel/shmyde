@@ -198,39 +198,47 @@ class User extends CI_Controller {
 
             if ($this->user_model->create_user($email, $password, $user_data)) 
             {
-                $result['success'] = true;
+		$result['success'] = true;
 
-                $user_id = $this->user_model->get_user_id_from_email($email);
-                $user    = $this->user_model->get_user($user_id);
+		$user_id = $this->user_model->get_user_id_from_email($email);
+		$user    = $this->user_model->get_user($user_id);
 
-                // set session user datas
-                $_SESSION['user_id']      = (int)$user->id;
-                $_SESSION['email']     = (string)$user->email;
-                $_SESSION['logged_in']    = (bool)true;
-                $_SESSION['is_confirmed'] = (bool)$user->is_confirmed;
-                $_SESSION['is_admin']     = (bool)$user->is_admin;
-
-                $this->send_resitration_confirmation($user_id, $user->confirm_id, $email);
-                
-                $response = array();
-	    	$response['invalid'] = false;
-	    	$response['valid'] = true;
+		// set session user datas
+		$_SESSION['user_id']      = (int)$user->id;
+		$_SESSION['email']     = (string)$user->email;
+		$_SESSION['logged_in']    = (bool)true;
+		$_SESSION['is_confirmed'] = (bool)$user->is_confirmed;
+		$_SESSION['is_admin']     = (bool)$user->is_admin;
+		
+		    try
+		    {
+			$this->send_resitration_confirmation($user_id, $user->confirm_id, $email);
+			$response = array();
+			$response['invalid'] = false;
+			$response['valid'] = true;
+		    }
+		    catch(Exception $e)
+		    {
+			$response = array();
+			$response['invalid'] = true;
+			$response['valid'] = false;
+			$response['message'] = $e->getMessage();
+		    }
 		   
 	    	// Send error messages to client
 	    	echo json_encode($response);
                 
-                //$this->post_registration(true);
             } 
             else
             {
                 $response = array();
 	    	$response['invalid'] = true;
 	    	$response['valid'] = false;
+	    	$response['message'] = 'An unexpected error occured. Please try again. ';
 		   
 	    	// Send error messages to client
 	    	echo json_encode($response);
-                // user creation failed, this should never happen
-                //$this->post_registration(false);
+
             }
             
 	}

@@ -3,8 +3,8 @@
 <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 <div class="container">
     <div class="shmyde-profile">
-        <img align="left" class="shmyde-image-lg" src="http://lorempixel.com/850/280/nightlife/5/" alt="Profile image example"/>
-        <img align="left" class="shmyde-image-profile thumbnail" src="http://lorempixel.com/180/180/people/9/" alt="Profile image example"/>
+        <img align="left" class="shmyde-image-lg" ng-src="<?php echo ASSETS_PATH; ?>images/account/background.png" alt="Profile image"/>
+        <img align="left" class="shmyde-image-profile thumbnail" ng-src="<?php echo ASSETS_PATH; ?>images/account/{{userObject.user.profile_image}}" alt="Profile image example"/>
         <div class="shmyde-profile-text">
             <h1>{{userObject.user.last_name + ", " + userObject.user.first_name}}</h1>
             <p>userObject.user.email.</p>
@@ -14,7 +14,7 @@
 
 <!-- Edit User Details Section -->
   <div class="row">
-    <div class="col-md-4 col-md-offset-4">
+    <div class="col-md-8 col-md-offset-2">
       <form class="form-horizontal" role="form">
         <fieldset>
 
@@ -34,8 +34,8 @@
                 </div>
             </div>
             
-          <!-- Gender input-->
-          <div class="form-group">
+              <!-- Gender input-->
+              <div class="form-group">
                 <label class="col-sm-2 control-label" for="gender">Gender</label>
                 <div class="col-sm-10">
                     <select name="gender" id="gender" ng-model="userObject.user.gender" class="form-control">
@@ -45,11 +45,11 @@
                         <option value='other'>Other</option>
                     </select>
                 </div>
-          </div>
+              </div>
             
           <!-- DoB input-->
           <div class="form-group">
-                <label class="col-sm-2 control-label" for="dob">Line 1</label>
+                <label class="col-sm-2 control-label" for="dob">Date of Birth</label>
                 <div class="col-sm-10">
                     <input type="date" name="dob" id="dob" ng-model="userObject.user.dob" class="form-control">
                 </div>
@@ -71,7 +71,7 @@
 
 <!-- Edit Address Section -->
   <div class="row">
-    <div class="col-md-4 col-md-offset-4">
+    <div class="col-md-8 col-md-offset-2">
       <form class="form-horizontal" role="form">
         <fieldset>
 
@@ -114,8 +114,6 @@
               <input type="text" placeholder="Post Code" class="form-control">
             </div>
           </div>
-
-
 
           <!-- Text input-->
           <div class="form-group">

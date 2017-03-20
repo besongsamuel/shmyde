@@ -37,6 +37,8 @@ class User extends CI_Controller {
 	{
 		$this->data['title'] = 'Account';
 		
+		$this->data['cssLinks'] = array('account');
+		
 		// No user is logged, goto home page
 		if($this->userObject->id == -1)
 		{

@@ -698,6 +698,7 @@ class UserObject
     public $city;
     public $postcode;
     public $email;
+    public $avatar;
 
 
     public function __construct($user_object)
@@ -712,6 +713,7 @@ class UserObject
         $this->country = $user_object != null ? $user_object->country : "";
         $this->city = $user_object != null ? $user_object->city : "";
         $this->postcode = $user_object != null ? $user_object->postcode : "";
+        $this->avatar = $user_object != null ? $user_object->avatar : "default.png";
     }
 
 }

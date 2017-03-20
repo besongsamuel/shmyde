@@ -10,7 +10,7 @@
         <div id="login" class="tab-pane fade in active">
             <div class="row">
                 <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;" ng-show="loginError">
-                    <span><strong>Login Error: </strong>Incorrect email or password. </span>
+                    <span><strong>Login Error: </strong>{{login_error_message}}</span>
                 </div>
                 <form name="loginForm" class="shmyde-form col-lg-12 text-center" ng-submit='login()' novalidate>
                     
@@ -71,7 +71,7 @@
                 
                 <div class="row">
                     <div class="alert alert-danger col-lg-6 col-lg-offset-3" style="margin-top: 10px;"  ng-show="register_error">
-                        <span>There are errors in the form!</span>
+                        <span><strong>Registration Error: </strong>{{registration_error_message}}</span>
                     </div>
                     <form name="registerForm" class="shmyde-form  col-lg-12 text-center"  novalidate ng-submit="register()">
                                                 

@@ -194,6 +194,10 @@
         
         
         $scope.required = true;
+        
+        $scope.registration_error_message = '';
+        
+        $scope.login_error_message = '';
                 
         $scope.phone_number_has_focus = false;
         
@@ -287,10 +291,16 @@
                 }).then(function successCallback(response) 
                 {
                     $scope.loginError = response.data.invalid;
+                    
+                    if($scope.loginError)
+                    {
+                        $scope.login_error_message = response.data.message;
+                    }
 
                 }, function errorCallback(response) 
                 {
                     $scope.loginError = true;
+                    $scope.login_error_message = 'An unexpected error occured. Please try again. ';
                 });
             }
         };

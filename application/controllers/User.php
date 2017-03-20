@@ -32,6 +32,21 @@ class User extends CI_Controller {
             
             $this->template->load('shmyde', 'user/login/login', $this->data);
 	}
+	
+	public function account()
+	{
+		$this->data['title'] = 'Account';
+		
+		// No user is logged, goto home page
+		if($this->userObject->id == -1)
+		{
+			$this->template->load('shmyde', 'home', $this->data);
+		}
+		else
+		{
+			$this->template->load('shmyde', 'user/account', $this->data);
+		}
+	}
         
         public function choose_password() 
         {

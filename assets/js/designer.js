@@ -688,7 +688,8 @@ function Product(product_object)
             thread_id : -1,
             measurements : -1,
             mix_menus : [],
-            options : []
+            options : [],
+            design_image : ''
         };
         
         designParameters.fabric_id = this.product.default_fabric !== null ? this.product.default_fabric.fabric_id : -1;

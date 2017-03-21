@@ -72,17 +72,18 @@ function User(user_object)
             
             var designParameters = productManager.getDesignParameters();
             
-            html2canvas(document.getElementById("design-preview"), {
-            onrendered: function (canvas) {
-                   $(document).append(canvas);
-                }
+            var node = document.getElementById('design-preview');
+            
+            // Save the current design as an immage
+            domtoimage.toPng(node)
+            .then(function (dataUrl) 
+            {
+                designParameters.designImage = dataUrl;
+            })
+            .catch(function (error) {
+                console.error('oops, something went wrong!', error);
             });
-            
-            $("#design-preview").on('click', function () {
-                 
-            });
-            
-            
+                        
             window.sessionStorage.setItem("designParameters", JSON.stringify(designParameters));
             
             $.ajax({
@@ -92,7 +93,7 @@ function User(user_object)
                 type : 'POST',
                 success : function()
                 {
-                    //window.location.href = Instance.base_url.concat('checkout');
+                    window.location.href = Instance.base_url.concat('checkout');
                 }
             });
                         

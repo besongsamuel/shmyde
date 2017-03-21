@@ -45,7 +45,7 @@
     <script src="<?php echo ASSETS_PATH; ?>js/modernizr.js"></script>    
     <script src="<?php echo ASSETS_PATH; ?>sly-master/dist/sly.js"></script>
     <script src="<?php echo ASSETS_PATH; ?>color-picker/js/bootstrap-colorpicker.js"></script>
-    <script src="<?php echo ASSETS_PATH; ?>js/html2canvas.js"></script>
+    <script src="<?php echo ASSETS_PATH; ?>js/dom-to-image.min.js"></script>
     <script src="<?php echo ASSETS_PATH; ?>js/user-object.js"></script>
     <script src="<?php echo ASSETS_PATH; ?>js/shmyde-angular.js" type="text/javascript"></script>
 

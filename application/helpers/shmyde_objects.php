@@ -86,7 +86,7 @@ class DesignProduct
         }        
     }
 
-    public function LoadProduct($model, $product_id) 
+    public function LoadProduct($model, $product_id, $load_images = true) 
     {
         $product_object = $model->get_product($product_id);
         
@@ -98,10 +98,10 @@ class DesignProduct
             $this->price = $product_object->base_price;
             
             $this->LoadMeasurements($model);
-            $this->LoadFabrics($model);
-            $this->LoadButtons($model);
-            $this->LoadThreads($model);
-            $this->LoadProductMenus($model);
+            $this->LoadFabrics($model, $load_images);
+            $this->LoadButtons($model, $load_images);
+            $this->LoadThreads($model, $load_images);
+            $this->LoadProductMenus($model, $load_images);
 
             if(array_key_exists($product_object->default_button_id, $this->buttons))
             {
@@ -118,7 +118,7 @@ class DesignProduct
         }
     }
     
-    private function LoadProductMenus($model) 
+    private function LoadProductMenus($model, $load_images = true) 
     {
         $product_menus = $model->get_product_menus($this->id);
             
@@ -127,13 +127,13 @@ class DesignProduct
             foreach ($product_menus->result() as $product_menu) 
             {
                 $design_menu = new DesignMenu();
-                $design_menu->LoadMenu($model, $product_menu->id);
+                $design_menu->LoadMenu($model, $product_menu->id, $load_images);
                 $this->product_menus[$product_menu->id] = $design_menu;
             }
         }
     }
     
-    private function LoadFabrics($model)
+    private function LoadFabrics($model, $load_images = true)
     {
         $fabrics = $model->get_fabrics();
         
@@ -141,12 +141,12 @@ class DesignProduct
         {
             foreach ($fabrics->result() as $fabric) 
             {
-                $this->fabrics[$fabric->fabric_id] = new DesignFabric($model, $fabric);
+                $this->fabrics[$fabric->fabric_id] = new DesignFabric($model, $fabric, $load_images);
             }
         }      
     }
     
-    private function LoadButtons($model)
+    private function LoadButtons($model, $load_images = true)
     {
         $buttons = $model->get_buttons();
         
@@ -154,12 +154,12 @@ class DesignProduct
         {
             foreach ($buttons->result() as $button) 
             {
-                $this->buttons[$button->id] = new DesignButtonImage($button);
+                $this->buttons[$button->id] = new DesignButtonImage($button, $load_images);
             }
         }      
     }
     
-    private function LoadThreads($model)
+    private function LoadThreads($model, $load_images = true)
     {
         $threads = $model->get_threads();
         
@@ -167,7 +167,7 @@ class DesignProduct
         {
             foreach ($threads->result() as $thread) 
             {
-                $this->threads[$thread->id] = new DesignButtonThread($thread);
+                $this->threads[$thread->id] = new DesignButtonThread($thread, $load_images);
             }
         }      
     }
@@ -287,7 +287,7 @@ class DesignMenu
     public $option_selected = -1;
 
 
-    public function LoadMenu($model, $menu_id) 
+    public function LoadMenu($model, $menu_id, $load_images = true) 
     {
         $menu_object = $model->get_menu($menu_id);
         
@@ -302,11 +302,11 @@ class DesignMenu
             $this->is_independent = $menu_object->is_independent; 
             $this->category = $menu_object->shmyde_design_category_id; 
             
-            $this->LoadMenuOptions($model);
+            $this->LoadMenuOptions($model, $load_images);
         }
     }
     
-    private function LoadMenuOptions($model)
+    private function LoadMenuOptions($model, $load_images = true)
     {
         // Is a fabric Menu
         if($this->category == 1)
@@ -317,13 +317,12 @@ class DesignMenu
             {
                 foreach ($menu_options->result() as $menu_option) 
                 {
-                    $design_option = new DesignFabric($model, $menu_option);
+                    $design_option = new DesignFabric($model, $menu_option, $load_images);
                     $this->design_options[$menu_option->id] = $design_option;
                 }
             }
         }
-        
-        
+                
         // Is a design Menu
         if($this->category == 2)
         {
@@ -336,7 +335,7 @@ class DesignMenu
                     $design_option = new DesignObject();
                     $design_option->outer_fabric = $this->outer_fabric;
                     $design_option->inner_fabric = $this->inner_fabric; 
-                    $design_option->LoadObject($model, $menu_option->id);
+                    $design_option->LoadObject($model, $menu_option->id, $load_images);
 
                     $this->design_options[$menu_option->id] = $design_option;
                 }
@@ -416,7 +415,7 @@ class DesignObject
      * @param type $model The Design Model
      * @param type $object_id The id of the object
      */
-    public function LoadObject($model, $object_id) 
+    public function LoadObject($model, $object_id, $load_images = true) 
     {
         $shmyde_object = $model->get_object($object_id);
   
@@ -428,14 +427,14 @@ class DesignObject
             $this->description = $shmyde_object->description;
             $this->selected = $shmyde_object->is_default;
 
-            $this->loadObjectImages($model);           
+            $this->loadObjectImages($model, $load_images);           
             $this->LoadDependentMenuIDs($model);   
-            $this->loadObjectThumbnail($model);
+            $this->loadObjectThumbnail($model, $load_images);
                 
         }
     }
     
-    private function loadObjectImages($model)
+    private function loadObjectImages($model, $load_images = true)
     {
         
         $object_images = $model->get_object_images($this->id);
@@ -444,7 +443,7 @@ class DesignObject
         {
             foreach ($object_images->result() as $object_image)
             {
-                $design_object_image = new DesignImage($model, $object_image);
+                $design_object_image = new DesignImage($model, $object_image, $load_images);
                 $design_object_image->outer_fabric = $this->outer_fabric;
                 $design_object_image->inner_fabric = $this->inner_fabric;   
                 
@@ -453,16 +452,20 @@ class DesignObject
         }
     }
     
-    private function loadObjectThumbnail($model) 
+    private function loadObjectThumbnail($model, $load_images = true) 
     {
         $object_thumbnail = $model->get_object_thumbnail($this->id);
         
         if($object_thumbnail != null)
         {
-            $path = ASSETS_DIR_PATH.'images/design/thumbnail/'.$object_thumbnail->name;
-            $type = pathinfo($path, PATHINFO_EXTENSION);
-            $data = file_get_contents($path);
-            $this->base_64_thumbnail = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            if($load_images)
+            {
+                $path = ASSETS_DIR_PATH.'images/design/thumbnail/'.$object_thumbnail->name;
+                $type = pathinfo($path, PATHINFO_EXTENSION);
+                $data = file_get_contents($path);
+                $this->base_64_thumbnail = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            }
+            
         }
     }
     
@@ -530,7 +533,7 @@ class DesignImage
     
     public $buttons = array();
 
-    public function __construct($model, $image_object)
+    public function __construct($model, $image_object, $load_images = true)
     {
         $this->id = $image_object->id;
         $this->name = $image_object->name;
@@ -543,9 +546,13 @@ class DesignImage
         $this->server_path = ASSETS_DIR_PATH.$this->dir_prefix.$this->name;
         $this->client_path = ASSETS_PATH.$this->dir_prefix.$this->name;
         
-        $type = pathinfo($this->server_path, PATHINFO_EXTENSION);
-        $data = file_get_contents($this->server_path);
-        $this->original_base_64_image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        if($load_images)
+        {
+            $type = pathinfo($this->server_path, PATHINFO_EXTENSION);
+            $data = file_get_contents($this->server_path);
+            $this->original_base_64_image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
+        
         
         $this->LoadImageButtons($model);
     }
@@ -602,7 +609,7 @@ class DesignButtonImage
     
     public $dir_prefix = "images/buttons/";
 
-    public function __construct($button_image_object)
+    public function __construct($button_image_object, $load_images = true)
     {
         $this->id = $button_image_object->id;
         $this->name = $button_image_object->name;
@@ -610,10 +617,14 @@ class DesignButtonImage
         $this->server_path = ASSETS_DIR_PATH.$this->dir_prefix.$button_image_object->design_image_name;
         $this->client_path = ASSETS_PATH.$this->dir_prefix.$button_image_object->design_image_name;
         
-        $type = pathinfo($this->server_path, PATHINFO_EXTENSION);
-        $data = file_get_contents($this->server_path);
-        $this->base_64_image = 'data:image/' . $type . ';base64,' . base64_encode($data);
-        $this->original_base_64_image = $this->base_64_image;
+        if($load_images)
+        {
+            $type = pathinfo($this->server_path, PATHINFO_EXTENSION);
+            $data = file_get_contents($this->server_path);
+            $this->base_64_image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            $this->original_base_64_image = $this->base_64_image;
+        }
+        
               
     }
 }
@@ -634,7 +645,7 @@ class DesignButtonThread
     
     public $color;
     
-    public function __construct($thread_object)
+    public function __construct($thread_object, $load_images = true)
     {
         $this->id = $thread_object->id;
         $this->name = $thread_object->image_name;
@@ -643,9 +654,12 @@ class DesignButtonThread
         $this->server_path = ASSETS_DIR_PATH."images/threads/".$this->name;
         $this->client_path = ASSETS_PATH."images/threads/".$this->name;
         
-        $type = pathinfo($this->server_path, PATHINFO_EXTENSION);
-        $data = file_get_contents($this->server_path);
-        $this->original_base_64_image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        if($load_images)
+        {
+            $type = pathinfo($this->server_path, PATHINFO_EXTENSION);
+            $data = file_get_contents($this->server_path);
+            $this->original_base_64_image = 'data:image/' . $type . ';base64,' . base64_encode($data);
+        }
     }
 }
 
@@ -653,11 +667,11 @@ class DesignFabric extends DesignImage
 {
     public $fabric_id;
     
-    public function __construct($model, $fabric_object)
+    public function __construct($model, $fabric_object, $load_images = true)
     {
         $this->fabric_id = $fabric_object->fabric_id;
         $this->dir_prefix = "images/product/fabric/";            
-        parent::__construct($model, $fabric_object);
+        parent::__construct($model, $fabric_object, $load_images);
         
     }
 }

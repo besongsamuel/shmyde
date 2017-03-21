@@ -479,6 +479,25 @@
             $scope.selected_product = 0;
         });
     }]);
+    
+    app.controller('ProductController', ['$scope', function($scope)
+    {
+        // This is the product managed by the product controller. 
+        $scope.products = [];
+        
+        $scope.selected_product_id = -1;
+        
+        $scope.delete_product = function(product_id)
+        {
+        
+        };
+        
+        $scope.add_product = function()
+        {
+            
+        };
+        
+    }]);
 
         
 })();

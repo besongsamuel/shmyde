@@ -71,19 +71,7 @@ function User(user_object)
             Instance = this;
             
             var designParameters = productManager.getDesignParameters();
-            
-            var node = document.getElementById('design-preview');
-            
-            // Save the current design as an immage
-            domtoimage.toPng(node)
-            .then(function (dataUrl) 
-            {
-                designParameters.designImage = dataUrl;
-            })
-            .catch(function (error) {
-                console.error('oops, something went wrong!', error);
-            });
-                        
+     
             window.sessionStorage.setItem("designParameters", JSON.stringify(designParameters));
             
             $.ajax({

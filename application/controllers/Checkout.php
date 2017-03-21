@@ -32,9 +32,11 @@ class Checkout extends CI_Controller
             $productManager = new DesignProduct();
             $productManager->LoadProduct(
                     $this->design_model, 
-                    $user_design['product_id']);
+                    $user_design['product_id'], false);
             $productManager->LoadUserDesign($user_design);
             $this->data['productManager'] = json_encode($productManager);
+            
+            $this->data['designImage'] = $user_design['design_image'];
         }
 
         $this->data['cssLinks'] = array('product-checkout');

@@ -72,35 +72,35 @@ class Admin extends CI_Controller {
             show_404();
         }
         
-        $data['cssLinks'] = array('admin');
+        $this->data['cssLinks'] = array('admin');
 
-        if($page == 'product'){
-
-            $data['products'] = $this->admin_model->get_all_products();
+        if($page == 'product')
+        {
+            $this->data['products'] = $this->admin_model->get_all_products();
 
         }
 
-        if($page == 'menu'){
-
-            $data['menus'] = $this->admin_model->get_all_menus();
+        if($page == 'menu')
+        {
+            $this->data['menus'] = $this->admin_model->get_all_menus();
         }
 
-        if($page == 'submenu'){
-
-            $data['submenus'] = $this->admin_model->get_all_submenus();
+        if($page == 'submenu')
+        {
+            $this->data['submenus'] = $this->admin_model->get_all_submenus();
         }
 
-        if($page == 'option'){
+        if($page == 'option')
+        {
+            $this->data['menus'] = $this->admin_model->get_design_menus();
 
-            $data['menus'] = $this->admin_model->get_design_menus();
+            $this->data['products'] = $this->admin_model->get_all_products();
 
-            $data['products'] = $this->admin_model->get_all_products();
+            $this->data['default_product_id'] = $product_id;
 
-            $data['default_product_id'] = $product_id;
+            $this->data['default_menu_id'] = $menu_id;
 
-            $data['default_menu_id'] = $menu_id;
-
-            $data['default_submenu_id'] = $submenu_id;
+            $this->data['default_submenu_id'] = $submenu_id;
 
             $query_options = $this->admin_model->get_all_options_extended();
 
@@ -108,58 +108,49 @@ class Admin extends CI_Controller {
 
             foreach ($query_options->result() as $row)
             {
-                    $options[$row->id]['id'] = $row->id;
-                    $options[$row->id]['name'] = $row->name;
-                    $options[$row->id]['description'] = $row->description;
-                    $options[$row->id]['price'] = $row->price;
-                    $options[$row->id]['product_name'] = $row->product_name;
-                    $options[$row->id]['menu_name'] = $row->menu_name;
-                    $options[$row->id]['product_id'] = $row->product_id;
-                    $options[$row->id]['menu_id'] = $row->shmyde_design_main_menu_id;
-                    $options[$row->id]['is_default'] = $row->is_default;
+                $options[$row->id]['id'] = $row->id;
+                $options[$row->id]['name'] = $row->name;
+                $options[$row->id]['description'] = $row->description;
+                $options[$row->id]['price'] = $row->price;
+                $options[$row->id]['product_name'] = $row->product_name;
+                $options[$row->id]['menu_name'] = $row->menu_name;
+                $options[$row->id]['product_id'] = $row->product_id;
+                $options[$row->id]['menu_id'] = $row->shmyde_design_main_menu_id;
+                $options[$row->id]['is_default'] = $row->is_default;
 
             }
 
-
-            $data['options'] = $options;
+            $this->data['options'] = $options;
         }
             
-            if($page == 'fabric'){
-                
-                $data['fabrics'] = $this->admin_model->get_all_fabrics();
-                                           
-            }
-            
-            if($page == 'measurement'){
-                
-                $data['measurements'] = $this->admin_model->get_measurements();
-                                           
-            }
-            
-            if($page == 'thread'){
-                
-                $data['threads'] = $this->admin_model->get_threads();
-                                           
-            }
-            
-            if($page == 'button'){
-                
-                $data['buttons'] = $this->admin_model->get_buttons();
-                                           
-            }
-            
-            if($page == 'product_fabric'){
-                
-                $data['product_fabrics'] = $this->admin_model->get_all_product_fabrics_with_submenus();
-            }
+        if($page == 'fabric')
+        {
+            $this->data['fabrics'] = $this->admin_model->get_all_fabrics();
+        }
 
-            $data['title'] = ucfirst($page); 
+        if($page == 'measurement')
+        {
+            $this->data['measurements'] = $this->admin_model->get_measurements();
+        }
 
-            $this->lang->load('shmyde', CURRENT_LANGUAGE);
+        if($page == 'thread')
+        {
+            $this->data['threads'] = $this->admin_model->get_threads();
+        }
 
-            $this->load->view('pages/header', $data);
-            $this->load->view('admin/'.$page, $data);
+        if($page == 'button')
+        {
+            $this->data['buttons'] = $this->admin_model->get_buttons();
+        }
 
+        if($page == 'product_fabric')
+        {
+            $this->data['product_fabrics'] = $this->admin_model->get_all_product_fabrics_with_submenus();
+        }
+
+        $this->data['title'] = ucfirst($page); 
+
+        $this->template->load('shmyde','admin/'.$page, $this->data);
 
     }
 
@@ -170,110 +161,97 @@ class Admin extends CI_Controller {
             show_404();
         }
         
-        
-
-        if ($this->input->server('REQUEST_METHOD') == 'POST'){
-
-            if($page == 'product'){
-
+        if ($this->input->server('REQUEST_METHOD') == 'POST')
+        {
+            if($page == 'product')
+            {
                 $this->edit_product($id);
             }
 
-            if($page == 'menu'){
-
+            if($page == 'menu')
+            {
                 $this->edit_menu($id);
             }
 
-            if($page == 'option'){
-
+            if($page == 'option')
+            {
                 $this->edit_option($id, $param0, $param1);
             }
             
             
-            if($page == 'product_fabric'){
-
+            if($page == 'product_fabric')
+            {
                 $this->edit_product_fabric($id);
             }
             
-            if($page == 'measurement'){
-
+            if($page == 'measurement')
+            {
                 $this->edit_measurement($id);
             }
             
-            if($page == 'thread'){
-
+            if($page == 'thread')
+            {
                 $this->edit_thread($id);
             }
             
-            if($page == 'button'){
-
+            if($page == 'button')
+            {
                 $this->edit_button($id);
             }
 
             return;
         }
         
-        $data = Array();
+        $this->data = Array();
         
-        $data['cssLinks'] = array('admin');
+        $this->data['cssLinks'] = array('admin');
         
-        $data['is_edit'] = json_encode(true);
+        $this->data['is_edit'] = json_encode(true);
         
-        if($page == 'product'){
-            
-            $data = $this->begin_edit_product($id, $data);	
+        if($page == 'product')
+        {
+            $this->begin_edit_product($id);	
         }
 
-        if($page == 'menu'){
-
-            $data = $this->begin_edit_menu($id, $data);
+        if($page == 'menu')
+        {
+            $this->begin_edit_menu($id);
         }
 
 
-        if($page == 'option'){
-                
-            $data = $this->begin_edit_option($id, $data, $param0, $param1);
-            
-        }
-        
-        if($page == 'fabric'){
-                            
-            $data = $this->begin_edit_fabric($id, $data);
-            
+        if($page == 'option')
+        {
+            $this->begin_edit_option($id, $param0, $param1);
         }
         
-        if($page == 'measurement'){
-                            
-            $data = $this->begin_edit_measurement($id, $data);
-            
+        if($page == 'fabric')
+        {
+            $this->begin_edit_fabric($id);
         }
         
-        if($page == 'thread'){
-                            
-            $data = $this->begin_edit_thread($id, $data);
-            
+        if($page == 'measurement')
+        {
+            $this->begin_edit_measurement($id);
         }
         
-        if($page == 'button'){
-                            
-            $data = $this->begin_edit_button($id, $data);
-            
+        if($page == 'thread')
+        {
+            $this->begin_edit_thread($id);
         }
         
-        if($page == 'product_fabric'){
-                            
-            $data = $this->begin_edit_product_fabric($id, $data);
+        if($page == 'button')
+        {
+            $this->begin_edit_button($id);
+        }
+        
+        if($page == 'product_fabric')
+        {
+            $this->begin_edit_product_fabric($id);
         }
 
-        $data['title'] = 'EDIT';  // Capitalize the first letter
-                
-        $this->lang->load('shmyde', CURRENT_LANGUAGE);
-
-        $this->load->view('pages/header', $data);
-
-        $this->load->view('admin/create_'.$page, $data);
-        
-
+        $this->data['title'] = 'EDIT';  // Capitalize the first letter
+                        
+        $this->template->load('shmyde','admin/create_'.$page, $this->data);
 
     }
 
@@ -387,7 +365,6 @@ class Admin extends CI_Controller {
         }
     }
     
-    
     function edit_option($id){
 
         if($this->admin_model->edit_option(
@@ -408,12 +385,11 @@ class Admin extends CI_Controller {
         }
     }
     
-    
-    function begin_edit_product($id, $data){
+    function begin_edit_product($id){
                 
-        $data['product'] = $this->admin_model->get_product($id);
+        $this->data['product'] = $this->admin_model->get_product($id);
         
-        $data['product_id'] = $data['product']->id;
+        $this->data['product_id'] = $this->data['product']->id;
         
         $back_image = $this->admin_model->get_images($id, 'shmyde_product_back_image');
         
@@ -421,16 +397,14 @@ class Admin extends CI_Controller {
         
         if(isset($back_image)){
             
-            if(!empty($back_image)){
-                
-                
-                $data['back_images'] = json_encode($back_image);
+            if(!empty($back_image))
+            {
+                $this->data['back_images'] = json_encode($back_image);
             }
-            else{
-                
-                $data['back_images'] = array();
+            else
+            {
+                $this->data['back_images'] = array();
             }
-            
         }
         
         if(isset($front_image)){
@@ -438,98 +412,84 @@ class Admin extends CI_Controller {
             if(!empty($front_image)){
                 
                 
-                $data['front_images'] = json_encode($front_image);
+                $this->data['front_images'] = json_encode($front_image);
             }
             else{
                 
-                $data['front_images'] = array();
+                $this->data['front_images'] = array();
             }
             
         }
-
-        
-        return $data;
         
     }
         
-    function begin_edit_product_fabric($id, $data){
+    function begin_edit_product_fabric($id)
+    {
         
         // Gets the fabric with its image data         
-        $data['product_fabric'] = json_encode($this->admin_model->get_product_fabric($id));
+        $this->data['product_fabric'] = json_encode($this->admin_model->get_product_fabric($id));
                                                 
-        $data['fabric_id'] = $id;
+        $this->data['fabric_id'] = $id;
         
-        $data['products'] = $this->admin_model->get_all_products();
+        $this->data['products'] = $this->admin_model->get_all_products();
         
-        $data['fabric_submenus'] = $this->admin_model->get_fabric_menus();
+        $this->data['fabric_submenus'] = $this->admin_model->get_fabric_menus();
         
-        $data['product_submenu_fabrics'] = $this->admin_model->get_product_submenu_fabrics();
-                              
-        return $data;
-        
+        $this->data['product_submenu_fabrics'] = $this->admin_model->get_product_submenu_fabrics();
+                                      
     }
     
-    function begin_edit_menu($id, $data){
+    function begin_edit_menu($id)
+    {
         
-        $data['menu'] = $this->admin_model->get_menu($id);
+        $this->data['menu'] = $this->admin_model->get_menu($id);
         
-        $data['products'] = $this->admin_model->get_all_products();
+        $this->data['products'] = $this->admin_model->get_all_products();
         
-        $data['categories'] = $this->admin_model->get_categories();
+        $this->data['categories'] = $this->admin_model->get_categories();
         
-        $data['menu_category'] = $this->admin_model->get_category($data['menu']->shmyde_design_category_id);
-                        
-        return $data;
-        
+        $this->data['menu_category'] = $this->admin_model->get_category($this->data['menu']->shmyde_design_category_id);
+                                
     }
     
-    function begin_edit_measurement($id, $data){
+    function begin_edit_measurement($id)
+    {
         
-        $data['measurement'] = $this->admin_model->get_measurement($id);
+        $this->data['measurement'] = $this->admin_model->get_measurement($id);
         
-        $data['products'] = $this->admin_model->get_all_products();
-                     
-        return $data;
-        
-    }
-    
-    function begin_edit_thread($id, $data){
-        
-        $data['thread'] = $this->admin_model->get_thread($id);
+        $this->data['products'] = $this->admin_model->get_all_products();
                              
-        return $data;
-        
     }
     
-    function begin_edit_button($id, $data){
-        
-        $data['button'] = $this->admin_model->get_button($id);
-                             
-        return $data;
-        
+    function begin_edit_thread($id)
+    {
+        $this->data['thread'] = $this->admin_model->get_thread($id);
     }
     
-    function begin_edit_buttons($id, $data){
-        
-        $data['button'] = $this->admin_model->get_button($id);
-                             
-        return $data;
-        
+    function begin_edit_button($id)
+    {
+        $this->data['button'] = $this->admin_model->get_button($id);
+    }
+    
+    function begin_edit_buttons($id)
+    {
+        $this->data['button'] = $this->admin_model->get_button($id);
+                                     
     }
         
-    function begin_edit_option($id, $data, $param0 = 0, $param1 = 0){
+    function begin_edit_option($id, $param0 = 0, $param1 = 0){
                 
-        $data['option_id'] = $id;
+        $this->data['option_id'] = $id;
         
-        $data['menus'] = $this->admin_model->get_design_dependent_menus();
+        $this->data['menus'] = $this->admin_model->get_design_dependent_menus();
 
-        $data['products'] = $this->admin_model->get_all_products();
+        $this->data['products'] = $this->admin_model->get_all_products();
         
-        $data['selected_product'] = $param0;
+        $this->data['selected_product'] = $param0;
         
-        $data['selected_menu'] = $param1;
+        $this->data['selected_menu'] = $param1;
         
-        $data['option_dependent_menu'] = $this->admin_model->get_option_dependent_menus($id);
+        $this->data['option_dependent_menu'] = $this->admin_model->get_option_dependent_menus($id);
 
         $option_images = $this->admin_model->get_images($id, 'shmyde_images');
                 
@@ -540,39 +500,33 @@ class Admin extends CI_Controller {
             if(!empty($option_images)){
                 
                 
-                $data['option_images'] = json_encode($option_images);
+                $this->data['option_images'] = json_encode($option_images);
             }
             else{
                 
-                $data['option_images'] = array();
+                $this->data['option_images'] = array();
             }
             
         }
         
         if(isset($option_thumbnail)){
             
-            if(!empty($option_thumbnail)){
+            if(!empty($option_thumbnail))
+             {
                 
-                
-                $data['option_thumbnails'] = json_encode($option_thumbnail);
+                $this->data['option_thumbnails'] = json_encode($option_thumbnail);
             }
             else{
                 
-                $data['option_thumbnails'] = array();
+                $this->data['option_thumbnails'] = array();
             }
             
         }
         
-
-        
-
-        $data['option'] = $this->admin_model->get_option($id);
-        
-        return $data;
-        
+        $this->data['option'] = $this->admin_model->get_option($id);
+                
     }
     
-
     public function delete($page = 'product', $id)
     {
         	
@@ -669,35 +623,32 @@ class Admin extends CI_Controller {
             return;
         }
         
-        $data = Array();
+        $this->data = Array();
         
-        $data['cssLinks'] = array('admin');
+        $this->data['cssLinks'] = array('admin');
                        
-        $data = $this->view_create_product($page, $data);
+        $this->view_create_product($page);
                        
-        $data = $this->view_create_product_fabric($page, $data);
+        $this->view_create_product_fabric($page);
         
-        $data = $this->view_create_measurement($page, $data);
+        $this->view_create_measurement($page);
         
-        $data = $this->view_create_menu($page, $data);
+        $this->view_create_menu($page);
         
-        $data = $this->view_create_thread($page, $data);
+        $this->view_create_thread($page);
         
-        $data = $this->view_create_button($page, $data);
+        $this->view_create_button($page);
                 
-        $data = $this->view_create_option($page, $data, $param0, $param1);
+        $this->view_create_option($page, $param0, $param1);
                               
-        $data['title'] = 'CREATE'; 
+        $this->data['title'] = 'CREATE'; 
         
-        $data['is_edit'] = json_encode(false);
+        $this->data['is_edit'] = json_encode(false);
         
 
         $this->lang->load('shmyde', CURRENT_LANGUAGE);
-
-        $this->load->view('pages/header', $data);
-
-        $this->load->view('admin/create_'.$page, $data);
-
+        
+        $this->template->load('shmyde','admin/create_'.$page, $this->data);
 
     }
     
@@ -911,7 +862,6 @@ class Admin extends CI_Controller {
         }
     }
 
-
     /**
      * This function is called when the create menu page is posted
      * @param type $page the current page being posted
@@ -951,15 +901,13 @@ class Admin extends CI_Controller {
         }
     }
 
-    
     /**
      * This function is called when the create option page is posted
      * @param type $page the current page being posted
      */
-    private function create_option($page){
-        
-        
-                
+    private function create_option($page)
+    {
+             
         if($page == 'option'){
             
             if($this->admin_model->create_option(
@@ -989,19 +937,17 @@ class Admin extends CI_Controller {
      * @param array $data
      * @return type
      */
-    private function view_create_product($page, $data){
+    private function view_create_product($page)
+    {
         
         if($page == 'product'){
             
             $id = $this->admin_model->get_table_next_id("shmyde_product");
             
-            $data['product_id'] = $id;
+            $this->data['product_id'] = $id;
         
-            
         }
-        
-        return $data;
-               
+                       
     }
     
     /**
@@ -1009,26 +955,24 @@ class Admin extends CI_Controller {
      * @param array $data
      * @return type
      */
-    private function view_create_product_fabric($page, $data){
+    private function view_create_product_fabric($page){
         
         if($page == 'product_fabric'){
             
             $id = $this->admin_model->get_table_next_id("shmyde_fabrics");
             
-            $data['fabric_id'] = $id;
+            $this->data['fabric_id'] = $id;
             
-            $data['product_fabric'] = '';
+            $this->data['product_fabric'] = '';
                                     
-            $data['products'] = $this->admin_model->get_all_products();
+            $this->data['products'] = $this->admin_model->get_all_products();
             
-            $data['fabric_submenus'] = $this->admin_model->get_fabric_menus();
+            $this->data['fabric_submenus'] = $this->admin_model->get_fabric_menus();
             
-            $data['product_submenu_fabrics'] = $this->admin_model->get_product_submenu_fabrics();
+            $this->data['product_submenu_fabrics'] = $this->admin_model->get_product_submenu_fabrics();
             
         }
-        
-        return $data;
-               
+                       
     }
     
     /**
@@ -1036,37 +980,34 @@ class Admin extends CI_Controller {
      * @param array $data
      * @return type
      */
-    private function view_create_menu($page, $data){
+    private function view_create_menu($page){
         
         if($page == 'menu'){
             
-            $data['products'] = $this->admin_model->get_all_products();
+            $this->data['products'] = $this->admin_model->get_all_products();
             
-            $data['categories'] = $this->admin_model->get_categories();
+            $this->data['categories'] = $this->admin_model->get_categories();
         }
                 
-        return $data;
     }
     
-    private function view_create_measurement($page, $data){
+    private function view_create_measurement($page){
         
         if($page == 'measurement'){
             
-            $data['products'] = $this->admin_model->get_all_products();
-            
+            $this->data['products'] = $this->admin_model->get_all_products();           
         }
                 
-        return $data;
     }
     
-    private function view_create_thread($page, $data){
+    private function view_create_thread($page){
         
-        return $data;
+        
     }
     
-    private function view_create_button($page, $data){
+    private function view_create_button($page){
         
-        return $data;
+        
     }
     
     
@@ -1075,26 +1016,25 @@ class Admin extends CI_Controller {
      * @param array $data
      * @return type
      */
-    private function view_create_option($page, $data, $param0, $param1){
+    private function view_create_option($page, $param0, $param1){
         
         if($page == 'option'){
             
-            $data['menus'] = $this->admin_model->get_design_dependent_menus();
+            $this->data['menus'] = $this->admin_model->get_design_dependent_menus();
 
-            $data['products'] = $this->admin_model->get_all_products();
+            $this->data['products'] = $this->admin_model->get_all_products();
             
-            $data['selected_product'] = $param0;
+            $this->data['selected_product'] = $param0;
             
-            $data['selected_menu'] = $param1;
+            $this->data['selected_menu'] = $param1;
             
             $id = $this->admin_model->get_table_next_id("shmyde_design_option");
 
             /// The ID of the option that shall be created. This is associated with the images uploaded. 
-            $data['option_id'] = $id;
+            $this->data['option_id'] = $id;
 
         }
         
-        return $data;
     }
     
 

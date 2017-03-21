@@ -1,7 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<body>
 
 <div style="margin-left:5%; margin-top:5%;">
 <span><a href="<?php echo site_url('admin/create/product'); ?>">Create New</a> </span>
@@ -53,6 +50,3 @@
     </tbody>
   </table>
 </div>
-
-</body>
-</html>

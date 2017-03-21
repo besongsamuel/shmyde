@@ -12,8 +12,7 @@
                 checkoutScope.product = JSON.parse('<?php echo $productManager; ?>');        
                 checkoutScope.productManager = new Product(checkoutScope.product);
                 checkoutScope.productManager.base_url = '<?= site_url("/"); ?>';
-                checkoutScope.productManager.setProductDetails();     
-                checkoutScope.productManager.draw("design-preview", 'front');
+                checkoutScope.productManager.setProductDetails();                    
             });
             
               
@@ -30,9 +29,7 @@
         });
         
         
-    </script>
-    <script src="<?php echo ASSETS_PATH; ?>/js/html2canvas.js" type="text/javascript"></script>
-    
+    </script>    
     <div id="checkout-container" class="container" ng-controller="CheckoutController">
         
         <!-- Product Category -->
@@ -69,7 +66,7 @@
                     <tr>
                       <td>
                           <div id='design-preview' style="width: 230px; height: 300px">
-
+                                <img src="<?php echo $designImage; ?>" />
                           </div>
                       </td>
                       <td>

@@ -36,7 +36,6 @@ class Checkout extends CI_Controller
             $productManager->LoadUserDesign($user_design);
             $this->data['productManager'] = json_encode($productManager);
             
-            $this->data['designImage'] = $user_design['design_image'];
         }
 
         $this->data['cssLinks'] = array('product-checkout');
@@ -51,12 +50,13 @@ class Checkout extends CI_Controller
         $design_data = $this->input->post('design_data');       
         $quantity = $this->input->post('quantity');        
         $price = $this->input->post('price');
+        $base64designImage = $this->input->post('designImage');
         
         // Check that user is still 
         if($this->userObject->id > -1)
         {
             // Perform Checkout
-            if($this->checkout_model->checkout($this->userObject->id, $quantity, $price, $design_data))
+            if($this->checkout_model->checkout($this->userObject->id, $quantity, $price, $design_data, $base64designImage))
             {
                 //$this->send_order_confirmation();
                 echo json_encode(true);

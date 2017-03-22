@@ -85,41 +85,6 @@ class User extends CI_Controller {
             $this->load->view('pages/footer', $data);
         }
         
-        
-        public function post_registration($success)
-       {
-           $this->data['title'] = "Registration";
-
-           if($success)
-           {
-               $this->data['message_title'] = 'Registration Complete';
-
-               $this->data['message'] = array();
-
-               array_push($this->data['message'], 'Your account has been created sucessfully');
-               array_push($this->data['message'], 'A confirmation email has been sent to '.$this->userObject->email.' with instructions');
-               array_push($this->data['message'], 'on how to activate your account. ');
-               array_push($this->data['message'], 'WELCOME TO SHMYDE.');
-               array_push($this->data['message'], 'Thank you.');
-               array_push($this->data['message'], 'Best Regards ');
-               array_push($this->data['message'], 'SHMYDE SARL');
-
-
-           }
-           else
-           {
-               $this->data['message_title'] = 'A network error occured';           
-               $this->data['message'] = array();
-           }
-
-           $this->data['cssLinks'] = array('product-checkout');
-           $this->data['user'] = json_encode($this->userObject);
-           $this->data['message_title'] = json_encode($this->data['message_title']);
-           $this->data['message'] = json_encode($this->data['message']);
-
-           $this->template->load('shmyde', 'message/message', $this->data);
-       }
-
         /**
          * 
          */
@@ -181,10 +146,9 @@ class User extends CI_Controller {
             $this->template->load('shmyde', 'user/forgot_password', $this->data);
             
         }
-	
+	        
 	/**
 	 * register function.
-	 * 
 	 * @access public
 	 * @return void
 	 */
@@ -227,23 +191,23 @@ class User extends CI_Controller {
 		$_SESSION['is_confirmed'] = (bool)$user->is_confirmed;
 		$_SESSION['is_admin']     = (bool)$user->is_admin;
 		
-		    try
-		    {
-			$this->send_resitration_confirmation($user_id, $user->confirm_id, $email);
-			$response = array();
-			$response['invalid'] = false;
-			$response['valid'] = true;
-		    }
-		    catch(Exception $e)
-		    {
-			$response = array();
-			$response['invalid'] = true;
-			$response['valid'] = false;
-			$response['message'] = $e->getMessage();
-		    }
-		   
-	    	// Send error messages to client
-	    	echo json_encode($response);
+                
+                set_error_handler(function(){ });
+                
+                if($this->send_resitration_confirmation($user_id, $user->confirm_id, $email))
+                {
+                    $response = array();
+                    $response['invalid'] = false;
+                    $response['valid'] = true;
+                    $response['type'] = 0;
+                }
+                else
+                {
+                    $response = array();
+                    $response['invalid'] = false;
+                    $response['valid'] = true;
+                    $response['type'] = 1;
+                }
                 
             } 
             else
@@ -251,14 +215,66 @@ class User extends CI_Controller {
                 $response = array();
 	    	$response['invalid'] = true;
 	    	$response['valid'] = false;
-	    	$response['message'] = 'An unexpected error occured. Please try again. ';
-		   
-	    	// Send error messages to client
-	    	echo json_encode($response);
-
+                $response['type'] = 2;
             }
             
+            echo json_encode($response);
+
+            
 	}
+        
+        public function registration_complete($success)
+        {
+           $this->data['title'] = "Registration";
+           
+           $success = intval($success);
+
+           if($success == 0)
+           {
+               $this->data['message_title'] = 'Registration Complete';
+
+               $this->data['message'] = array();
+
+               array_push($this->data['message'], 'Your account has been created sucessfully');
+               array_push($this->data['message'], 'A confirmation email has been sent to '.$this->userObject->email.' with instructions');
+               array_push($this->data['message'], 'on how to activate your account. ');
+               array_push($this->data['message'], 'WELCOME TO SHMYDE.');
+               array_push($this->data['message'], 'Thank you.');
+               array_push($this->data['message'], 'Best Regards ');
+               array_push($this->data['message'], 'SHMYDE SARL');
+
+           }
+           else if($success == 1)
+           {
+               $this->data['message_title'] = 'Registration Complete';
+
+               $this->data['message'] = array();
+
+               array_push($this->data['message'], 'Your account has been created sucessfully');
+               array_push($this->data['message'], 'An error occured while sending the confirmation email to '.$this->userObject->email);
+               array_push($this->data['message'], 'Please contact us to activate your mail at +2255225522. ');
+               array_push($this->data['message'], 'WELCOME TO SHMYDE.');
+               array_push($this->data['message'], 'Thank you.');
+               array_push($this->data['message'], 'Best Regards ');
+               array_push($this->data['message'], 'SHMYDE SARL');
+               
+           }
+           else if($success == 2)
+           {
+               $this->data['message_title'] = 'A server error occured ';
+               $this->data['message'] = array();
+               array_push($this->data['message'], 'An unexpected error occured. ');
+               array_push($this->data['message'], 'Please try again later. ');
+               
+           }
+
+           $this->data['cssLinks'] = array('product-checkout');
+           $this->data['user'] = json_encode($this->userObject);
+           $this->data['message_title'] = json_encode($this->data['message_title']);
+           $this->data['message'] = json_encode($this->data['message']);
+
+           $this->template->load('shmyde', 'message/message', $this->data);
+        }
         
         /**
          * This function checks if an email exists and returns true if 
@@ -366,10 +382,11 @@ class User extends CI_Controller {
                 $result['is_confirmed'] = (bool)$user->is_confirmed;
                 $result['is_admin']     = (bool)$user->is_admin;
                 
-	    	// Go to previous page. 
-	    	// Login was successful
-                header("Location: ". site_url("/").$this->rememberme->getOrigPage());
-            
+                
+                $response = array();
+	    	$response['invalid'] = false;
+	    	$response['valid'] = true;
+                $response['redirect_url'] = site_url("/").$this->rememberme->getOrigPage();
             }
             else
             {
@@ -378,11 +395,10 @@ class User extends CI_Controller {
 	    	$response['invalid'] = true;
 	    	$response['valid'] = false;
 	    	$response['message'] = 'Username or password incorrect. ';
-		   
-	    	// Send error messages to client
-	    	echo json_encode($response);
-		    
+	    	
             }
+            // Send error messages to client
+            echo json_encode($response);
                                  
 	}
 	

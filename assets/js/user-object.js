@@ -69,23 +69,31 @@ function User(user_object)
         else
         {
             Instance = this;
-            
-            var designParameters = productManager.getDesignParameters();
-     
-            window.sessionStorage.setItem("designParameters", JSON.stringify(designParameters));
-            
-            $.ajax({
-                url : this.base_url.concat('Design/SaveTmpUserDesign'),
-                data : {designParameters : JSON.stringify(designParameters)},
-                async : true,
-                type : 'POST',
-                success : function()
-                {
-                    window.location.href = Instance.base_url.concat('checkout');
-                }
-            });
                         
+            var designParameters = productManager.getDesignParameters();
             
+            var node = document.getElementById("design-preview");
+            
+            domtoimage.toPng(node)
+            .then(function (dataUrl) 
+            {                
+                localStorage.setItem("designImage", dataUrl);
+                
+                $.ajax({
+                    url : Instance.base_url.concat('Design/SaveTmpUserDesign'),
+                    data : {designParameters : JSON.stringify(designParameters)},
+                    async : true,
+                    type : 'POST',
+                    success : function()
+                    {
+                        window.location.href = Instance.base_url.concat('checkout');
+                    }
+                });
+            })
+            .catch(function (error) {
+                console.error('oops, something went wrong!', error);
+            });
+     
         }
 
     };

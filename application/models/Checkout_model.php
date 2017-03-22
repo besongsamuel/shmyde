@@ -29,7 +29,7 @@ class Checkout_model extends CI_Model {
          * @param type $design_data
          * @return boolean
          */
-	public function checkout($user_id, $quantity, $price, $design_data) 
+	public function checkout($user_id, $quantity, $price, $design_data, $base64Image) 
         {
 		
             $data = array(
@@ -42,7 +42,15 @@ class Checkout_model extends CI_Model {
                     'user_design'    => $design_data,
             );
 
-            return $this->db->insert('shmyde_orders', $data);
+            $result =  $this->db->insert('shmyde_orders', $data);
+            
+            $insert_id = $this->db->insert_id();
+            
+            $decoded_base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $base64Image));
+            
+            file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'.png', $decoded_base64Image);
+            
+            return $result;
 		
 	}
 	

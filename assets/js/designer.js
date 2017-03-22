@@ -682,16 +682,6 @@ function Product(product_object)
             design_image : ''
         };
         
-        var node = document.getElementById('design-preview');
-        // Save the current design as an immage
-        domtoimage.toPng(node)
-        .then(function (dataUrl) 
-        {
-            designParameters.design_image = dataUrl;
-        })
-        .catch(function (error) {
-            console.error('oops, something went wrong!', error);
-        });
         
         designParameters.fabric_id = this.product.default_fabric !== null ? this.product.default_fabric.fabric_id : -1;
         designParameters.mix_fabric_id = this.product.mix_fabric !== null ? this.product.mix_fabric.fabric_id : -1;

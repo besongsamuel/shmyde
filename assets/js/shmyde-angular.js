@@ -139,7 +139,8 @@
             var xsrf = $.param({
                     design_data : JSON.stringify($scope.productManager.getDesignParameters()), 
                     quantity : $scope.quantity,
-                    price : $scope.price
+                    price : $scope.price,
+                    designImage : $scope.designImage
                 });
             
             $http({
@@ -255,11 +256,18 @@
                 {
                     $scope.register_error = response.data.invalid;
                     
-                    window.location =  $scope.site_url.concat('user/post_registration/' + response.data.valid.toString()); 
-                    
+                    if($scope.register_error)
+                    {
+                        window.location =  $scope.site_url.concat("user/registration_complete/".concat(response.data.type.toString()));
+                    }
+                    else
+                    {
+                        window.location =  $scope.site_url.concat("user/registration_complete/".concat(response.data.type.toString()));
+                    }
+                     
                 }, function errorCallback(response) 
                 {
-                    window.location =  $scope.site_url.concat('user/post_registration/false'); 
+                    window.location =  $scope.site_url.concat("user/registration_complete/".concat(response.data.type.toString())); 
                 });
             }
             
@@ -290,11 +298,16 @@
                   headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
                 }).then(function successCallback(response) 
                 {
+                                        
                     $scope.loginError = response.data.invalid;
                     
                     if($scope.loginError)
                     {
                         $scope.login_error_message = response.data.message;
+                    }
+                    else
+                    {
+                        window.location = response.data.redirect_url;
                     }
 
                 }, function errorCallback(response) 

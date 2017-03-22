@@ -12,10 +12,10 @@
                 checkoutScope.product = JSON.parse('<?php echo $productManager; ?>');        
                 checkoutScope.productManager = new Product(checkoutScope.product);
                 checkoutScope.productManager.base_url = '<?= site_url("/"); ?>';
-                checkoutScope.productManager.setProductDetails();                    
+                checkoutScope.productManager.setProductDetails();  
+                checkoutScope.designImage = localStorage.getItem("designImage");
             });
-            
-              
+                                     
         });
 
         $('#agreeButton, #disagreeButton').on('click', function() 
@@ -66,7 +66,7 @@
                     <tr>
                       <td>
                           <div id='design-preview' style="width: 230px; height: 300px">
-                                <img src="<?php echo $designImage; ?>" />
+                              <img id="design-image" ng-src="{{designImage}}" />
                           </div>
                       </td>
                       <td>
@@ -151,8 +151,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="agreeButton" data-dismiss="modal" ng-click="checkout.agree_to_terms = true">Agree</button>
-                        <button type="button" class="btn btn-default" id="disagreeButton" data-dismiss="modal" ng-click="checkout.agree_to_terms = false">Disagree</button>
+                        <button type="button" class="btn btn-primary" id="agreeButton" data-dismiss="modal" ng-click="agree_to_terms = true">Agree</button>
+                        <button type="button" class="btn btn-default" id="disagreeButton" data-dismiss="modal" ng-click="agree_to_terms = false">Disagree</button>
                     </div>
                 </div>
             </div>

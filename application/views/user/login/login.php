@@ -20,7 +20,7 @@
                                 <div class="input-group">
                                     <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
                                     <input  id="email" type="email" name="email" class="form-control" placeholder="Email" ng-model="loginObject.email"
-                                             ng-required='required'>
+                                             ng-required='required' email>
                                     <span class="form_hint" ng-hide="loginForm.email.valid">                                      
                                         <p ng-show="loginForm.email.$error.required">This field is required. </p>
                                         <p ng-show="loginForm.email.$error.email">The email entered is invalid. </p>

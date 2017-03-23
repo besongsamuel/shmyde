@@ -317,6 +317,35 @@
                 });
             }
         };
+        
+        $scope.submit_email = function()
+        {
+            if($scope.forgotPasswordForm.$valid)
+            {
+                $http({
+                  method  : 'POST',
+                  url     : $scope.site_url.concat('user/send_forgot_password_email'),
+                  data    : $.param($scope.forgotPasswordObject),  
+                  headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+                }).then(function successCallback(response) 
+                {
+                    
+                    if(response.data.valid)
+                    {
+                        window.location =  $scope.site_url.concat("user/forgot_password_complete/0");
+                    }
+                    else
+                    {
+                        window.location =  $scope.site_url.concat("user/forgot_password_complete/1");
+                    }
+
+                }, function errorCallback(response) 
+                {
+                    window.location =  $scope.site_url.concat("user/forgot_password_complete/1");
+                });
+            }
+            
+        };
        
     }]);
     

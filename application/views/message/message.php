@@ -19,12 +19,12 @@
 <div ng-controller="MessageController" class="container checkout-message" id="messageContainer">
 
      <div class="row">
-        <div class="container">
+        <div class="col-lg-12">
             <div class="section-header">
                 <h3 class="text-center">{{message_header}}</h3>
             </div> 
-            <div class="section-body">
-                <p ng-repeat="message in messages">{{message}}</p>
+            <div class="section-body" style="margin-bottom: 30px;">
+                <p style="text-align: center;" ng-repeat="message in messages">{{message}}</p>
             </div>
             <div class="center-button">
                 <button type="button" class="btn btn-default" ng-click="gotoHome()">Home</button>

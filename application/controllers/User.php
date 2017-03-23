@@ -90,61 +90,78 @@ class User extends CI_Controller {
          */
         public function forgot_password() 
         {                        
-            $result['success'] = false;
             
             $this->data['title'] = "Forgot Password";
             
+            $this->data['cssLinks'] = array('product-checkout');
+            
+            $this->template->load('shmyde', 'user/forgot_password', $this->data);
+        }
+        
+        public function send_forgot_password_email()
+        {            
             $email = $this->input->post('email');
             
             if ($this->input->server('REQUEST_METHOD') == 'POST')
             {
-                $this->data['cssLinks'] = array('product-checkout');
-                
                 $user_id = $this->user_model->get_user_id_from_email($email);
                 
                 if($user_id)
                 {
                     $password_reset_token = $this->user_model->create_reset_password_code($email);
                     
-                    try
+                    set_error_handler(function(){ });
+                    
+                    $response = array();
+                    
+                    if($this->send_reset_password($user_id, $password_reset_token, $email))
                     {
-                        $this->send_reset_password($user_id, $password_reset_token, $email);
-                        
-                        $this->data['message_title'] = 'Email Sent';
-        
-                        $this->data['message'] = array();
-                        
-                        array_push($this->data['message'], 'We sent you you an email with an activation link.');
-
-                        $this->data['user'] = json_encode($this->userObject);
-                        
-                        $this->template->load('shmyde', 'message/message', $this->data);
+                        $response['invalid'] = false;
+                        $response['valid'] = true;
                     }
-                    catch (Exception $e)
+                    else
                     {
-                        $this->data['message_title'] = 'An Error Occured';
-        
-                        $this->data['message'] = array();
-                        
-                        array_push($this->data['message'], 'The following error occured while sending trying to send the mail.');
-                        
-                        array_push($this->data['message'], $e->getMessage());
-
-                        $this->data['user'] = json_encode($this->userObject);
-                        
-                        $this->template->load('shmyde', 'message/message', $this->data);
+                        $response['invalid'] = true;
+                        $response['valid'] = false;
                     }
                     
-                    
+                    restore_error_handler();
                 }
                 
-                                
-                return;
+                echo json_encode($response);
+            }
+        }
+                
+        public function forgot_password_complete($type)
+        {
+            $type = intval($type);
+            
+            if($type == 0)
+            {
+                $this->data['message_title'] = 'Email Sent';
+        
+                $this->data['message'] = array();
+
+                array_push($this->data['message'], 'We sent you you an email with an activation link.');
+
+            }
+            else
+            {
+                $this->data['message_title'] = 'An Error Occured';
+        
+                $this->data['message'] = array();
+
+                array_push($this->data['message'], 'An error occured while sending trying to send the mail.');
+                array_push($this->data['message'], 'Please try again later.');
+
             }
             
-                        
-            $this->template->load('shmyde', 'user/forgot_password', $this->data);
+            $this->data['cssLinks'] = array('product-checkout');
+            $this->data['user'] = json_encode($this->userObject);
+            $this->data['message_title'] = json_encode($this->data['message_title']);
+            $this->data['message'] = json_encode($this->data['message']);
             
+            $this->template->load('shmyde', 'message/message', $this->data);
         }
 	        
 	/**
@@ -209,6 +226,7 @@ class User extends CI_Controller {
                     $response['type'] = 1;
                 }
                 
+                restore_error_handler();
             } 
             else
             {
@@ -304,7 +322,7 @@ class User extends CI_Controller {
             $message.='</div>';
             $message.='</body></html>';
 
-            mail($email,$subject,$message,$headers);
+            return mail($email,$subject,$message,$headers);
         }
         
         /**
@@ -337,7 +355,7 @@ class User extends CI_Controller {
             $message .=  '</div>';
             $message .='</body></html>';
 
-            mail($email,$subject,$message,$headers);
+            return mail($email,$subject,$message,$headers);
         }
 		
 	/**

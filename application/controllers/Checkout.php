@@ -26,8 +26,7 @@ class Checkout extends CI_Controller
           
         if($this->session->userdata('user_id') !== null)
         {
-            $user_id = $this->session->userdata('user_id');
-            $user_design = json_decode($this->GetTmpUserDesign($user_id), true);
+            $user_design = json_decode($this->GetTmpUserDesign(), true);
             
             $productManager = new DesignProduct();
             $productManager->LoadProduct(
@@ -152,8 +151,17 @@ class Checkout extends CI_Controller
      * @param type $user_id
      * @return type
      */
-    public function GetTmpUserDesign($user_id)
-    {          
-        return $this->admin_model->GetTmpUserDesign($user_id);
+    public function GetTmpUserDesign()
+    {   
+        
+        if(session_id() !== "")
+        {
+            return $this->admin_model->GetTmpUserDesign(session_id());
+        }
+        else
+        {
+            return null;
+        }
+        
     }
 }

@@ -60,35 +60,61 @@ function User(user_object)
     
     this.CheckOut = function(productManager)
     {
-        if(parseInt(this.user) > 0)
+        var designParameters = productManager.getDesignParameters();
+        
+        Instance = this;
+
+        // User is not logged in
+        // Redirect to login page
+        if(parseInt(this.user.id) === -1)
         {
-            login_callbacks = $.Callbacks();
-            login_callbacks.add(this.CheckOut);
-            open_login();
+            // Save current Design. Shall be reloaded after login
+            $.ajax({
+                url : Instance.base_url.concat('Design/SaveTmpUserDesign'),
+                data : {designParameters : JSON.stringify(designParameters)},
+                async : true,
+                type : 'POST',
+                success : function()
+                {
+                    window.location.href = Instance.base_url.concat('user');
+                }
+            });
         }
         else
         {
-            Instance = this;
-                        
-            var designParameters = productManager.getDesignParameters();
+            var node = document.getElementById(productManager.designDomElementID);
             
-            var node = document.getElementById("design-preview");
+            if(productManager.current_side !== 'front')
+            {
+                productManager.draw(productManager.designDomElementID, "front", true);
+            }
             
             domtoimage.toPng(node)
-            .then(function (dataUrl) 
-            {                
-                localStorage.setItem("designImage", dataUrl);
+            .then(function (dataUrlFront) 
+            {    
+                productManager.draw(productManager.designDomElementID, "back", true);
                 
-                $.ajax({
-                    url : Instance.base_url.concat('Design/SaveTmpUserDesign'),
-                    data : {designParameters : JSON.stringify(designParameters)},
-                    async : true,
-                    type : 'POST',
-                    success : function()
-                    {
-                        window.location.href = Instance.base_url.concat('checkout');
-                    }
+                domtoimage.toPng(node)
+                .then(function (dataUrlBack) 
+                {
+                    $.ajax({
+                        url : Instance.base_url.concat('Design/SaveTmpUserDesign'),
+                        data : {designParameters : JSON.stringify(designParameters)},
+                        async : true,
+                        type : 'POST',
+                        success : function()
+                        {
+                            
+                            sessionStorage.setItem("frontDesignImage", dataUrlFront);
+                            
+                            sessionStorage.setItem("backDesignImage", dataUrlBack);
+                    
+                            window.location.href = Instance.base_url.concat('checkout');
+                        }
+                    });              
                 });
+                
+                
             })
             .catch(function (error) {
                 console.error('oops, something went wrong!', error);

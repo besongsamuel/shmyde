@@ -378,7 +378,12 @@
             
             return $scope.is_initialized;
             
-        };    
+        };  
+        
+        $scope.goto_account = function()
+        {
+            window.location = $scope.site_url.concat("user/account");
+        };
             
         $scope.user_logged = function()
         {
@@ -472,7 +477,7 @@
             
             if($scope.controller.toString() !== 'home')
             {
-                window.location = $scope.site_url;
+                window.location = $scope.home_url;
             }
                        
         };
@@ -484,7 +489,28 @@
         
         $scope.login = function()
         {
-            window.location = $scope.site_url.concat("user");           
+            // Save Design
+            if($scope.controller.toString() === 'design')
+            {
+                var designParameters = $scope.productManager.getDesignParameters();
+                
+                $.ajax({
+                url : $scope.site_url.concat('Design/SaveTmpUserDesign'),
+                data : {designParameters : JSON.stringify(designParameters)},
+                async : true,
+                type : 'POST',
+                success : function()
+                {
+                    window.location.href = $scope.site_url.concat("user");
+                }
+            });
+            }
+            else
+            {
+                window.location = $scope.site_url.concat("user"); 
+            }
+            
+                      
         };
                
     }]);
@@ -537,6 +563,51 @@
         $scope.add_product = function()
         {
             
+        };
+        
+    }]);
+
+    app.controller('DesignController', ['$scope', '$rootScope', function($scope, $rootScope)
+    {
+        $scope.selected_category = 0;
+        
+        $scope.DesignCategorySelected = function(category_selected)
+        {
+            $scope.selected_category = category_selected;
+            
+            $('#option-list').empty();
+            
+            $scope.productManager.category_selected = category_selected;
+            
+            if(parseInt(category_selected) === 1 || parseInt(category_selected) === 2)
+            {
+                $scope.productManager.loadMenus("sub_menu_list");
+            }
+            
+            if(parseInt(category_selected) === 3)
+            {
+                $scope.productManager.loadMixMenus("sub_menu_list");
+            }
+            
+            if(parseInt(category_selected) === 4)
+            {
+                $scope.productManager.loadMeasurementMenus();
+            }
+            
+            if(parseInt(category_selected) === 5)
+            {
+                $scope.productManager.LoadButtonOptions();
+            }
+                        
+            if(parseInt(category_selected) === 6)
+            {
+                $scope.productManager.invertFabric();
+            }            
+        };
+        
+        $scope.checkout = function()
+        {
+            $scope.userObject.CheckOut($scope.productManager);
         };
         
     }]);

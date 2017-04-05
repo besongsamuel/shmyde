@@ -110,7 +110,10 @@ class CI_Controller {
 		
 		log_message('info', 'Controller Class Initialized');
 		
-                if($this->router->fetch_class() != 'user')
+                $excluded_methods = array("SaveTmpUserDesign");
+                $excluded_classes = array("user");
+                
+                if(!in_array($this->router->fetch_class(), $excluded_classes) && !in_array($this->router->fetch_method(), $excluded_methods))
                 {
                     // Always record our current page. 
                     // This will enable us to redirect here after login if needed
@@ -118,7 +121,6 @@ class CI_Controller {
                 }
 		                
                 $user_email = $this->rememberme->verifyCookie();
-                
                 
                 if(!$user_email)
                 {
@@ -138,7 +140,6 @@ class CI_Controller {
                     $this->userObject = new UserObject($user_data);
 		    $this->data['user'] = $this->userObject;	
 
-                    
                     // find user id of cookie_user stored in application database
                     // set session if necessary
                     if (!$this->session->userdata('user_id')) 
@@ -161,11 +162,8 @@ class CI_Controller {
                     $this->userObject = new UserObject(null);
                     
                 }
-		
                                
                 $this->data['user'] = json_encode($this->userObject);  
-                
-                                
                 $this->data['ci_class'] = $this->router->fetch_class();
                 $this->data['ci_method'] = $this->router->fetch_method();
                 $this->data['home_url'] = site_url().'/home/';

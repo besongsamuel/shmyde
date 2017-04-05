@@ -138,7 +138,7 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="#">Account Page</a></li>
+                <li><a href="#" ng-click="goto_account()">Account Page</a></li>
                 <li><a href="#" ng-click="logout()">Logout</a></li> 
               </ul>
             </li>

@@ -1425,12 +1425,12 @@ class Admin_model extends CI_Model {
      */
     public function SaveTmpUserDesign($user_id, $userDesign)
     {        
-        $this->db->where('user_id', $user_id);
+        $this->db->where('session_id', $user_id);
         $this->db->delete(USER_TMP_DESIGN_TABLE);
         
         $data = array(
             
-            'user_id' => $user_id,
+            'session_id' => $user_id,
             'product_design' => $userDesign
         );
         
@@ -1442,12 +1442,13 @@ class Admin_model extends CI_Model {
     {
         $this->db->select('*');
         $this->db->from(USER_TMP_DESIGN_TABLE);
-        $this->db->where('user_id', $user_id);
+        $this->db->where('session_id', $user_id);
         $user_product_design = $this->db->get()->row();
         $this->db->reset_query();
         
         if(isset($user_product_design))
         {
+            // Delete temporal design after getting it
             return $user_product_design->product_design;
         }
         

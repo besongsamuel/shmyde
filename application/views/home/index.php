@@ -122,7 +122,7 @@
           <h4><span class="glyphicon glyphicon-gift"></span> Shmyde Product</h4>
         </div>
         <div class="modal-body">
-            <form action="<?php echo site_url('design/product/'); ?>" role="form" method="post">
+            <form action="<?php echo site_url('design/product/'); ?>" role="form" method="get">
             <div class="form-group">
               <label for="product">Product</label>
               <select class="form-control" id="product" name="product_id" ng-options="product.name for product in selected_products track by product.id" ng-model="selected_product">

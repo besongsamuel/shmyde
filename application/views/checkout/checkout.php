@@ -6,14 +6,15 @@
         $(document).ready(function()
         {
             var checkoutScope = angular.element("#checkout-container").scope();
-            
+                        
             checkoutScope.$apply(function()
             {                              
                 checkoutScope.product = JSON.parse('<?php echo $productManager; ?>');        
                 checkoutScope.productManager = new Product(checkoutScope.product);
                 checkoutScope.productManager.base_url = '<?= site_url("/"); ?>';
                 checkoutScope.productManager.setProductDetails();  
-                checkoutScope.designImage = localStorage.getItem("designImage");
+                checkoutScope.designImage = sessionStorage.getItem("frontDesignImage");
+                checkoutScope.designBackImage = sessionStorage.getItem("backDesignImage");
             });
                                      
         });
@@ -65,9 +66,12 @@
                   <tbody>
                     <tr>
                       <td>
-                          <div id='design-preview' style="width: 230px; height: 300px">
-                              <img id="design-image" ng-src="{{designImage}}" />
-                          </div>
+                          <span id='design-preview' style="width: 150px; height: 180px;">
+                              <img ng-src="{{designImage}}" />
+                          </span>
+                          <span id='design-preview-back' style="width: 150px; height: 180px;">
+                              <img ng-src="{{designBackImage}}" />
+                          </span>
                       </td>
                       <td>
                           <p ng-bind-html="product_name"></p>

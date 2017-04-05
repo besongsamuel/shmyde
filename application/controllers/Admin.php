@@ -35,36 +35,34 @@ class Admin extends CI_Controller {
         
     }
     
-    public function button_editor($editor_type, $id){
+    public function button_editor($editor_type, $id)
+    {
+                
+        $this->data['id'] = json_encode($id);
         
-        $data = array();
+        $this->data['title'] = 'Button Editor';
         
-        $data['id'] = json_encode($id);
+        $this->data['cssLinks'] = array('admin');
         
-        $data['title'] = 'Button Editor';
+        $this->data['editor_type'] = json_encode($editor_type);
         
-        $data['cssLinks'] = array('admin');
-        
-        $data['editor_type'] = json_encode($editor_type);
-        
-        $this->load->view('pages/header', $data);
-        $this->load->view('admin/editor.php', $data);
+        $this->template->load('shmyde','admin/editor.php', $this->data);
     }
     
     public function index(){
         
-        $data['products'] = $this->admin_model->get_all_products();
+        $this->data['products'] = $this->admin_model->get_all_products();
         
-        $data['title'] = ucfirst('product'); 
+        $this->data['title'] = ucfirst('product'); 
 
         $this->lang->load('shmyde', CURRENT_LANGUAGE);
 
         $this->load->view('pages/header');
-        
-        $this->load->view('admin/product', $data);
+                
+        $this->template->load('shmyde','admin/product', $this->data);
     }
 
-    public function view($page = 'product_id', $product_id = -1, $menu_id = -1, $submenu_id = -1)
+    public function view($page = 'product', $product_id = -1, $menu_id = -1, $submenu_id = -1)
     {
         if ( ! file_exists(APPPATH.'/views/admin/'.$page.'.php'))
         {
@@ -376,9 +374,12 @@ class Admin extends CI_Controller {
             
             $this->admin_model->delete_option_dependent_menus($id);
         
-            foreach ($this->input->post('option_dependent_menu') as $key => $value) {
-
-                $this->admin_model->add_option_dependent_menu($id, $key);
+            if($this->input->post('option_dependent_menu') != null)
+            {
+                foreach ($this->input->post('option_dependent_menu') as $key => $value)
+                {
+                    $this->admin_model->add_option_dependent_menu($id, $key);
+                }
             }
             
             redirect('/admin/view/option/'.$this->input->post('product').'/'. $this->input->post('menu'), 'refresh');

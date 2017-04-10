@@ -31,21 +31,15 @@ function Product(product_object)
     this.user_modal_id = "#userDataModal";
     
     this.measurements_container_id = "#my_measurements";
-    
-    /**
-    * This is the current side being drawn
-    * @type String
-    */
-   var current_side = 'front';
-   
+
    /**
-    * 
+    * This represents the menu selected
     * @type type
     */
    var menu_selected;
       
    /**
-    * 
+    * THis represents the category that is selected
     * @type type
     */
    var category_selected;
@@ -69,6 +63,8 @@ function Product(product_object)
     * @type type
     */
    var designDomElementID;
+   
+   var designBackDomElementID;
     
     this.InitOptionsContainer = function(frame)
     {
@@ -151,38 +147,27 @@ function Product(product_object)
         
     };
     
-    this.draw = function(domElementID, side, nofade)
+    this.setContainers = function(domElementID, domBackElementID)
     {
         this.designDomElementID = domElementID;
-        this.current_side = side;
-        var container = $("#" + domElementID);
+        this.designBackDomElementID = domBackElementID;
+    };
+    
+    this.draw = function(nofade)
+    {
+        
+        var container = $("#" + this.designDomElementID);
+        var backContainer = $("#" + this.designBackDomElementID);
         var Instance = this;
         
         if(nofade)
         {
             // Clear Contents
             container.empty();
-            
-            // Loop Through design Menus
-            for(var key in Instance.product.product_menus)
-            {
-                var menu = Instance.product.product_menus[key];
+            backContainer.empty();
 
-                // Its a design menu if the category is 2
-                if(parseInt(menu.category) === 2)
-                {
-                    // Add A Div for the menu
-                    $('<div/>', 
-                    {
-                        id: 'menu_' + menu.id,
-                        style: 'position : absolute', 
-                        class : 'designer-menu'
-                    }).appendTo(container);
-
-                    // Loop through the different Options in the menu
-                    Instance.drawMenu(menu);
-                }
-            } 
+            this.drawProduct('front');
+            this.drawProduct('back');
         }
         else
         {
@@ -190,32 +175,197 @@ function Product(product_object)
             {
                 // Clear Contents
                 container.empty();
-
-                // Loop Through design Menus
-                for(var key in Instance.product.product_menus)
-                {
-                    var menu = Instance.product.product_menus[key];
-
-                    // Its a design menu if the category is 2
-                    if(parseInt(menu.category) === 2)
-                    {
-                        // Add A Div for the menu
-                        $('<div/>', 
-                        {
-                            id: 'menu_' + menu.id,
-                            style: 'position : absolute', 
-                            class : 'designer-menu'
-                        }).appendTo(container);
-
-                        // Loop through the different Options in the menu
-                        Instance.drawMenu(menu);
-                    }
-                }  
-
+                Instance.drawProduct('front');
                 container.fadeIn("slow");
+            });
+            
+            backContainer.fadeOut( "slow", function() 
+            {
+                // Clear Contents
+                backContainer.empty();
+                Instance.drawProduct('back');
+                backContainer.fadeIn("slow");
             });
         }
         
+    };
+    
+    this.drawProduct = function(side)
+    {
+        var container;
+        
+        if(side.toString() === 'front')
+        {
+            container = $("#" + this.designDomElementID);
+        }
+        else
+        {
+            container = $("#" + this.designBackDomElementID);
+        }
+        
+        // Loop Through design Menus
+        for(var key in this.product.product_menus)
+        {
+            var menu = this.product.product_menus[key];
+
+            // Its a design menu if the category is 2
+            if(parseInt(menu.category) === 2)
+            {
+                $('<div/>', 
+                {
+                    id: side + '_menu_' + menu.id,
+                    style: 'position : absolute', 
+                    class : 'designer-menu menu_' + menu.id
+                }).appendTo(container);
+
+                this.drawMenu(menu, side);
+            }
+        } 
+    };
+    
+    this.drawMenu = function(menu, side)
+    {
+        var Instance = this;
+        
+        // Get the element corresponsing to the side
+        var menu_element = $("#" + side + "_menu_" + menu.id);
+                
+        for(var option_key in menu.design_options)
+        {
+            var design_option = menu.design_options[option_key];
+
+            if(parseInt(design_option.selected) === 1)
+            {
+                menu.option_selected = design_option.id;
+                Instance.menu_selected = menu.id;
+            }
+                       
+            // Only show selected Options
+            var visibility = parseInt(design_option.selected) === 1 ? 'visible' : 'hidden';
+
+            // Add a div for the option
+            var design_option_element = $('<div/>', 
+            {
+                id: side + '_option_' + design_option.id,
+                style: 'position : relative', 
+                class : 'designer-option option_' + design_option.id                      
+            }).css("visibility", visibility).appendTo(menu_element);
+            
+            for(var image_key in design_option.images)
+            {
+                
+                var design_option_image = design_option.images[image_key];
+                
+                design_option_image.base_64_image = design_option_image.original_base_64_image;
+                
+                if(parseInt(design_option_image.is_back) === 1 && side === 'front')
+                {
+                    continue;
+                }
+
+                if(parseInt(design_option_image.is_back) === 0 && side === 'back')
+                {
+                    continue;
+                }
+                
+                // Apply Inner Contrast if applicable
+                if (parseInt(design_option_image.is_inner) === 1 
+                        && parseInt(menu.inner_contrast_support) === 1
+                        && parseInt(menu.inner_mix_selected) === 1)
+                {
+                    design_option_image.base_64_image 
+                        = Instance.blendImage(design_option_image, Instance.product.mix_fabric);
+                }                           
+                // Apply Outer Contrast if applicable
+                else if (parseInt(design_option_image.is_inner) === 0 
+                        && parseInt(menu.is_mixed_fabric_menu) === 1
+                        && parseInt(menu.outer_mix_selected) === 1)
+                {
+                    design_option_image.base_64_image 
+                        = Instance.blendImage(design_option_image, Instance.product.mix_fabric);
+                }
+                else if(parseInt(design_option_image.is_inner) === 0)
+                {
+                    design_option_image.base_64_image 
+                        = Instance.blendImage(design_option_image, Instance.product.default_fabric);
+                }
+                else if(parseInt(design_option_image.is_inner) === 1)
+                {
+                    design_option_image.base_64_image 
+                        = design_option_image.original_base_64_image;
+                }
+
+                // Create Image element
+                $('<img />', 
+                { 
+                    id: 'image_' + design_option_image.id,
+                    src: design_option_image.base_64_image,
+                    class : "preview-image"
+                }).css({ zIndex : design_option_image.zindex, left: design_option_image.x_pos.toString().concat("px"), top: design_option_image.y_pos.toString().concat("px")})
+                .appendTo(design_option_element);
+
+                // Loop through image buttons and add them as well
+                for(var button_key in design_option_image.buttons)
+                {
+                    var button = design_option_image.buttons[button_key];
+
+                    $('<img />', 
+                    { 
+                        id: 'image_' + button.id,
+                        src: Instance.product.default_button.base_64_image,
+                        class : "button-image"
+                    }).css({zIndex : button.zindex, left: button.x_pos.toString().concat("px"), top: button.y_pos.toString().concat("px")})
+                    .appendTo(design_option_element);
+
+                }
+
+            }
+
+        }
+    };
+    
+    /**
+     * This method is called when a new option is selected
+     * @param {type} option_selected The id of the option selected
+     */     
+    this.selectOption = function(option_selected)
+    {
+        var menu = this.product.product_menus[this.menu_selected];
+
+        // Its a design menu if the category is 2
+        if(parseInt(menu.category) === 2)
+        {   
+            // Backup previously selected menu
+            var prev_option_selected = menu.option_selected;  
+            // Set new selected menu
+            menu.option_selected = option_selected;
+            
+            // Do nothing if the same menu is selected
+            if(parseInt(prev_option_selected) ===  parseInt(menu.option_selected))
+            {
+                return;
+            }
+            
+            // Update selected states for current and previous options
+            menu.design_options[prev_option_selected].selected = 0;
+            menu.design_options[menu.option_selected].selected = 1;
+            
+            var id_menu = "#menu_" + menu.id;
+            var id_option = ".option_" + menu.option_selected;
+
+            var prev_id_option = ".option_" + prev_option_selected;
+
+            var selected_option_element = $(id_menu + ' ' + id_option);
+            var prev_selected_option_element = $(id_menu + ' ' + prev_id_option);
+
+            // Switch Options
+            prev_selected_option_element.fadeOut( "slow", function() 
+            {
+                prev_selected_option_element.css("visibility", "hidden");
+                selected_option_element.css("visibility", "visible");
+                selected_option_element.fadeIn("slow");
+            });            
+        }    
     };
     
     this.create_canvas_for_image = function(imageElement, canvas_width, canvas_height)
@@ -323,43 +473,7 @@ function Product(product_object)
         var rgbaArr = [r, g, b, 255];
         return rgbaArr;
     };
-    
-    this.selectOption = function(option_selected)
-    {
-        
-        var menu = this.product.product_menus[this.menu_selected];
 
-        // Its a design menu if the category is 2
-        if(parseInt(menu.category) === 2)
-        {       
-            var prev_option_selected = menu.option_selected;                
-            menu.option_selected = option_selected;
-            
-            if(parseInt(prev_option_selected) ===  parseInt(menu.option_selected))
-            {
-                return;
-            }
-            
-            menu.design_options[prev_option_selected].selected = 0;
-            menu.design_options[menu.option_selected].selected = 1;
-            
-            var id_menu = "#menu_" + menu.id;
-            var id_option = "#option_" + menu.option_selected;
-
-            var previ_id_option = "#option_" + prev_option_selected;
-
-            var selected_option_element = $(id_menu + ' ' + id_option);
-            var prev_selected_option_element = $(id_menu + ' ' + previ_id_option);
-
-            // Switch Options
-            prev_selected_option_element.fadeOut( "slow", function() 
-            {
-                prev_selected_option_element.css("visibility", "hidden");
-                selected_option_element.css("visibility", "visible");
-                selected_option_element.fadeIn("slow");
-            });            
-        }    
-    };
     
     /**
      * Checks if the dependent menu supplied has been unlocked by
@@ -586,118 +700,32 @@ function Product(product_object)
     {
         var Instance = this;
         
-        var menu_element = $("#menu_" + menu.id);
+        var menu_element = $("#front_menu_" + menu.id);
         
         menu_element.fadeOut("slow", function()
         {
             menu_element.empty();
             
-            Instance.drawMenu(menu);
+            Instance.drawMenu(menu, 'front');
+                        
+            menu_element.fadeIn("slow");
+        });
+        
+        var back_menu_element = $("#back_menu_" + menu.id);
+        
+        back_menu_element.fadeOut("slow", function()
+        {
+            menu_element.empty();
             
+            Instance.drawMenu(menu, 'back');
+                        
             menu_element.fadeIn("slow");
         });
         
         
     };
     
-    this.drawMenu = function(menu)
-    {
-        var Instance = this;
-        
-        var menu_element = $("#menu_" + menu.id);
-        
-        for(var option_key in menu.design_options)
-        {
-            var design_option = menu.design_options[option_key];
 
-            if(parseInt(design_option.selected) === 1)
-            {
-                menu.option_selected = design_option.id;
-                Instance.menu_selected = menu.id;
-            }
-
-            // Only show selected Options
-            var visibility = parseInt(design_option.selected) === 1 ? 'visible' : 'hidden';
-
-            // Add a div for the option
-            var design_option_element = $('<div/>', 
-            {
-                id: 'option_' + design_option.id,
-                style: 'position : relative', 
-                class : 'designer-option'                      
-            }).css("visibility", visibility).appendTo(menu_element);
-
-            for(var image_key in design_option.images)
-            {
-                var design_option_image = design_option.images[image_key];
-
-                if(parseInt(design_option_image.is_back) === 1 && Instance.current_side === 'front')
-                {
-                    continue;
-                }
-                
-                if(parseInt(design_option_image.is_back) === 0 && Instance.current_side === 'back')
-                {
-                    continue;
-                }
-                
-                design_option_image.base_64_image = design_option_image.original_base_64_image;
-                
-                // Apply Inner Contrast if applicable
-                if (parseInt(design_option_image.is_inner) === 1 
-                        && parseInt(menu.inner_contrast_support) === 1
-                        && parseInt(menu.inner_mix_selected) === 1)
-                {
-                    design_option_image.base_64_image 
-                        = Instance.blendImage(design_option_image, Instance.product.mix_fabric);
-                }                           
-                // Apply Outer Contrast if applicable
-                else if (parseInt(design_option_image.is_inner) === 0 
-                        && parseInt(menu.is_mixed_fabric_menu) === 1
-                        && parseInt(menu.outer_mix_selected) === 1)
-                {
-                    design_option_image.base_64_image 
-                        = Instance.blendImage(design_option_image, Instance.product.mix_fabric);
-                }
-                else if(parseInt(design_option_image.is_inner) === 0)
-                {
-                    design_option_image.base_64_image 
-                        = Instance.blendImage(design_option_image, Instance.product.default_fabric);
-                }
-                else if(parseInt(design_option_image.is_inner) === 1)
-                {
-                    design_option_image.base_64_image 
-                        = design_option_image.original_base_64_image;
-                }
-
-                // Create Image element
-                $('<img />', 
-                { 
-                    id: 'image_' + design_option_image.id,
-                    src: design_option_image.base_64_image,
-                    class : "preview-image"
-                }).css({ zIndex : design_option_image.zindex, left: design_option_image.x_pos.toString().concat("px"), top: design_option_image.y_pos.toString().concat("px")})
-                .appendTo(design_option_element);
-
-                // Loop through image buttons and add them as well
-                for(var button_key in design_option_image.buttons)
-                {
-                    var button = design_option_image.buttons[button_key];
-
-                    $('<img />', 
-                    { 
-                        id: 'image_' + button.id,
-                        src: Instance.product.default_button.base_64_image,
-                        class : "button-image"
-                    }).css({zIndex : button.zindex, left: button.x_pos.toString().concat("px"), top: button.y_pos.toString().concat("px")})
-                    .appendTo(design_option_element);
-
-                }
-
-            }
-
-        }
-    };
     
     /**
      * Gets the design parameters that will be saved
@@ -771,7 +799,7 @@ function Product(product_object)
     {
         this.product.default_fabric = this.product.fabrics[fabric_selected];
         
-        this.draw(this.designDomElementID, this.current_side);
+        this.draw(false);
     };
     
     this.loadAllFabrics = function()

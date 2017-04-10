@@ -35,19 +35,22 @@ class User extends CI_Controller {
 	
 	public function account()
 	{
-		$this->data['title'] = 'Account';
-		
-		$this->data['cssLinks'] = array('account');
-		
-		// No user is logged, goto home page
-		if($this->userObject->id == -1)
-		{
-			$this->template->load('shmyde', 'home', $this->data);
-		}
-		else
-		{
-			$this->template->load('shmyde', 'user/account', $this->data);
-		}
+            $this->data['title'] = 'Account';
+
+            $this->data['cssLinks'] = array('account');
+            
+            // No user is logged, goto home page
+            if($this->userObject->id == -1)
+            {
+                $this->template->load('shmyde', 'home', $this->data);
+            }
+            else
+            {
+                // Get the users orders if he is logged in
+                $this->data['shmyde_orders'] = json_encode($this->user_model->get_user_orders($this->userObject->id));
+                
+                $this->template->load('shmyde', 'user/account', $this->data);
+            }
 	}
         
         public function choose_password() 

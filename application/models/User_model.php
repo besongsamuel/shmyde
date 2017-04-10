@@ -308,4 +308,20 @@ class User_model extends CI_Model {
             
             return $this->db->get()->row();
         }
+        
+        public function get_user_orders($user_id)
+        {
+            $this->db->select('*');
+            $this->db->from(ORDERS_TABLE);
+            $this->db->where('user_id', $user_id);
+            $user_orders = $this->db->get();
+            $this->db->reset_query();
+
+            if(isset($user_orders))
+            {
+                return $user_orders;
+            }
+
+            return null;
+        }
 }

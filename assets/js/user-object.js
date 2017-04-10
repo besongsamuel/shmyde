@@ -84,17 +84,12 @@ function User(user_object)
         {
             var node = document.getElementById(productManager.designDomElementID);
             
-            if(productManager.current_side !== 'front')
-            {
-                productManager.draw(productManager.designDomElementID, "front", true);
-            }
-            
             domtoimage.toPng(node)
             .then(function (dataUrlFront) 
             {    
-                productManager.draw(productManager.designDomElementID, "back", true);
+                var backNode = document.getElementById(productManager.designBackDomElementID);
                 
-                domtoimage.toPng(node)
+                domtoimage.toPng(backNode)
                 .then(function (dataUrlBack) 
                 {
                     $.ajax({

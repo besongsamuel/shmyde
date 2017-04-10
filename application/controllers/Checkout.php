@@ -49,13 +49,15 @@ class Checkout extends CI_Controller
         $design_data = $this->input->post('design_data');       
         $quantity = $this->input->post('quantity');        
         $price = $this->input->post('price');
-        $base64designImage = $this->input->post('designImage');
+        $type = $this->input->post('type');
+        $base64designImage = $this->input->post('frontDesignImage');
+        $backBase64designImage = $this->input->post('backDesignImage');
         
         // Check that user is still 
         if($this->userObject->id > -1)
         {
             // Perform Checkout
-            if($this->checkout_model->checkout($this->userObject->id, $quantity, $price, $design_data, $base64designImage))
+            if($this->checkout_model->checkout($this->userObject->id, $quantity, $price, $type, $design_data, $base64designImage, $backBase64designImage))
             {
                 //$this->send_order_confirmation();
                 echo json_encode(true);
@@ -138,7 +140,7 @@ class Checkout extends CI_Controller
         
         $this->data['cssLinks'] = array('product-checkout');
         $this->data['user'] = json_encode($this->userObject);
-        $this->data['message_title'] = json_encode($this->data['message_header']);
+        $this->data['message_title'] = json_encode($this->data['message_title']);
         $this->data['message'] = json_encode($this->data['message']);
 
         $this->template->load('shmyde', 'message/message', $this->data);

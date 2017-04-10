@@ -13,8 +13,8 @@
                 checkoutScope.productManager = new Product(checkoutScope.product);
                 checkoutScope.productManager.base_url = '<?= site_url("/"); ?>';
                 checkoutScope.productManager.setProductDetails();  
-                checkoutScope.designImage = sessionStorage.getItem("frontDesignImage");
-                checkoutScope.designBackImage = sessionStorage.getItem("backDesignImage");
+                checkoutScope.frontDesignImage = sessionStorage.getItem("frontDesignImage");
+                checkoutScope.backDesignImage = sessionStorage.getItem("backDesignImage");
             });
                                      
         });
@@ -42,8 +42,8 @@
                 <div class="section-body">
                     <div class="form-group">
                     <label for="design-types">Design Type:</label>
-                    <select class="form-control" id="design-types">
-                        <option ng-repeat="type in designTypes">{{type}}</option>
+                    <select class="form-control" ng-model="type" id="design-types">
+                        <option ng-repeat="type in designTypes" value="{{type}}">{{type}}</option>
                     </select>
                   </div>                  
                 </div>
@@ -67,10 +67,10 @@
                     <tr>
                       <td>
                           <span id='design-preview' style="width: 150px; height: 180px;">
-                              <img ng-src="{{designImage}}" />
+                              <img ng-src="{{frontDesignImage}}" />
                           </span>
                           <span id='design-preview-back' style="width: 150px; height: 180px;">
-                              <img ng-src="{{designBackImage}}" />
+                              <img ng-src="{{backDesignImage}}" />
                           </span>
                       </td>
                       <td>
@@ -79,7 +79,7 @@
                           <a href="#"  data-toggle="modal" data-target="#myMeasurementModal">Measurements</a>
                       </td>
                       <td><input type="number" ng-model="quantity" style="width: 50px;" /></td>
-                      <td>{{price * quantity }} FCFA</td>
+                      <td>{{productManager.total_price * quantity }} FCFA</td>
                     </tr>
                   </tbody>
                 </table>

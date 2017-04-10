@@ -113,5 +113,7 @@ defined('MEASUREMENTS_TABLE')           OR define('MEASUREMENTS_TABLE', "shmyde_
 defined('USERS_TABLE')                  OR define('USERS_TABLE', "users");
 defined('USER_DATA_TABLE')              OR define('USER_DATA_TABLE', "shmyde_user_data");
 defined('USER_TMP_DESIGN_TABLE')        OR define('USER_TMP_DESIGN_TABLE', "shmyde_temp_user_design");
+defined('ORDERS_TABLE')                 OR define('ORDERS_TABLE', "shmyde_orders");
+
 
 

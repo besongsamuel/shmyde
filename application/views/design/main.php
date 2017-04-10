@@ -22,7 +22,8 @@
                 applicationScope.productManager.InitOptionsContainer($('#design_options'));
                 applicationScope.productManager.InitThreadsContainer($('#button-design-threads'));
                 applicationScope.productManager.LoadThreadsToSly();
-                applicationScope.productManager.draw("design-preview", "front");
+                applicationScope.productManager.setContainers("design-preview", "design-preview-back");
+                applicationScope.productManager.draw(false);
                 
                 productManager = applicationScope.productManager;
             });
@@ -54,8 +55,6 @@
                         
         });
         
-        
-        
         function ApplyThread()
         {
             productManager.applySelectedThread();
@@ -71,9 +70,6 @@
             userManager.updateUser();
         }
         
-        
-        
-        
     </script>
 
     <!-- Design Page -->
@@ -83,8 +79,7 @@
             <div id='' class="row">
 
                 <!-- MAIN MENUS  -->
-                <div id='' class=' design-menu col-sm-2'>
-                    <div id='main_menu' class='design-menu-header'>Design Menu</div>
+                <div id='' class='col-sm-3'>
                     <div id='main_menu_list' class="list-group">
                         <a ng-repeat="category in categories" ng-click="DesignCategorySelected(category.id)"  href="#" class="list-group-item">{{category.name}}</a>
                     </div>
@@ -94,29 +89,34 @@
                 <div id='sub_menu_list' class="col-sm-3">
                 </div>
 
-                <div id='design-preview' class='design-preview col-sm-4' style="width: 230px; height: 300px;">
+                <div id='design-preview' class='design-preview col-sm-3' style="width: 230px; height: 300px;">
                 </div>
-
-                <div class='col-sm-4' style="float:right;">
-                    <button class="btn pull-right" ng-click="checkout()">Checkout</button>
+                
+                <div id='design-preview-back' class='design-preview col-sm-3' style="width: 230px; height: 300px;">
                 </div>
 
             </div>
-
+            
             <!-- END MAIN MENUS  -->
+            <div class="row">
+                <div class="wrap">  
+                    <div class="scrollbar">
+                        <div class="handle">
+                                <div class="mousearea"></div>
+                        </div>
+                    </div>
 
-            <div class="wrap">  
-                <div class="scrollbar">
-                    <div class="handle">
-                            <div class="mousearea"></div>
+                    <div class="frame" id="design_options">
+                        <ul class="clearfix" id="option-list">
+
+                        </ul>
                     </div>
                 </div>
-
-                <div class="frame" id="design_options">
-                    <ul class="clearfix" id="option-list">
-
-                    </ul>
-                </div>
+            </div>
+            
+            
+             <div class='row'>
+                    <button class="btn pull-right" ng-click="checkout()">Checkout</button>
             </div>
         </div>
     </div>

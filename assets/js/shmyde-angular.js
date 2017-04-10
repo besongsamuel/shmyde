@@ -128,6 +128,12 @@
                 
         $scope.detail_header = $scope.productManager === null ? "" : "<h1>" + $scope.productManager.product.name + " : " + $scope.productManager.product.price + " FCFA </h1>";
         
+        $scope.$watch('productManager', function(newValue, oldValue) 
+        {
+            $scope.detail_header = $scope.productManager === null ? "" : "<h3>" + $scope.productManager.product.name + " : " + $scope.productManager.product.price + " FCFA </h3>";
+            $scope.product_name = $sce.trustAsHtml($scope.detail_header);
+        });
+        
         $scope.product_name = $sce.trustAsHtml($scope.detail_header);
         
         $scope.price = $scope.productManager === null ? 0 : $scope.productManager.total_price;
@@ -140,7 +146,9 @@
                     design_data : JSON.stringify($scope.productManager.getDesignParameters()), 
                     quantity : $scope.quantity,
                     price : $scope.price,
-                    designImage : $scope.designImage
+                    frontDesignImage : $scope.frontDesignImage,
+                    backDesignImage :  $scope.backDesignImage,
+                    type : $scope.type
                 });
             
             $http({

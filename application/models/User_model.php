@@ -311,7 +311,7 @@ class User_model extends CI_Model {
         
         public function get_user_orders($user_id)
         {
-            $this->db->select('*');
+            $this->db->select('id, user_id, quantity, type, price, status, date_created');
             $this->db->from(ORDERS_TABLE);
             $this->db->where('user_id', $user_id);
             $user_orders = $this->db->get();
@@ -319,7 +319,23 @@ class User_model extends CI_Model {
 
             if(isset($user_orders))
             {
-                return $user_orders;
+                return $user_orders->result();
+            }
+
+            return null;
+        }
+        
+        public function get_user_order($order_id) 
+        {
+            $this->db->select('*');
+            $this->db->from(ORDERS_TABLE);
+            $this->db->where('id', $order_id);
+            $order = $this->db->get();
+            $this->db->reset_query();
+
+            if(isset($order))   
+            {
+                return $order->row();
             }
 
             return null;

@@ -1,8 +1,21 @@
 
-<div style="background-color: white">
+<div style="background-color: white" ng-controller="UserController" id="account-container">
     
     <!-- Profile Header -->
 <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+
+<script>
+    $(document).ready(function()
+    {
+        var userScope = angular.element("#account-container").scope();
+        
+        userScope.$apply(function()
+        {
+            userScope.user_orders = JSON.parse('<?php echo $shmyde_orders; ?>');
+        });
+    });
+</script>
+
 <div class="container">
     <div class="shmyde-profile">
         <img align="left" class="shmyde-image-lg" ng-src="<?php echo ASSETS_PATH; ?>images/account/background.png" alt="Profile image"/>
@@ -149,26 +162,33 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Firstname</th>
-                            <th>Lastname</th>
-                            <th>Email</th>
+                            <th>Product Design</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>John</td>
-                            <td>Doe</td>
-                            <td>john@example.com</td>
-                        </tr>
-                        <tr>
-                            <td>Mary</td>
-                            <td>Moe</td>
-                            <td>mary@example.com</td>
-                        </tr>
-                        <tr>
-                            <td>July</td>
-                            <td>Dooley</td>
-                            <td>july@example.com</td>
+                        <tr ng-repeat="design in user_orders">
+                            <td>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <img width="80" height="100" ng-src="<?php echo ASSETS_PATH?>images/orders/order_{{design.id}}_{{design.user_id}}_front.png"/>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <img width="80" height="100"  ng-src="<?php echo ASSETS_PATH?>images/orders/order_{{design.id}}_{{design.user_id}}_back.png"/>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{design.type}}</td>
+                            <td>{{design.price}} FCFA</td>
+                            <td>{{get_design_status(design.status)}}</td>
+                            <td>
+                                <span ng-show="can_complete(design.status)"><a href="<?php echo site_url('user/complete/{{design.id}}') ?>">Complete</a> | </span>
+                                <span ng-show="can_edit(design.status)"><a  href="<?php echo site_url('design/edit/{{design.id}}') ?>">Edit</a> | </span>
+                                <span ng-show="can_edit(design.status)"><a  href="<?php echo site_url('user/delete/{{design.id}}') ?>">Delete</a></span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -55,6 +55,11 @@
                         
         });
         
+        $("apply-thread").click(function()
+        {            
+            ApplyThread();
+        });
+        
         function ApplyThread()
         {
             productManager.applySelectedThread();
@@ -255,7 +260,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="ApplyThread()">Apply</button>
+                    <button type="button" id="apply-thread" class="btn btn-default" data-dismiss="modal">Apply</button>
                 </div>
 
             </div>

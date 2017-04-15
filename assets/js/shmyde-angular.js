@@ -354,6 +354,44 @@
             }
             
         };
+        
+        $scope.get_design_status = function(status_code)
+        {
+            if(parseInt(status_code) === 0)
+            {
+                return "Pending Payment";
+            }
+            
+            if(parseInt(status_code) === 1)
+            {
+                return "Pending Dilivery";
+            }
+            
+            if(parseInt(status_code) === 2)
+            {
+                return "Incomplete Design";
+            }
+        };
+        
+        $scope.can_complete = function(status_code)
+        {
+            if(parseInt(status_code) === 0)
+            {
+                return true;
+            }
+            
+            return false;
+        };
+        
+        $scope.can_edit = function(status_code)
+        {
+            if(parseInt(status_code) === 0 || parseInt(status_code) === 10)
+            {
+                return true;
+            }
+            
+            return false;
+        };
        
     }]);
     

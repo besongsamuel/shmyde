@@ -143,8 +143,6 @@ function Product(product_object)
                 }
             }                 
         }
-        
-        
     };
     
     this.setContainers = function(domElementID, domBackElementID)
@@ -233,6 +231,8 @@ function Product(product_object)
         for(var option_key in menu.design_options)
         {
             var design_option = menu.design_options[option_key];
+            
+            console.log("Drawing " + design_option.name);
 
             if(parseInt(design_option.selected) === 1)
             {
@@ -268,13 +268,20 @@ function Product(product_object)
                     continue;
                 }
                 
+                var imageElement = $('<img />', 
+                { 
+                    id: 'image_' + design_option_image.id,
+                    class : "preview-image"
+                }).css({ zIndex : design_option_image.zindex, left: design_option_image.x_pos.toString().concat("px"), top: design_option_image.y_pos.toString().concat("px")});
+                
+                
                 // Apply Inner Contrast if applicable
                 if (parseInt(design_option_image.is_inner) === 1 
                         && parseInt(menu.inner_contrast_support) === 1
                         && parseInt(menu.inner_mix_selected) === 1)
                 {
                     design_option_image.base_64_image 
-                        = Instance.blendImage(design_option_image, Instance.product.mix_fabric);
+                        = Instance.blendImage(design_option_image, Instance.product.mix_fabric, imageElement);
                 }                           
                 // Apply Outer Contrast if applicable
                 else if (parseInt(design_option_image.is_inner) === 0 
@@ -282,27 +289,22 @@ function Product(product_object)
                         && parseInt(menu.outer_mix_selected) === 1)
                 {
                     design_option_image.base_64_image 
-                        = Instance.blendImage(design_option_image, Instance.product.mix_fabric);
+                        = Instance.blendImage(design_option_image, Instance.product.mix_fabric, imageElement);
                 }
                 else if(parseInt(design_option_image.is_inner) === 0)
                 {
                     design_option_image.base_64_image 
-                        = Instance.blendImage(design_option_image, Instance.product.default_fabric);
+                        = Instance.blendImage(design_option_image, Instance.product.default_fabric, imageElement);
                 }
                 else if(parseInt(design_option_image.is_inner) === 1)
                 {
                     design_option_image.base_64_image 
                         = design_option_image.original_base_64_image;
+                        
+                    imageElement.attr("src", design_option_image.base_64_image);
                 }
-
-                // Create Image element
-                $('<img />', 
-                { 
-                    id: 'image_' + design_option_image.id,
-                    src: design_option_image.base_64_image,
-                    class : "preview-image"
-                }).css({ zIndex : design_option_image.zindex, left: design_option_image.x_pos.toString().concat("px"), top: design_option_image.y_pos.toString().concat("px")})
-                .appendTo(design_option_element);
+                                
+                imageElement.appendTo(design_option_element);
 
                 // Loop through image buttons and add them as well
                 for(var button_key in design_option_image.buttons)
@@ -380,8 +382,11 @@ function Product(product_object)
         return canvas;
     };
     
-    this.blendImage = function(imageObject, fabric)
+    this.blendImage = function(imageObject, fabric, imageElement)
     {
+        var Instance = this;
+        
+        // Return the option image if there is no fabric set
         if(fabric === null)
         {
             return imageObject.original_base_64_image;
@@ -389,45 +394,60 @@ function Product(product_object)
         
         fabric.base_64_image = fabric.original_base_64_image;
         
-        var designImage = document.createElement("img");
-        designImage.setAttribute('src', imageObject.original_base_64_image);
-        designImage.setAttribute('class', 'preview-image');
-        
-        var fabricImage = document.createElement("img");
-        fabricImage.setAttribute('src', fabric.base_64_image);
-        fabricImage.setAttribute('class', 'preview-image');
-        
-        var designImageCanvas = this.create_canvas_for_image(designImage, 230, 300);
-        var designImageContext = designImageCanvas.getContext('2d');
-        var designImageData = designImageContext.getImageData(0, 0, designImageCanvas.width, designImageCanvas.height);
-        var designData = designImageData.data;
-        
-        var fabricImageCanvas = this.create_canvas_for_image(fabricImage, 230, 300);
-        var fabricImageContext = fabricImageCanvas.getContext('2d');
-        var fabricImageData = fabricImageContext.getImageData(0, 0, fabricImageCanvas.width, fabricImageCanvas.height);
-        var fabricData = fabricImageData.data;
-        
-        for (var i = 0; i < designData.length; i += 4) 
+        var designImage = new Image();
+        designImage.onload = function() 
         {
             
-            var avgColor = (designData[i] + designData[i + 1] + designData[i + 2]) / 3;
+            var fabricImage = new Image();
             
-            if(designData[i + 3] > 0 && avgColor > 150)
+            fabricImage.onload = function() 
             {
-                designData[i]     = (fabricData[i]);     
-                designData[i + 1] = (fabricData[i + 1]); 
-                designData[i + 2] = (fabricData[i + 2]); 
-            }
-            else if(designData[i + 3] > 0)
-            {
-                designData[i] = 44;
-                designData[i + 1] = 44;
-                designData[i + 2] = 44;
-            }
-        }
+                var designImageCanvas = Instance.create_canvas_for_image(designImage, 230, 300);
+                var designImageContext = designImageCanvas.getContext('2d');
+                var designImageData = designImageContext.getImageData(0, 0, designImageCanvas.width, designImageCanvas.height);
+                var designData = designImageData.data;
+
+                var fabricImageCanvas = Instance.create_canvas_for_image(fabricImage, 230, 300);
+                var fabricImageContext = fabricImageCanvas.getContext('2d');
+                var fabricImageData = fabricImageContext.getImageData(0, 0, fabricImageCanvas.width, fabricImageCanvas.height);
+                var fabricData = fabricImageData.data;
+
+                for (var i = 0; i < designData.length; i += 4) 
+                {
+
+                    var avgColor = (designData[i] + designData[i + 1] + designData[i + 2]) / 3;
+
+                    if(designData[i + 3] > 0 && avgColor > 150)
+                    {
+                        designData[i]     = (fabricData[i]);     
+                        designData[i + 1] = (fabricData[i + 1]); 
+                        designData[i + 2] = (fabricData[i + 2]); 
+                    }
+                    else if(designData[i + 3] > 0)
+                    {
+                        designData[i] = 44;
+                        designData[i + 1] = 44;
+                        designData[i + 2] = 44;
+                    }
+                }
+
+                designImageContext.putImageData(designImageData, 0, 0);
+                
+                var finalImage = designImageCanvas.toDataURL();
+                
+                imageElement.attr("src", finalImage);
+
+            };
+            
+            fabricImage.setAttribute('class', 'preview-image');
+            fabricImage.src = fabric.base_64_image;
+            
+        };
         
-        designImageContext.putImageData(designImageData, 0, 0);
-        return designImageCanvas.toDataURL();
+        designImage.setAttribute('class', 'preview-image');
+        designImage.src = imageObject.original_base_64_image;
+
+        
                 
     };
     

@@ -11,17 +11,7 @@ class Design extends CI_Controller
 	public function __construct()
 	{
             parent::__construct();
-	}
-	
-	
-	public function index()
-        {
-            
-        }
 
-	public function product()
-	{
-         
             $this->data['categories'] = $this->admin_model->get_categories();
             
             $ordered_categories = array();
@@ -48,6 +38,17 @@ class Design extends CI_Controller
 
             $this->data['cssLinks'] = array('design');
             
+	}
+	
+	
+	public function index()
+        {
+            
+        }
+
+	public function product()
+	{
+         
             $user_design = null;
             // User returning after login, go back to design
             if($this->session->userdata('user_id') !== null)
@@ -74,6 +75,39 @@ class Design extends CI_Controller
             $this->template->load('shmyde', 'design/main', $this->data);
 
 	}
+        
+        public function edit($order_id)
+        {
+            // User is signed_in
+            if($this->session->userdata('user_id') !== null)
+            {
+                // Get the order object
+                $order = $this->GetUserOrder($order_id);
+                
+                if($order != null)
+                {
+                    // Get user design from order
+                    $user_design = json_decode($order->user_design, true);
+                    // Create design product
+                    $productManager = new DesignProduct();
+                    // Load the product recursively
+                    $productManager->LoadProduct(
+                        $this->design_model, 
+                        $user_design['product_id'], true);
+                    // Load the user design recursively
+                    $productManager->LoadUserDesign($user_design);
+                    $this->data['product'] = json_encode($productManager);
+                    
+                    // Load view
+                    $this->template->load('shmyde', 'design/main', $this->data);
+                    
+                    return;
+                }
+                
+            }
+            
+            
+        }
         
         
         /**
@@ -102,12 +136,16 @@ class Design extends CI_Controller
         public function GetTmpUserDesign()
         {   
             // Get the design with the current Session ID
-            
             if (session_id() === "") 
             {
                 session_start();
             }
             return $this->admin_model->GetTmpUserDesign(session_id());
+        }
+        
+        public function GetUserOrder($order_id) 
+        {
+            return $this->user_model->get_user_order($order_id);
         }
         
 }

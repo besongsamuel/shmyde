@@ -129,6 +129,8 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" ng-show="saveDesignVisible()" ng-click="savedesign()">SAVE DESIGN</a></li>
+            <li><a href="#" ng-show="updateDesignVisible()" ng-click="savedesign()">UPDATE DESIGN</a></li>
             <li><a href="#myPage" ng-show="homeMenuVisible()">HOME</a></li>
             <li><a href="#design-section" ng-show="designMenuVisible()">DESIGN</a></li>
             <li><a href="#about-us" ng-show="aboutUsVisible()">ABOUT US</a></li>
@@ -139,7 +141,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li><a href="#" ng-click="goto_account()">Account Page</a></li>
-                <li><a href="#" ng-click="logout()">Logout</a></li> 
+                <li><a href="#" ng-click="logout()">Logout</a></li>
               </ul>
             </li>
             <li ng-hide="user_logged()" ng-click="login()"><a href="#"><span class="glyphicon glyphicon-user"></span></a></li>

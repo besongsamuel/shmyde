@@ -58,16 +58,19 @@ function User(user_object)
         
     };
     
-    this.CheckOut = function(productManager)
+    this.CheckOut = function(productManager, order_id, order_status)
     {
         var designParameters = productManager.getDesignParameters();
         
         Instance = this;
-
+        
         // User is not logged in
         // Redirect to login page
         if(parseInt(this.user.id) === -1)
         {
+            sessionStorage.setItem("order_id", order_id);
+            sessionStorage.setItem("order_status", order_status);
+            
             // Save current Design. Shall be reloaded after login
             $.ajax({
                 url : Instance.base_url.concat('Design/SaveTmpUserDesign'),

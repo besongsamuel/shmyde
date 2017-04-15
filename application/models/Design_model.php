@@ -291,4 +291,60 @@ class Design_model extends CI_Model
         
         return null;
     }
+    
+    /**
+     * This function saves the current user design or updates it
+     * @param type $user_id
+     * @param type $userDesign
+     */
+    public function SaveUserDesign($user_id, $order_id, $total_price, $designParameters, $frontBase64Image, $backBase64Image)
+    {    
+        $data = array
+        (
+            'user_design'       => $designParameters,
+            'user_id'           => $user_id,
+            'price'             => $total_price,
+            'status'            => 20 // This is the status for saved designs
+        );
+        
+        if($order_id == -1)
+        {
+            $this->db->insert(ORDERS_TABLE, $data);
+            
+            $decoded_frontBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $frontBase64Image));
+            $decoded_backBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $backBase64Image));
+            
+            $insert_id = $this->db->insert_id();
+            
+            file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_front.png', $decoded_frontBase64Image);
+            file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_back.png', $decoded_backBase64Image);
+            
+            return $insert_id;
+        }
+        else
+        {
+            $this->db->where('id', $order_id);
+            $this->db->update(ORDERS_TABLE, $data);
+            
+            $decoded_frontBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $frontBase64Image));
+            $decoded_backBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $backBase64Image));
+            
+            $insert_id = $order_id;
+            
+            file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_front.png', $decoded_frontBase64Image);
+            file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_back.png', $decoded_backBase64Image);
+            
+            return $insert_id;
+        }        
+    }
+    
+    /**
+     * THis method deletes an order or design
+     * @param type $order_id
+     */
+    public function delete_design($order_id) 
+    {
+        $this->db->where('id', $order_id);
+        $this->db->delete(ORDERS_TABLE);
+    }
 }

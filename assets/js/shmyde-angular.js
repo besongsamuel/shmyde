@@ -392,6 +392,27 @@
             
             return false;
         };
+        
+        $scope.delete_design = function(design_id)
+        {
+            if (confirm('Are you sure you want to parmanently delete this design?')) 
+            {
+                $.ajax({
+                    url : $scope.site_url.concat('Design/DeleteUserDesign'),
+                    data : {
+                        order_id :  design_id},
+                    async : true,
+                    type : 'POST',
+                    success : function(response)
+                    {
+                        $scope.$apply(function()
+                        {
+                            $scope.user_orders = JSON.parse(response);
+                        });
+                    }
+                });
+            }
+        };
        
     }]);
     
@@ -410,6 +431,7 @@
     
     app.controller('HeaderController', ['$scope', '$rootScope', function($scope, $rootScope)
     {
+        
         /**
          * Checks if the root scope is initialized
          * @returns {undefined}
@@ -653,7 +675,91 @@
         
         $scope.checkout = function()
         {
-            $scope.userObject.CheckOut($scope.productManager);
+            $scope.userObject.CheckOut($scope.productManager, $scope.order_id, $scope.order_Status);
+        };
+        
+        $rootScope.saveDesignVisible = function()
+        {
+            
+            if(!$rootScope.initialized())
+            {
+                return;
+            }
+            
+            if($scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_id === -1)
+            {
+                return true;
+            }
+            
+            return false;
+        };
+        
+        $rootScope.updateDesignVisible = function()
+        {
+            
+            if(!$rootScope.initialized())
+            {
+                return;
+            }
+            
+            if($scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_status === 20)
+            {
+                return true;
+            }
+            
+            return false;
+        };
+        
+        $rootScope.savedesign = function()
+        {
+            if (confirm('Are you sure you want to save the current design?')) 
+            {
+                var designParameters = $rootScope.productManager.getDesignParameters();
+                
+                $rootScope.productManager.setProductDetails();
+                
+                Instance = this;
+                
+                var node = document.getElementById($rootScope.productManager.designDomElementID);
+            
+                domtoimage.toPng(node)
+                .then(function (dataUrlFront) 
+                {    
+                    var backNode = document.getElementById($rootScope.productManager.designBackDomElementID);
+
+                    domtoimage.toPng(backNode)
+                    .then(function (dataUrlBack) 
+                    {
+                        // Save current Design. Shall be reloaded after login
+                        $.ajax({
+                            url : $rootScope.site_url.concat('Design/SaveUserDesign'),
+                            data :  {
+                                        designParameters : JSON.stringify(designParameters), 
+                                        order_id : $rootScope.order_id, 
+                                        price : $rootScope.productManager.total_price,
+                                        frontDesignImage : dataUrlFront,
+                                        backDesignImage :  dataUrlBack
+                                    },
+                            async : true,
+                            type : 'POST',
+                            success : function(response)
+                            {
+                                $rootScope.order_id = parseInt(JSON.parse(response));
+                                
+                                if($rootScope.order_id !== -1)
+                                {
+                                    $rootScope.order_status = 20;
+                                }
+                                
+                                alert("Current design has been saved to your user account. ");
+                            }
+                        });
+                    });
+                })
+                .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                });
+            } 
         };
         
     }]);

@@ -45,7 +45,10 @@ class Design extends CI_Controller
         {
             
         }
-
+        
+        /**
+         * This function starts a new order or product design
+         */
 	public function product()
 	{
          
@@ -56,7 +59,12 @@ class Design extends CI_Controller
                 $user_id = $this->session->userdata('user_id');
                 $user_design = json_decode($this->GetTmpUserDesign($user_id), true);
             }
-                        
+            
+            $this->data['order_id'] = json_encode("-1");
+            
+            $this->data['order_status'] = json_encode("-1");
+            
+            // User is returning from a previous design
             if($user_design != null)
             {
                 $productManager = new DesignProduct();
@@ -66,28 +74,41 @@ class Design extends CI_Controller
             }
             else
             {
+                // New Design
                 $product_id = $this->input->get('product_id');
                 $my_product = new DesignProduct();
                 $my_product->LoadProduct($this->design_model, $product_id);
                 $this->data['product'] = json_encode($my_product);
+                
             }
                         
             $this->template->load('shmyde', 'design/main', $this->data);
 
 	}
         
+        /**
+         * This function edits an order or product design
+         * @param type $order_id The id of the order
+         * @return type
+         */
         public function edit($order_id)
         {
             // User is signed_in
             if($this->session->userdata('user_id') !== null)
             {
+                
+                $this->data['order_id'] = json_encode($order_id);
                 // Get the order object
                 $order = $this->GetUserOrder($order_id);
+                
+                $this->data['order_status'] = json_encode("-1");;
                 
                 if($order != null)
                 {
                     // Get user design from order
                     $user_design = json_decode($order->user_design, true);
+                    
+                    $this->data['order_status'] = json_encode($order->status);
                     // Create design product
                     $productManager = new DesignProduct();
                     // Load the product recursively
@@ -143,9 +164,40 @@ class Design extends CI_Controller
             return $this->admin_model->GetTmpUserDesign(session_id());
         }
         
+        /**
+         * Saves the current user design to the database
+         */
+        public function SaveUserDesign() 
+        {
+            $designParameters = $this->input->post('designParameters');
+            
+            // Order ID
+            $order_id = $this->input->post('order_id');
+            
+            $total_price = $this->input->post('price');
+            
+            $base64designImage = $this->input->post('frontDesignImage');
+            $backBase64designImage = $this->input->post('backDesignImage');
+            
+            $user_id = $this->userObject->id;
+            
+            // Return the new order ID if it was -1
+            echo json_encode($this->design_model->SaveUserDesign($user_id, $order_id, $total_price, $designParameters, $base64designImage, $backBase64designImage));
+            
+        }
+        
         public function GetUserOrder($order_id) 
         {
             return $this->user_model->get_user_order($order_id);
+        }
+        
+        public function DeleteUserDesign() 
+        {
+            $order_id = $this->input->post('order_id');
+            
+            $this->design_model->delete_design($order_id);
+            
+            echo json_encode($this->user_model->get_user_orders($this->userObject->id));
         }
         
 }

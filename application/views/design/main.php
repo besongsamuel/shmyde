@@ -17,7 +17,23 @@
             var productManager;
             applicationScope.$apply(function()
             {                              
-                applicationScope.product = JSON.parse('<?php echo $product; ?>');        
+                applicationScope.product = JSON.parse('<?php echo $product; ?>');  
+                applicationScope.order_id = parseInt(JSON.parse('<?php echo $order_id; ?>'));
+                applicationScope.order_status = parseInt(JSON.parse('<?php echo $order_status; ?>'));
+                if(applicationScope.order_id === -1)
+                {
+                    if(sessionStorage.getItem("order_id")!== null && sessionStorage.getItem("order_id")!== 'undefined')
+                    {
+                        applicationScope.order_id = parseInt(sessionStorage.getItem("order_id"));
+                    }
+                }
+                if(applicationScope.order_status === -1)
+                {
+                    if(sessionStorage.getItem("order_status")!== null && sessionStorage.getItem("order_status")!== 'undefined')
+                    {
+                        applicationScope.order_status = parseInt(sessionStorage.getItem("order_status"));
+                    }
+                }
                 applicationScope.productManager = new Product(applicationScope.product);
                 applicationScope.productManager.InitOptionsContainer($('#design_options'));
                 applicationScope.productManager.InitThreadsContainer($('#button-design-threads'));

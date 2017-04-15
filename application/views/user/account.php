@@ -153,7 +153,7 @@
 </div><!-- /.row -->
 
 <!-- Edit User Details Section -->
-  <div class="row">
+<div class="row" id="orders">
     <div class="col-md-8 col-md-offset-2">
         <form class="form-horizontal" role="form">
             <fieldset>
@@ -187,7 +187,7 @@
                             <td>
                                 <span ng-show="can_complete(design.status)"><a href="<?php echo site_url('user/complete/{{design.id}}') ?>">Complete</a> | </span>
                                 <span ng-show="can_edit(design.status)"><a  href="<?php echo site_url('design/edit/{{design.id}}') ?>">Edit</a> | </span>
-                                <span ng-show="can_edit(design.status)"><a  href="<?php echo site_url('user/delete/{{design.id}}') ?>">Delete</a></span>
+                                <span ng-show="can_edit(design.status)" ng-click="delete_design(design.id)"><a href="#orders">Delete</a></span>
                             </td>
                         </tr>
                     </tbody>

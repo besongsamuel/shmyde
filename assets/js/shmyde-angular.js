@@ -148,7 +148,8 @@
                     price : $scope.price,
                     frontDesignImage : $scope.frontDesignImage,
                     backDesignImage :  $scope.backDesignImage,
-                    type : $scope.type
+                    type : $scope.type,
+                    order_id : $scope.order_id
                 });
             
             $http({

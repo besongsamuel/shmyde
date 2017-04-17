@@ -52,12 +52,13 @@ class Checkout extends CI_Controller
         $type = $this->input->post('type');
         $base64designImage = $this->input->post('frontDesignImage');
         $backBase64designImage = $this->input->post('backDesignImage');
+        $order_id = $this->input->post('order_id');
         
         // Check that user is still 
         if($this->userObject->id > -1)
         {
             // Perform Checkout
-            if($this->checkout_model->checkout($this->userObject->id, $quantity, $price, $type, $design_data, $base64designImage, $backBase64designImage))
+            if($this->checkout_model->checkout($this->userObject->id, $order_id, $quantity, $price, $type, $design_data, $base64designImage, $backBase64designImage))
             {
                 //$this->send_order_confirmation();
                 echo json_encode(true);

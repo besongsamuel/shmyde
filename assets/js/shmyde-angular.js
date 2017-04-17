@@ -371,6 +371,11 @@
             {
                 return "Incomplete Design";
             }
+            
+            if(parseInt(status_code) === 20)
+            {
+                return "Saved Design";
+            }
         };
         
         $scope.can_complete = function(status_code)
@@ -385,7 +390,7 @@
         
         $scope.can_edit = function(status_code)
         {
-            if(parseInt(status_code) === 0 || parseInt(status_code) === 10)
+            if(parseInt(status_code) === 0 || parseInt(status_code) === 20)
             {
                 return true;
             }
@@ -441,7 +446,6 @@
             if($scope.is_initialized === null || $scope.is_initialized === 'undefined')
             {
                 return false;
-                
             }
             
             return $scope.is_initialized;

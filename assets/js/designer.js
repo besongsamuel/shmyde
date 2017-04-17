@@ -722,24 +722,24 @@ function Product(product_object)
         
         var menu_element = $("#front_menu_" + menu.id);
         
-        menu_element.fadeOut("slow", function()
+        menu_element.fadeOut("fast", function()
         {
             menu_element.empty();
             
             Instance.drawMenu(menu, 'front');
                         
-            menu_element.fadeIn("slow");
+            menu_element.fadeIn("fast");
         });
         
         var back_menu_element = $("#back_menu_" + menu.id);
         
-        back_menu_element.fadeOut("slow", function()
+        back_menu_element.fadeOut("fast", function()
         {
-            menu_element.empty();
+            back_menu_element.empty();
             
             Instance.drawMenu(menu, 'back');
                         
-            menu_element.fadeIn("slow");
+            back_menu_element.fadeIn("fast");
         });
         
         
@@ -844,7 +844,7 @@ function Product(product_object)
             list_element.click(function()
             {
                 Instance.product.mix_fabric = Instance.product.fabrics[this.value];
-                Instance.draw(Instance.designDomElementID, Instance.current_side);
+                Instance.draw(false);
             });
 
             $("#option-list").append(list_element);
@@ -858,7 +858,7 @@ function Product(product_object)
         var tmp_fabric = this.product.default_fabric;
         this.product.default_fabric = this.product.mix_fabric;
         this.product.mix_fabric = tmp_fabric;
-        this.draw(this.designDomElementID, this.current_side);
+        this.draw(false);
     };
     
     this.loadOptions = function(menu_selected)

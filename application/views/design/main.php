@@ -4,6 +4,9 @@
 
     <script>
         
+        // Show loading animation
+        $('#loading').show();
+        
         var designObject;
         var productManager;
         var userManager;

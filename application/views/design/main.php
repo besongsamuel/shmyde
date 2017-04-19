@@ -42,6 +42,7 @@
                 applicationScope.productManager.InitThreadsContainer($('#button-design-threads'));
                 applicationScope.productManager.LoadThreadsToSly();
                 applicationScope.productManager.setContainers("design-preview", "design-preview-back");
+                applicationScope.productManager.setImageCount();
                 applicationScope.productManager.draw(false);
                 
                 productManager = applicationScope.productManager;

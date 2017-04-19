@@ -475,7 +475,7 @@
             }
         };
         
-        $scope.homeMenuVisible = function()
+        $rootScope.homeMenuVisible = function()
         {
             if(!$rootScope.initialized())
             {
@@ -495,7 +495,7 @@
             return false;
         };
         
-        $scope.designMenuVisible = function()
+        $rootScope.designMenuVisible = function()
         {
             if(!$rootScope.initialized())
             {
@@ -510,7 +510,7 @@
             return false;
         };
         
-        $scope.aboutUsVisible = function()
+        $rootScope.aboutUsVisible = function()
         {
             
             if(!$rootScope.initialized())
@@ -526,7 +526,7 @@
             return false;
         };
         
-        $scope.contactUsVisible = function()
+        $rootScope.contactUsVisible = function()
         {
             if(!$rootScope.initialized())
             {
@@ -541,7 +541,7 @@
             return false;
         };
         
-        $scope.gotoHome = function()
+        $rootScope.gotoHome = function()
         {
             if(!$rootScope.initialized())
             {
@@ -619,6 +619,41 @@
         {
             $scope.selected_product = 0;
         });
+    }]);
+    
+    app.controller('ContactUsController', ['$scope', function($scope)
+    {
+        $scope.contactName = "";
+        $scope.contactEmail = "";
+        $scope.contactComment = "";
+        
+        $scope.Message = "We love our fans";
+        
+        $scope.submitComment = function()
+        {
+            $.ajax({
+                url : $scope.site_url.concat('Home/ContactUs'),
+                data : {
+                        contactName : JSON.stringify($scope.contactName),
+                        contactEmail : JSON.stringify($scope.contactEmail),
+                        contactComment : JSON.stringify($scope.contactComment),
+                    },
+                async : true,
+                type : 'POST',
+                success : function()
+                {
+                    $scope.contactName = "";
+                    $scope.contactEmail = "";
+                    $scope.contactComment = "";
+                    $scope.Message = "We have recieved your comments. Thank you for your interest.";
+                },
+                error : function()
+                {
+                    $scope.Message = "An unexpected error occured. Please contact us later. ";
+                }
+            });
+        };
+        
     }]);
     
     app.controller('ProductController', ['$scope', function($scope)

@@ -53,8 +53,19 @@
 
         $(document).ready(function()
         {
-                        
-            var rootScope = angular.element("#shmyde-application").scope();
+           
+		var contactusScope = angular.element("contact").scope();
+		
+		contactusScope.$apply(function()
+	      	{
+			contactusScope.shmyde_contact_email = '<?php echo SHMYDE_CONTACT; ?>';
+			contactusScope.shmyde_address_line_2 = '<?php echo SHMYDE_ADDRESS_LINE_1; ?>';
+			contactusScope.shmyde_address_line_1 = '<?php echo SHMYDE_ADDRESS_LINE_2; ?>';
+			contactusScope.shmyde_country = '<?php echo SHMYDE_COUNTRY; ?>';
+			contactusScope.shmyde_contact_phone = '<?php echo SHMYDE_CONTACT_PHONE; ?>';
+		});
+		
+            	var rootScope = angular.element("#shmyde-application").scope();
                        
             /* Apply these values to the root scope */
             rootScope.$apply(function()
@@ -177,11 +188,12 @@
     <h3 class="text-center">Contact</h3>
     <p class="text-center"><em>{{Message}}</em></p>
     <div class="row">
-        <div class="col-md-4">
-            <p>Tell us your feeling.</p>
-            <p><span class="glyphicon glyphicon-map-marker"></span>Cameroon, YDE</p>
-            <p><span class="glyphicon glyphicon-phone"></span>Phone: +237 1515151515</p>
-            <p><span class="glyphicon glyphicon-envelope"></span>Email: admin@shmyde.com</p>
+       	<div class="col-md-4">
+            	<p>Tell us your feeling.</p>
+            	<p><span class="glyphicon glyphicon-map-marker"></span>{{shmyde_address_line_1}}</p>
+		<p><span class="glyphicon glyphicon-map-marker"></span>{{shmyde_address_line_2}}</p>
+            	<p><span class="glyphicon glyphicon-phone"></span>{{shmyde_contact_phone}}</p>
+            	<p><span class="glyphicon glyphicon-envelope"></span>{{shmyde_contact_email}}</p>
         </div>
         <div class="col-md-8">
             <div class="row">

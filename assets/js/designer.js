@@ -12,6 +12,10 @@ function Product(product_object)
     
     this.total_price = 0;
     
+    this.image_count = 0;
+    
+    this.current_image_count = 0;
+    
     /**
      * An array of strings representing
      * the product details
@@ -302,6 +306,7 @@ function Product(product_object)
                         = design_option_image.original_base_64_image;
                         
                     imageElement.attr("src", design_option_image.base_64_image);
+                    this.imageLoaded();
                 }
                                 
                 imageElement.appendTo(design_option_element);
@@ -323,6 +328,39 @@ function Product(product_object)
 
             }
 
+        }
+    };
+    
+    this.imageLoaded = function()
+    {
+        this.current_image_count++;
+        
+        if(this.current_image_count === this.image_count)
+        {
+            // Finished Loading
+            $("#loading").fadeOut(500);
+        }
+    }
+    
+    this.setImageCount = function()
+    {
+        this.image_count = 0;
+        
+        this.current_image_count = 0;
+        
+        for(var key in this.product.product_menus)
+        {
+            var menu = this.product.product_menus[key];
+            
+            for(var option_key in menu.design_options)
+            {
+                var design_option = menu.design_options[option_key];
+
+                for(var image_key in design_option.images)
+                {
+                    this.image_count++;
+                }
+            }
         }
     };
     
@@ -436,6 +474,7 @@ function Product(product_object)
                 var finalImage = designImageCanvas.toDataURL();
                 
                 imageElement.attr("src", finalImage);
+                Instance.imageLoaded();
 
             };
             

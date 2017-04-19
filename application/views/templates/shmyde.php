@@ -173,9 +173,9 @@
 </body>
 
 <!-- Container (Contact Section) -->
-<div id="contact" class="container" ng-controller="HeaderController" ng-show="aboutUsVisible()">
+<div id="contact" class="container" ng-controller="ContactUsController" ng-show="contactUsVisible()">
     <h3 class="text-center">Contact</h3>
-    <p class="text-center"><em>We love our fans!</em></p>
+    <p class="text-center"><em>{{Message}}</em></p>
     <div class="row">
         <div class="col-md-4">
             <p>Tell us your feeling.</p>
@@ -186,19 +186,19 @@
         <div class="col-md-8">
             <div class="row">
                 <div class="col-sm-6 form-group">
-                    <input class="form-control" id="name" name="name" placeholder="Name" type="text" required>
+                    <input class="form-control" id="name" name="name" placeholder="Name" type="text" ng-model="contactName" required>
                 </div>
                 <div class="col-sm-6 form-group">
-                    <input class="form-control" id="email" name="email" placeholder="Email" type="email" required>
+                    <input class="form-control" id="email" name="email" placeholder="Email" type="email" ng-model="contactEmail" required>
                 </div>
             </div>
-            <textarea class="form-control" id="comments" name="comments" placeholder="Comment" rows="5">
+            <textarea class="form-control" id="comments" name="comments" placeholder="Comment" ng-model="contactComment" rows="5">
             
             </textarea>
             <br>
             <div class="row">
                 <div class="col-md-12 form-group">
-                    <button class="btn pull-right" type="submit">Send</button>
+                    <button class="btn pull-right" type="submit" ng-submit="submitComment()">Send</button>
                 </div>
             </div>
         </div>

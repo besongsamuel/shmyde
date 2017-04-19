@@ -95,8 +95,12 @@ defined('CURRENT_LANGUAGE')	   OR define('CURRENT_LANGUAGE', 'english'); // The 
 defined('IMAGE_WIDTH')             OR define('IMAGE_WIDTH', 230); 
 defined('IMAGE_HEIGHT')            OR define('IMAGE_HEIGHT', 300); 
 
-// SHMYDE MAILS
-defined('SHMYDE_CONTACT')               OR define('SHMYDE_CONTACT', "contact@shmyde.com"); 
+// SHMYDE CONTACT
+defined('SHMYDE_CONTACT')               OR define('SHMYDE_CONTACT', "contact@shmyde.com");
+defined('SHMYDE_ADDRESS_LINE_1')        OR define('SHMYDE_ADDRESS_LINE_1', "Cameroon, YDE");
+defined('SHMYDE_ADDRESS_LINE_2')        OR define('SHMYDE_ADDRESS_LINE_2', "00237, WestRoad Lane");
+defined('SHMYDE_COUNTRY')               OR define('SHMYDE_COUNTRY', "Cameroon");
+defined('SHMYDE_CONTACT_PHONE')         OR define('SHMYDE_CONTACT_PHONE', "00237 677777777");
 
 
 // Table Names

@@ -55,9 +55,8 @@ class User extends CI_Controller {
         
         public function choose_password() 
         {
-            $data = array();
             
-            $data['cssLinks'] = array('forgot_password');
+            $this->data['cssLinks'] = array('forgot_password');
             
             if ($this->input->server('REQUEST_METHOD') == 'POST')
             {
@@ -81,11 +80,8 @@ class User extends CI_Controller {
                 return;
             }
 
-            $data["title"] = "Choose Password";
-            
-            $this->load->view('pages/header', $data);
-            $this->load->view('user/choose_password', $data);
-            $this->load->view('pages/footer', $data);
+            $this->data["title"] = "Choose Password";
+            $this->template->load('shmyde', 'user/choose_password', $this->data);
         }
         
         /**

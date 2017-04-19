@@ -119,7 +119,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">×</button>
-          <h4><span class="glyphicon glyphicon-gift"></span> Shmyde Product</h4>
+          <h4>Select Product</h4>
         </div>
         <div class="modal-body">
             <form action="<?php echo site_url('design/product/'); ?>" role="form" method="get">

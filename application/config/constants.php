@@ -95,6 +95,9 @@ defined('CURRENT_LANGUAGE')	   OR define('CURRENT_LANGUAGE', 'english'); // The 
 defined('IMAGE_WIDTH')             OR define('IMAGE_WIDTH', 230); 
 defined('IMAGE_HEIGHT')            OR define('IMAGE_HEIGHT', 300); 
 
+// SHMYDE MAILS
+defined('SHMYDE_CONTACT')               OR define('SHMYDE_CONTACT', "contact@shmyde.com"); 
+
 
 // Table Names
 defined('OPTION_TABLE')                 OR define('OPTION_TABLE', "shmyde_design_option"); 

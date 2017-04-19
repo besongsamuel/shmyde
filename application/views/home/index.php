@@ -129,7 +129,7 @@
                   <option value="">-- choose product --</option>
               </select>
             </div>
-            <button type="submit" class="btn btn-block">Begin 
+            <button type="submit" class="btn btn-block">Design 
               <span class="glyphicon glyphicon-ok"></span>
             </button>
           </form>

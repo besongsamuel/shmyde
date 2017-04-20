@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-<div class="container">
+<div class="container" ng-controller='UserController'>
     <div class="row">
         <div class="container choose-password">
             <form name="setPasswordForm" class="shmyde-form  col-lg-12 text-center"  novalidate ng-submit="setPassword()">

@@ -3,16 +3,33 @@
 <div class="container">
     <div class="row">
         <div class="container choose-password">
-            <?= form_open('user/choose_password',array('id'=>'choose_password','method'=>'post')) ?> 
-                <div class="form-group">
-                    <label for="new_password">Password</label>
-                    <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Enter a new password">
-                    <p class="help-block">At least 6 characters</p>
+            <form name="setPasswordForm" class="shmyde-form  col-lg-12 text-center"  novalidate ng-submit="setPassword()">
+                <!-- Password  -->
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+                            <input id="password"  type="password" name="password" class="form-control" placeholder="Password" ng-required='required' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" ng-model="password">
+                            <span class="form_hint" ng-hide="setPasswordForm.password.valid">                                      
+                                <p ng-show="setPasswordForm.password.$error.required">A password is required to register. </p>
+                                <p ng-show="setPasswordForm.password.$error.pattern">The password must contain 8 or more characters that are of at least one number, and one uppercase and lowercase letter. </p>
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="confirm_new_password">Confirm password</label>
-                    <input type="password" class="form-control" id="confirm_new_password" name="confirm_new_password" placeholder="Confirm your password">
-                    <p class="help-block">Must match your password</p>
+                        
+                <!-- Confirm Password -->
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+                            <input  type="password" id="confirm_password" name="confirm_password" class="form-control" ng-required='required' placeholder="Confirm Password" ng-model="confirm_password" pw-check='password'>
+                            <span class="form_hint" ng-hide="setPasswordForm.confirm_password.valid">     
+                                <p ng-show="setPasswordForm.confirm_password.$error.required">A password is required to register. </p>
+                                <p ng-show="setPasswordForm.confirm_password.$error.pwmatch">The passwords entered don't match. </p>
+                            </span>                                
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <input type="submit" class="btn btn-default" value="Reset">

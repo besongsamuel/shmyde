@@ -458,6 +458,11 @@
                         success : function(response)
                          {
                             $scope.loading = false;
+                             
+                            $scope.userObject.user.first_name = $scope.first_name;
+                            $scope.userObject.user.last_name = $scope.last_name;
+                            $scope.userObject.user.gender = $scope.gender;
+                            $scope.userObject.user.dob = $scope.dob;
                          },
                         error   : function(){}
                     });
@@ -490,6 +495,8 @@
                         success : function(response)
                          {
                             $scope.loading = false;
+                            $scope.new_password = "";
+                            $scope.confirm_new_password = "";
                          },
                         error   : function(){}
                     });
@@ -522,6 +529,11 @@
                         success : function(response)
                          {
                             $scope.loading = false;
+                            $scope.userObject.user.address_line_1 = $scope.address_line_1;
+                            $scope.userObject.user.address_line_2 = $scope.address_line_2;
+                            $scope.userObject.user.country = $scope.country;
+                            $scope.userObject.user.city = $scope.city;                             
+                            
                          },
                         error   : function(){}
                     });

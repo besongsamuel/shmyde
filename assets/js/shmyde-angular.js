@@ -435,6 +435,108 @@
         
     }]);
     
+    app.controller('AccountController', ['$scope', function($scope)
+    {
+        
+        $scope.saveUserDetails = function()
+        {
+            if($scope.userDetailsForm.$valid)
+            {
+                $scope.loading = true;
+                $.ajax(
+                    {
+                        url : $scope.site_url.concat("user/saveUserDetails"),
+                        type : 'POST',
+                        async : true,
+                        data :  
+                        {
+                            first_name : $scope.first_name,
+                            last_name : $scope.last_name,
+                            gender : $scope.gender,
+                            dob : $scope.dob
+                        },
+                        success : function(response)
+                         {
+                            $scope.loading = false;
+                         },
+                        error   : function(){}
+                    });
+            }
+        };
+        
+        $scope.cancelUserDetails = function()
+        {
+            $scope.first_name = $scope.userObject.user.first_name;
+            $scope.last_name = $scope.userObject.user.last_name;
+            $scope.gender = $scope.userObject.user.gender;
+            $scope.dob = $scope.userObject.user.dob;
+        };
+                                         
+        $scope.changeUserPassword = function()
+        {
+            if($scope.changePasswordForm.$valid)
+            {
+                $scope.loading = true;
+                $.ajax(
+                    {
+                        url : $scope.site_url.concat("user/changeUserPassword"),
+                        type : 'POST',
+                        async : true,
+                        data :  
+                        {
+                            new_password : $scope.new_password,
+                            confirm_new_password : $scope.confirm_new_password
+                        },
+                        success : function(response)
+                         {
+                            $scope.loading = false;
+                         },
+                        error   : function(){}
+                    });
+            }
+        };
+        
+        $scope.cancelUserPassword = function()
+        {
+            $scope.new_password = "";
+            $scope.confirm_new_password = "";
+        };
+                                         
+        $scope.saveUserAddress = function()
+        {
+            if($scope.userAddressForm.$valid)
+            {
+                $scope.loading = true;
+                $.ajax(
+                    {
+                        url : $scope.site_url.concat("user/saveUserAddress"),
+                        type : 'POST',
+                        async : true,
+                        data :  
+                        {
+                            address_line_1 : $scope.address_line_1,
+                            address_line_2 : $scope.address_line_2,
+                            country : $scope.country,
+                            city : $scope.city
+                        },
+                        success : function(response)
+                         {
+                            $scope.loading = false;
+                         },
+                        error   : function(){}
+                    });
+            }
+        };
+        
+        $scope.cancelUserAddress = function()
+        {
+            $scope.address_line_1 = $scope.userObject.user.address_line_1;
+            $scope.address_line_2 = $scope.userObject.user.address_line_2;
+            $scope.country = $scope.userObject.user.country;
+            $scope.city = $scope.userObject.user.city;
+        };
+    }]);
+    
     app.controller('HeaderController', ['$scope', '$rootScope', function($scope, $rootScope)
     {
         

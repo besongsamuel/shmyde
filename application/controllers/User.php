@@ -70,11 +70,11 @@ class User extends CI_Controller {
                 
                 if(!$password_reset)
                 {
-                    
+                    echo json_encode(false);
                 }
                 else
                 {
-                    return;
+                    echo json_encode(true);
                 }
                 
                 return;

@@ -223,6 +223,10 @@
         
         $scope.email = '';
         
+        $scope.choose_password_error = false;
+        
+        $scope.choose_password_error_message = 'An unexpected error occured. please try again later. ';
+        
         $scope.login_error = false;
         
         $scope.register = function()
@@ -418,6 +422,61 @@
                     }
                 });
             }
+        };
+        
+        $scope.setPassword = function()
+        {
+            
+            if($scope.setPasswordForm.$invalid)
+            {
+                $scope.choose_password_error_message = 'Please enter valid passwords. ';
+
+                $scope.choose_password_error = true;
+                
+                if($scope.setPasswordForm.password.$invalid)
+                {
+                    $("#password").focus();
+                }
+                                
+                if($scope.setPasswordForm.confirm_password.$invalid)
+                {
+                    $("#confirm_password").focus();
+                }
+            }
+            else
+            {
+                $.ajax(
+                    {
+                        url : $scope.site_url.concat('User/choose_password'),
+                        type : 'POST',
+                        async  : true,
+                        success : function(response)
+                        {
+                            var valid_response = JSON.parse(response) === "true" ? true : false;
+                            
+                            if(valid_response)
+                            {
+                                $scope.choose_password_error = false;
+                                // redirect to home page
+                                window.location = $scope.site_url.concat("home");
+                            }
+                            else
+                            {
+                                $scope.choose_password_error = true;
+                                $scope.choose_password_error_message = 'A server error occured. Please request for a new password reset code. ';
+                            }
+                            
+                            
+                        },
+                        error : function()
+                        {
+                            $scope.choose_password_error = true;
+                            $scope.choose_password_error_message = 'A server error occured. Please try again later. ';
+                        }
+                        
+                    });
+            }
+            
         };
        
     }]);
@@ -726,7 +785,7 @@
                 return;
             }
             
-            if($scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_id === -1)
+            if($scope.user_logged && $scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_id === -1)
             {
                 return true;
             }
@@ -742,7 +801,7 @@
                 return;
             }
             
-            if($scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_status === 20)
+            if($scope.user_logged && $scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_status === 20)
             {
                 return true;
             }

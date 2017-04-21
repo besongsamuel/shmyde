@@ -497,5 +497,72 @@ class User extends CI_Controller {
                 $this->user_model->update_user_data($user_id, $user_data);
             }
         }
+	
+	public function saveUserDetails()
+	{
+		if($this->session->userdata('user_id') !== null)
+            	{
+			$user_id = $this->session->userdata('user_id');
+			$data = array(
+				'first_name' => $this->input->post('first_name'),
+				'last_name' => $this->input->post('last_name'),
+				'gender' => $this->input->post('gender'),
+				'dob' => $this->input->post('dob'),
+			);
+			
+			$this->user_model->update_user_details($user_id, $user_data);
+			
+			echo json_encode(true);
+		}
+		else
+		{
+			echo json_encode(false);
+		}
+	}
 
+	public function saveUserAddress()
+	{
+		if($this->session->userdata('user_id') !== null)
+            	{
+			$user_id = $this->session->userdata('user_id');
+			$data = array(
+				'address_line_1' => $this->input->post('address_line_1'),
+				'address_line_2' => $this->input->post('address_line_2'),
+				'country' => $this->input->post('country'),
+				'city' => $this->input->post('city'),
+			);
+			
+			$this->user_model->update_user_address($user_id, $user_data);
+			
+			echo json_encode(true);
+		}
+		else
+		{
+			echo json_encode(false);
+		}
+	}
+	
+	public function changeUserPassword()
+	{
+		if($this->session->userdata('user_id') !== null)
+            	{
+			$user_id = $this->session->userdata('user_id');
+			$new_password = $this->input->post('new_password');
+			$old_password = $this->input->post('old_password')
+			
+			if ($this->user_model->valid_password($user_id, $password))
+			{
+				$this->user_model->update_user_password($user_id, $new_password);
+				echo json_encode(true);
+			}
+			else
+			{
+				echo json_encode(false);
+			}
+		}
+		else
+		{
+			echo json_encode(false);
+		}
+	}	
 }

@@ -1,5 +1,5 @@
 
-<div style="background-color: white" ng-controller="UserController" id="account-container">
+<div style="background-color: white" ng-controller="AccountController" id="account-container">
     
     <!-- Profile Header -->
 <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>

@@ -485,7 +485,7 @@
                         data :  
                         {
                             new_password : $scope.new_password,
-                            confirm_new_password : $scope.confirm_new_password
+                            old_password : $scope.old_password
                         },
                         success : function(response)
                          {

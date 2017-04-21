@@ -39,7 +39,7 @@
 <!-- Edit User Details Section -->
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      <form class="form-horizontal" role="form" novalidate ng-submit="saveUserDetails()">
+      <form name="userDetailsForm" class="form-horizontal" role="form" novalidate ng-submit="saveUserDetails()">
         <fieldset>
 
           <!-- Form Name -->
@@ -145,7 +145,7 @@
 <!-- Edit Address Section -->
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
-      <form class="form-horizontal" role="form" novalidate ng-submit="changeUserAddress()">
+      <form name="userAddressForm" class="form-horizontal" role="form" novalidate ng-submit="changeUserAddress()">
         <fieldset>
 
           <!-- Form Name -->

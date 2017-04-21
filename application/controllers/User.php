@@ -532,7 +532,7 @@ class User extends CI_Controller {
 				'city' => $this->input->post('city'),
 			);
 			
-			$this->user_model->update_user_address($user_id, $user_data);
+			$this->user_model->update_user_details($user_id, $user_data);
 			
 			echo json_encode(true);
 		}

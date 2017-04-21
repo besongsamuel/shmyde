@@ -106,7 +106,7 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="textinput">Enter Old Password</label>
             <div class="col-sm-10">
-              <input type="password" placeholder="Old Password"  ng-model="old-password" name="old-password" id='old-password' class="form-control">
+              <input type="password" placeholder="Old Password"  ng-model="old_password" name="old_password" id='old_password' class="form-control">
             </div>
           </div>
           
@@ -114,7 +114,7 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="textinput">New Password</label>
             <div class="col-sm-10">
-              <input type="password" placeholder="New Password" ng-model="new-password" name="new-password" id='new-password' class="form-control">
+              <input type="password" placeholder="New Password" ng-model="new_password" name="new_password" id='new_password' class="form-control">
             </div>
           </div> 
             
@@ -122,7 +122,7 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="textinput">Confirm New Password</label>
             <div class="col-sm-10">
-              <input type="password" placeholder="Confirm New Password" ng-model="confirm-new-password" name="confirm-new-password" id='confirm-new-password' class="form-control">
+              <input type="password" placeholder="Confirm New Password" ng-model="confirm_new-password" name="confirm_new-password" id='confirm_new_password' class="form-control">
             </div>
           </div>   
 

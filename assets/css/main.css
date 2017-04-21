@@ -8,17 +8,16 @@ and open the template in the editor.
     Author     : beson
 */
 
-
-  body {
-      font: 400 15px/1.8 Lato, sans-serif;
-      color: #777;
-      background:url('../images/designpage/bg.jpg');    
-  }
+body 
+{
+	font: 400 15px/1.8 Lato, sans-serif;
+	color: #777;
+	height : 80%;
+	background:url('../images/designpage/bg.jpg');    
+}
 footer 
 { 
     display: block;
-    position:absolute;
-    bottom:0;
     width:100%;
 }
   h3, h4 {

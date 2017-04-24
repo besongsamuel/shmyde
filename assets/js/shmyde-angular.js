@@ -494,6 +494,180 @@
         
     }]);
     
+    app.controller('AccountController', ['$scope', function($scope)
+    {
+        $scope.user_address_loading = false;
+        
+        $scope.user_detail_loading = false;
+        
+        $scope.change_password_loading  = false;
+        
+        $scope.user_address_message = "";
+        
+        $scope.user_detail_message = "";
+        
+        $scope.change_password_message  = "";
+        
+        $scope.saveUserDetails = function()
+        {
+            if($scope.userDetailsForm.$valid && $scope.dob !== null)
+            {
+                $scope.user_detail_loading = true;
+                $scope.user_detail_message = "";
+                
+                $.ajax(
+                    {
+                        url : $scope.site_url.concat("user/saveUserDetails"),
+                        type : 'POST',
+                        async : true,
+                        data :  
+                        {
+                            form_first_name : $scope.first_name,
+                            form_last_name : $scope.last_name,
+                            form_gender : $scope.gender,
+                            form_dob : $scope.dob.toISOString()
+                        },
+                        success : function(response)
+                         {
+                            $scope.$apply(function(){
+                                $scope.user_detail_loading = false;
+                                $scope.user_detail_message = "Saved!";
+                                $scope.userObject.user.first_name = $scope.first_name;
+                                $scope.userObject.user.last_name = $scope.last_name;
+                                $scope.userObject.user.gender = $scope.gender;
+                                $scope.userObject.user.dob = $scope.dob;
+                            });
+                            
+                         },
+                        error   : function()
+                        {
+                            $scope.user_detail_loading = false;
+                            $scope.user_detail_message = "An unexpected error occured. ";
+                        }
+                    });
+            }
+        };
+        
+        $scope.cancelUserDetails = function()
+        {
+            $scope.first_name = $scope.userObject.user.first_name;
+            $scope.last_name = $scope.userObject.user.last_name;
+            $scope.gender = $scope.userObject.user.gender;
+            $scope.dob = $scope.userObject.user.dob;
+        };
+                                         
+        $scope.changeUserPassword = function()
+        {
+            if($scope.changePasswordForm.$valid)
+            {
+                $scope.change_password_loading = true;
+                $scope.change_password_message  = "";
+                $.ajax(
+                    {
+                        url : $scope.site_url.concat("user/changeUserPassword"),
+                        type : 'POST',
+                        async : true,
+                        data :  
+                        {
+                            form_new_password : $scope.new_password,
+                            form_old_password : $scope.old_password
+                        },
+                        success : function(response)
+                         {
+                             var valid_response = response.toString() === "true" ? true : false;
+                             
+                             if(valid_response)
+                             {
+                                $scope.$apply(function()
+                                {
+                                    $scope.change_password_loading = false;
+                                    $scope.change_password_message  = "Password changed. ";
+                                    $scope.old_password = "";
+                                    $scope.new_password = "";
+                                    $scope.confirm_new_password = "";
+                                });
+                                
+                             }
+                             else
+                             {
+                                $scope.$apply(function()
+                                {
+                                    $scope.change_password_loading = false;
+                                    $scope.change_password_message  = "An unexpeted error occured. Please check passords and try again. ";
+                                });
+                             }
+                            
+                         },
+                        error : function()
+                        {
+                            $scope.$apply(function()
+                            {
+                                $scope.change_password_loading = false;
+                                $scope.change_password_message  = "An unexpeted error occured. Please check passords and try again. ";
+                            });
+                        }
+                    });
+            }
+        };
+        
+        $scope.cancelUserPassword = function()
+        {
+            $scope.new_password = "";
+            $scope.confirm_new_password = "";
+        };
+                                         
+        $scope.saveUserAddress = function()
+        {
+            if($scope.userAddressForm.$valid)
+            {
+                $scope.user_address_loading = true;
+                $.ajax(
+                    {
+                        url : $scope.site_url.concat("user/saveUserAddress"),
+                        type : 'POST',
+                        async : true,
+                        data :  
+                        {
+                            form_address_line_1 : $scope.address_line_1,
+                            form_address_line_2 : $scope.address_line_2,
+                            form_country : $scope.country,
+                            form_city : $scope.city
+                        },
+                        success : function(response)
+                         {
+                            $scope.$apply(function()
+                            {
+                                $scope.user_address_loading = false;
+                                $scope.user_address_message = "Saved. ";
+                                $scope.userObject.user.address_line_1 = $scope.address_line_1;
+                                $scope.userObject.user.address_line_2 = $scope.address_line_2;
+                                $scope.userObject.user.country = $scope.country;
+                                $scope.userObject.user.city = $scope.city;
+                            });
+                                                         
+                            
+                         },
+                        error   : function()
+                        {
+                            $scope.$apply(function()
+                            {
+                                $scope.user_address_loading = false;
+                                $scope.user_address_message = "An unexpected error occured. ";
+                            });
+                        }
+                    });
+            }
+        };
+        
+        $scope.cancelUserAddress = function()
+        {
+            $scope.address_line_1 = $scope.userObject.user.address_line_1;
+            $scope.address_line_2 = $scope.userObject.user.address_line_2;
+            $scope.country = $scope.userObject.user.country;
+            $scope.city = $scope.userObject.user.city;
+        };
+    }]);
+    
     app.controller('HeaderController', ['$scope', '$rootScope', function($scope, $rootScope)
     {
         

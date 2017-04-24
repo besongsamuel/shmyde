@@ -20,11 +20,8 @@ body {
   }
 footer 
 { 
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    padding: 1rem;
+    display: block;
+    width:100%;
 }
   h3, h4 {
       margin: 10px 0 30px 0;
@@ -98,10 +95,10 @@ footer
       background-color: #333;
       color: #fff !important;
       text-align: center;
-      font-size: 30px;
+      font-size: 15px;
   }
   .modal-header, .modal-body {
-      padding: 40px 50px;
+      padding: 20px 25px;
   }
   .nav-tabs li a {
       color: #777;
@@ -461,6 +458,50 @@ input:focus.ng-valid + .form_hint::before {color:#28921f;} /* change form hint a
 }
 
 /* PRELOADING STYLES END */
+
+/* Spinner  */
+
+.shmyde-loading 
+{  
+    margin : auto;
+    text-align: center;
+}
+.loading-bar {
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  border-radius: 4px;
+  animation: loading 1s ease-in-out infinite;
+}
+.loading-bar:nth-child(1) {
+  background-color: gray;
+  animation-delay: 0;
+}
+.loading-bar:nth-child(2) {
+  background-color: lightgray;
+  animation-delay: 0.09s;
+}
+.loading-bar:nth-child(3) {
+  background-color: lightgray;
+  animation-delay: .18s;
+}
+.loading-bar:nth-child(4) {
+  background-color: gray;
+  animation-delay: .27s;
+}
+
+@keyframes loading {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1, 2.2);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+/* Spinner End */
 
 
 

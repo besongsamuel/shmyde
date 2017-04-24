@@ -130,7 +130,14 @@ class User extends CI_Controller {
                 echo json_encode($response);
             }
         }
-                
+        
+        public function complete_checkout() 
+        {
+            $this->data['order_id'] = $this->input->get("order_id");
+            $this->template->load('shmyde', 'user/complete_checkout', $this->data);
+        }
+
+
         public function forgot_password_complete($type)
         {
             $type = intval($type);
@@ -497,5 +504,73 @@ class User extends CI_Controller {
                 $this->user_model->update_user_data($user_id, $user_data);
             }
         }
+	
+	public function saveUserDetails()
+	{
+		if($this->session->userdata('user_id') !== null)
+            	{
+			$user_id = $this->session->userdata('user_id');
+			$data = array(
+				'first_name' => $this->input->post('form_first_name'),
+				'last_name' => $this->input->post('form_last_name'),
+				'gender' => $this->input->post('form_gender'),
+				'dob' => $this->input->post('form_dob'),
+			);
+			
+			$this->user_model->update_user_details($user_id, $data);
+			
+			echo json_encode(true);
+		}
+		else
+		{
+			echo json_encode(false);
+		}
+	}
 
+	public function saveUserAddress()
+	{
+		if($this->session->userdata('user_id') !== null)
+            	{
+			$user_id = $this->session->userdata('user_id');
+			$data = array(
+				'address_line_1' => $this->input->post('form_address_line_1'),
+				'address_line_2' => $this->input->post('form_address_line_2'),
+				'country' => $this->input->post('form_country'),
+				'city' => $this->input->post('form_city'),
+			);
+			
+			$this->user_model->update_user_details($user_id, $data);
+			
+			echo json_encode(true);
+		}
+		else
+		{
+			echo json_encode(false);
+		}
+	}
+	
+	public function changeUserPassword()
+	{
+            if($this->session->userdata('user_id') !== null)
+            {
+                $user_id = $this->session->userdata('user_id');
+                $new_password = $this->input->post('form_new_password');
+                $old_password = $this->input->post('form_old_password');
+
+                if ($this->user_model->valid_password($user_id, $old_password))
+                {
+                        $this->user_model->update_user_password($user_id, $new_password);
+                        echo json_encode(true);
+                        return;
+                }
+                else
+                {
+                        echo json_encode(false);
+                }
+            }
+            else
+            {
+                echo json_encode(false);
+            }
+	}	
 }

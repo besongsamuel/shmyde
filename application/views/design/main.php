@@ -122,6 +122,9 @@
 
             </div>
             
+            <div class='row'>
+                    <button class="btn pull-right" ng-click="checkout()">Checkout</button>
+            </div>
             <!-- END MAIN MENUS  -->
             <div class="row">
                 <div class="wrap">  
@@ -140,9 +143,7 @@
             </div>
             
             
-             <div class='row'>
-                    <button class="btn pull-right" ng-click="checkout()">Checkout</button>
-            </div>
+            
         </div>
     </div>
 
@@ -159,7 +160,7 @@
           <div class="modal-body">
               <div class="row">
                   <!-- Contains a Scrollable list of all measurements  -->
-                  <div class="col-sm-4" style="height: 400px; overflow-y: auto;">
+                  <div class="col-sm-4" style="height: 300px; overflow-y: auto;">
                       <table class="table table-hover">
                         <thead>
                           <tr>
@@ -184,7 +185,7 @@
               </div>
           </div>
           <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Update</button>
           </div>
         </div>
 
@@ -201,7 +202,7 @@
             <h4 class="modal-title">Confirm User Details</h4>
           </div>
           <div class="modal-body">
-              <div style="width: 100%">
+              <div style="width: 100%;">
                   <div class="form-group">
                       <label for="last_name">Last Name:</label>
                     <input type="text" class="form-control" id="last_name">

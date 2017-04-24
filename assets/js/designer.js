@@ -340,7 +340,7 @@ function Product(product_object)
             // Finished Loading
             $("#loading").fadeOut(500);
         }
-    }
+    };
     
     this.setImageCount = function()
     {
@@ -427,6 +427,7 @@ function Product(product_object)
         // Return the option image if there is no fabric set
         if(fabric === null)
         {
+            imageElement.attr("src", imageObject.original_base_64_image);
             return imageObject.original_base_64_image;
         }
         

@@ -1,8 +1,10 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-<div class="container" ng-controller='UserController'>
+<div class="container white-background top-container" ng-controller='UserController'>
+    <h3 class="text-center">Select new password</h3>
+    <p class="text-center" ng-show="choose_password_error"><em>{{choose_password_error_message}}</em></p>
     <div class="row">
-        <div class="container choose-password">
+        <div class="container">
             <form name="setPasswordForm" class="shmyde-form  col-lg-12 text-center"  novalidate ng-submit="setPassword()">
                 <!-- Password  -->
                 <div class="row">
@@ -31,8 +33,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-default" value="Reset">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <input type="submit" class="btn btn-default pull-right" value="Reset">
+                    </div>
                 </div>
             </form>
         </div>

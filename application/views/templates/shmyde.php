@@ -51,23 +51,24 @@
 
     <script>
 
+        $('#loading').hide();
         $(document).ready(function()
         {
-           	// Always hide loading by default
-		$('#loading').hide();
+            // Always hide loading by default
+            $('#loading').hide();
+            
+            var contactusScope = angular.element("#contact").scope();
 		
-		var contactusScope = angular.element("contact").scope();
-		
-		contactusScope.$apply(function()
-	      	{
-			contactusScope.shmyde_contact_email = '<?php echo SHMYDE_CONTACT; ?>';
-			contactusScope.shmyde_address_line_2 = '<?php echo SHMYDE_ADDRESS_LINE_1; ?>';
-			contactusScope.shmyde_address_line_1 = '<?php echo SHMYDE_ADDRESS_LINE_2; ?>';
-			contactusScope.shmyde_country = '<?php echo SHMYDE_COUNTRY; ?>';
-			contactusScope.shmyde_contact_phone = '<?php echo SHMYDE_CONTACT_PHONE; ?>';
-		});
-		
-            	var rootScope = angular.element("#shmyde-application").scope();
+            contactusScope.$apply(function()
+            {
+                contactusScope.shmyde_contact_email = '<?php echo SHMYDE_CONTACT; ?>';
+                contactusScope.shmyde_address_line_2 = '<?php echo SHMYDE_ADDRESS_LINE_1; ?>';
+                contactusScope.shmyde_address_line_1 = '<?php echo SHMYDE_ADDRESS_LINE_2; ?>';
+                contactusScope.shmyde_country = '<?php echo SHMYDE_COUNTRY; ?>';
+                contactusScope.shmyde_contact_phone = '<?php echo SHMYDE_CONTACT_PHONE; ?>';
+            });
+
+            var rootScope = angular.element("#shmyde-application").scope();
                        
             /* Apply these values to the root scope */
             rootScope.$apply(function()
@@ -120,19 +121,20 @@
                   } // End if
             });
         });
+        
     </script>
 
   </head>
 	
 	<!-- Preloading Section -->
-	<div id="loading">
-		<div id="loading-center">
-			<div id="loading-center-absolute">
-				<div class="object" id="object_one"></div>
-				<div class="object" id="object_two"></div>
-				<div class="object" id="object_three"></div>
-			</div>
-		</div>
+	<div id="loadings">
+            <div id="loading-center">
+                <div id="loading-center-absolute">
+                        <div class="object" id="object_one"></div>
+                        <div class="object" id="object_two"></div>
+                        <div class="object" id="object_three"></div>
+                </div>
+            </div>
 	</div>
 	<!-- Preloading Section End -->
       
@@ -224,7 +226,7 @@
             <br>
             <div class="row">
                 <div class="col-md-12 form-group">
-                    <button class="btn pull-right" type="submit" ng-submit="submitComment()">Send</button>
+                    <button class="btn pull-right" ng-click="submitComment()">Send</button>
                 </div>
             </div>
         </div>

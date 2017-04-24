@@ -77,6 +77,26 @@ class User_model extends CI_Model {
 	}
 	
 	/**
+	 * resolve_user_login function using the user id.
+	 * 
+	 * @access public
+	 * @param mixed $email
+	 * @param mixed $user_id
+	 * @return bool true on success, false on failure
+	 */
+	public function valid_password($user_id, $password) 
+        {
+		
+            $this->db->select('password');
+            $this->db->from('users');
+            $this->db->where('id', $user_id);
+            $hash = $this->db->get()->row('password');
+
+            return $this->verify_password_hash($password, $hash);
+		
+	}
+	
+	/**
 	 * get_user_id_from_username function.
 	 * 
 	 * @access public
@@ -261,6 +281,8 @@ class User_model extends CI_Model {
                     'address_line_2' => $data['address_line_2'],
                     'country' => $data['country'],
                     'city' => $data['city'],
+                    'gender' => $data['gender'],
+                    'dob' => $data['dob'],
                     'postcode' => $data['postal_code'],
                     'last_modified' => date('Y-m-j H:i:s'),
                 );
@@ -283,6 +305,8 @@ class User_model extends CI_Model {
                     'address_line_1' => $data['address_line_1'],
                     'address_line_2' => $data['address_line_2'],
                     'country' => $data['country'],
+                    'gender' => $data['gender'],
+                    'dob' => $data['dob'],
                     'city' => $data['city'],
                     'postcode' => $data['postal_code'],
                     'last_modified' => date('Y-m-j H:i:s'),
@@ -340,4 +364,24 @@ class User_model extends CI_Model {
 
             return null;
         }
+	
+	public function update_user_details($user_id, $data) 
+        {
+            	$this->db->where("user_id", $user_id);
+		$this->db->update(USER_DATA_TABLE, $data);
+        }
+	
+	public function update_user_password($user_id, $new_password)
+	{
+                $data = array
+                (
+                    'password' => $this->hash_password($new_password),
+                    'updated_at' => date('Y-m-j H:i:s'),
+                );
+		
+		$this->db->where("id", $user_id);
+		$this->db->update(USERS_TABLE, $data);
+	}
+	
+	
 }

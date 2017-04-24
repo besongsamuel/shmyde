@@ -2,7 +2,7 @@
 .design-page
 {	
     background-size:cover;
-    padding-top:1%;
+    height: 100%;
 }
 
 .design-page .design-menu
@@ -87,8 +87,8 @@
     text-align: center;
     display: block;
     margin: auto;
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
 }
 
 .sly-list-item {

@@ -1035,6 +1035,20 @@
             } 
         };
         
+        $scope.loadYTVideo = function(id, description, videoLink)
+        {
+            var iFrame = $("#youtube_frame");
+
+            if(parseInt(iFrame.val()) === parseInt(id))
+            {
+                return;
+            }
+
+            iFrame.attr("src", videoLink.replace("watch?v=", "v/"));
+            iFrame.val(id);
+            $("#measurement_description").html(description);
+        };
+        
     }]);
 
         

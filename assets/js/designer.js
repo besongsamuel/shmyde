@@ -17,6 +17,12 @@ function Product(product_object)
     this.current_image_count = 0;
     
     /**
+     * When this is true, the user choose to request a tailor 
+     * instead of entering the product measurements himself
+     */
+    this.requestTailor = false;
+    
+    /**
      * An array of strings representing
      * the product details
      */
@@ -657,55 +663,15 @@ function Product(product_object)
     
     this.LoadMeasurementsIntoModal = function()
     {
+        this.requestTailor = false; 
         
-        var Instance = this;
+        var designScope = angular.element("#design-page").scope();
         
-        $(this.measurements_container_id).empty();
-        
-        for(var key in this.product.measurements){
-            
-            var measurement = this.product.measurements[key];
-            
-            var measurement_input_element = $('<input>')
-                            .attr('type', 'number')
-                            .attr('class', 'form-control')
-                            .attr('id', measurement.id);;
-                    
-            measurement_input_element.val(measurement.default_value);
-            
-            measurement_input_element.change(function()
-            {
-                Instance.product.measurements[this.id].default_value = this.value;
-            });
-            
-            measurement_input_element.mousedown(function()
-            {
-                var measurement_object = Instance.product.measurements[this.id];
-                var iFrame = $("#youtube_frame");
-                
-                if(parseInt(iFrame.val()) === parseInt(measurement_object.id))
-                {
-                    return;
-                }
-                
-                iFrame.attr("src", measurement_object.youtube_link.replace("watch?v=", "v/"));
-                iFrame.val(measurement_object.id);
-                $("#measurement_description").html(measurement_object.description);
-                
-            });
-            
-            $(this.measurements_container_id).append(
-                $('<tr>').append(
-                    $('<td>').append(                       
-                        $('<div>').attr('class', 'form-group')
-                        .append(
-                            $('<label>').attr('for', measurement.id).text(measurement.name)
-                        )
-                        .append(measurement_input_element)
-                    )
-                )
-            );
-        }
+        designScope.$apply(function()
+        {
+            // Set Measurements
+            designScope.measurements = designScope.productManager.product.measurements;
+        });
     };
         
     this.createMixElement = function(menu, type)

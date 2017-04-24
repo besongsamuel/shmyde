@@ -51,6 +51,7 @@
             designScope.$apply(function()
             {
                 designScope.categories = JSON.parse('<?php echo $ordered_categories; ?>');
+                
             });
             
             
@@ -65,6 +66,7 @@
             
             $('#myMeasurementModal').on('shown.bs.modal', function() 
             {
+                
                 productManager.LoadMeasurementsIntoModal();
             });
         
@@ -87,6 +89,9 @@
         
         function LoadUserDataIntoModal()
         {
+            productManager.requestTailor = true;
+            
+            
             userManager.setUserToModal();   
         }
         
@@ -147,8 +152,8 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="myMeasurementModal" class="modal fade" role="dialog">
+    <!-- Measurement Modal -->
+    <div id="myMeasurementModal" class="modal fade" ng-controller="DesignController" role="dialog">
       <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -160,7 +165,7 @@
           <div class="modal-body">
               <div class="row">
                   <!-- Contains a Scrollable list of all measurements  -->
-                  <div class="col-sm-4" style="height: 300px; overflow-y: auto;">
+                  <div class="col-sm-6" style="height: 300px; overflow-y: auto;">
                       <table class="table table-hover">
                         <thead>
                           <tr>
@@ -168,12 +173,16 @@
                           </tr>
                         </thead>
                         <tbody id="my_measurements">
-
+                            <tr ng-repeat="measurement in measurements">
+                                <td>
+                                    <input class="form-control" type="number" id="{{measurement.id}}" ng-model="measurement.default_value" ng-mousedown="loadYTVideo(measurement.id, measurement.description, measurement.youtube_link)" />
+                                </td>
+                            </tr>   
                         </tbody>
                       </table>    
                   </div>
-                  <div class="col-sm-8">
-                      <iframe id="youtube_frame" src="" value="-1"  style="width: 100%; height: 300px; padding: 2px; background-color: gray;">
+                  <div class="col-sm-6">
+                      <iframe id="youtube_frame" src="" value="-1"  style="width: 100%; height: 100%; margin: auto; background-color: darkgray;">
 
                       </iframe>
                       <div>

@@ -39,6 +39,7 @@
     <script src="<?php echo ASSETS_PATH; ?>/js/utils.js" type="text/javascript"></script>
     <script src="<?php echo ASSETS_PATH; ?>js/bootstrap.min.js"></script> 
     <script src="<?php echo ASSETS_PATH; ?>/js/angular.min.js" type="text/javascript"></script> 
+    <script src="<?php echo ASSETS_PATH; ?>/js/ui-bootstrap-tpls-2.5.0.min.js" type="text/javascript"></script> 
     <script src="<?php echo ASSETS_PATH; ?>/js/country-picker.js" type="text/javascript"></script> 
     <script src="<?php echo ASSETS_PATH; ?>/js/angular-messages.js" type="text/javascript"></script>  
     <script src="<?php echo ASSETS_PATH; ?>/js/international-phone-number.js" type="text/javascript"></script>

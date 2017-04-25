@@ -54,6 +54,13 @@
                 
             });
             
+            var measurementDesignScope = angular.element("#myMeasurementModal").scope();
+            
+            measurementDesignScope.$apply(function()
+            {
+                measurementDesignScope.measurements = applicationScope.productManager.product.measurements;
+            });
+            
             
             var user = JSON.parse('<?php echo $user;  ?>');
             userManager = new User(user);
@@ -153,7 +160,7 @@
     </div>
 
     <!-- Measurement Modal -->
-    <div id="myMeasurementModal" class="modal fade" ng-controller="DesignController" role="dialog">
+    <div id="myMeasurementModal" class="modal fade" role="dialog"  ng-controller="DesignController">
       <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -175,11 +182,15 @@
                         <tbody id="my_measurements">
                             <tr ng-repeat="measurement in measurements">
                                 <td>
-                                    <input class="form-control" type="number" id="{{measurement.id}}" ng-model="measurement.default_value" ng-mousedown="loadYTVideo(measurement.id, measurement.description, measurement.youtube_link)" />
+                                    <div class="form-group">
+                                        <label for="usr">{{measurement.name}}</label>
+                                        <input type="number" class="form-control" id="{{measurement.id}}" ng-model="measurement.default_value" string-to-number ng-mousedown="loadYTVideo(measurement.id, measurement.description, measurement.youtube_link)">
+                                    </div>
                                 </td>
                             </tr>   
                         </tbody>
-                      </table>    
+                      </table>
+                      
                   </div>
                   <div class="col-sm-6">
                       <iframe id="youtube_frame" src="" value="-1"  style="width: 100%; height: 100%; margin: auto; background-color: darkgray;">

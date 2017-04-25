@@ -47,6 +47,21 @@
         };
     });
     
+    app.directive('stringToNumber', function() {
+        return {
+          require: 'ngModel',
+          link: function(scope, element, attrs, ngModel) {
+            ngModel.$parsers.push(function(value) {
+              return '' + value;
+            });
+            ngModel.$formatters.push(function(value) {
+              return parseFloat(value);
+            });
+          }
+        };
+    });
+
+    
     app.directive('pwCheck', [function () {
     return {
         require: 'ngModel',
@@ -911,6 +926,8 @@
     app.controller('DesignController', ['$scope', '$rootScope', function($scope, $rootScope)
     {
         $scope.selected_category = 0;
+        
+        $scope.title = "Measurements";
         
         $scope.DesignCategorySelected = function(category_selected)
         {

@@ -9,7 +9,7 @@
     
     var app = angular.module('shmyde', ['ngMessages', 'internationalPhoneNumber', 'puigcerber.countryPicker']);
     
-    app.component('measurement', 
+    app.component('userMeasurements', 
     {
         templateUrl : '../../application/view/templates/measurementComponent.html',
         bindings    : 

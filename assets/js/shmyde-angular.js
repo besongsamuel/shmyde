@@ -9,6 +9,15 @@
     
     var app = angular.module('shmyde', ['ngMessages', 'internationalPhoneNumber', 'puigcerber.countryPicker']);
     
+    app.component('measurement', 
+    {
+        templateUrl : '../../application/view/templates/measurementComponent.html',
+        bindings    : 
+        {
+            measurements : '<'
+        }
+    });
+    
     app.directive('isUniqueEmail', function($http, $q) 
     {
         return {

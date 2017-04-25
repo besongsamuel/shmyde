@@ -160,56 +160,8 @@
     </div>
 
     <!-- Measurement Modal -->
-    <div id="myMeasurementModal" class="modal fade" role="dialog"  ng-controller="DesignController">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Measurements</h4>
-          </div>
-          <div class="modal-body">
-              <div class="row">
-                  <!-- Contains a Scrollable list of all measurements  -->
-                  <div class="col-sm-6" style="height: 300px; overflow-y: auto;">
-                      <table class="table table-hover">
-                        <thead>
-                          <tr>
-                            <th>Set Measurement</th>
-                          </tr>
-                        </thead>
-                        <tbody id="my_measurements">
-                            <tr ng-repeat="measurement in measurements">
-                                <td>
-                                    <div class="form-group">
-                                        <label for="usr">{{measurement.name}}</label>
-                                        <input type="number" class="form-control" id="{{measurement.id}}" ng-model="measurement.default_value" string-to-number ng-mousedown="loadYTVideo(measurement.id, measurement.description, measurement.youtube_link)">
-                                    </div>
-                                </td>
-                            </tr>   
-                        </tbody>
-                      </table>
-                      
-                  </div>
-                  <div class="col-sm-6">
-                      <iframe id="youtube_frame" src="" value="-1"  style="width: 100%; height: 100%; margin: auto; background-color: darkgray;">
-
-                      </iframe>
-                      <div>
-                          <p id="measurement_description">
-
-                          </p>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Update</button>
-          </div>
-        </div>
-
-      </div>
+    <div id="myMeasurementModal" class="modal fade" role="dialog"  ng-controller="DesignController as $design">
+        <user-measurements measurements="$design.measurements"></user-measurements>
     </div>
 
     <div id="userDataModal" class="modal fade" role="dialog">

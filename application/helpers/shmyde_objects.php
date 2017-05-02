@@ -19,6 +19,8 @@ class DesignProduct
     
     public $price;
     
+    public $request_tailor = false;
+
     public $buttons = array();
     
     public $fabrics = array();
@@ -39,6 +41,11 @@ class DesignProduct
     
     public function LoadUserDesign($user_design)
     {
+        
+        if(isset($user_design['request_tailor']))
+        {
+            $this->request_tailor = $user_design['request_tailor'];
+        }
         
         if((int)$user_design['fabric_id'] > -1)
         {

@@ -52,7 +52,6 @@
 
     <script>
 
-        $('#loading').hide();
         $(document).ready(function()
         {
             // Always hide loading by default
@@ -127,17 +126,17 @@
 
   </head>
 	
-	<!-- Preloading Section -->
-	<div id="loadings">
-            <div id="loading-center">
-                <div id="loading-center-absolute">
-                        <div class="object" id="object_one"></div>
-                        <div class="object" id="object_two"></div>
-                        <div class="object" id="object_three"></div>
-                </div>
+    <!-- Preloading Section -->
+    <div id="loading">
+        <div id="loading-center">
+            <div id="loading-center-absolute">
+                    <div class="object" id="object_one"></div>
+                    <div class="object" id="object_two"></div>
+                    <div class="object" id="object_three"></div>
             </div>
-	</div>
-	<!-- Preloading Section End -->
+        </div>
+    </div>
+    <!-- Preloading Section End -->
       
     <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">
 

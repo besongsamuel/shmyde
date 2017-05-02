@@ -47,8 +47,12 @@
 <!-- Container (About Us Section) -->
 <div id="about-us" class="container text-center">
   <h3>SHMYDE</h3>
-  <p><em>Wear what you design | Design what you wear</em></p>
-  <p>We have created a fictional band website. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  <p><em>Design what you wear / Wear what you design.</em></p>
+  <p>Jarvis is an entrepreneur, passionate about fashion and has à desire to change the industry in Africa. His goal is to put designing at the finger tips of everyone and enable you take control of your style. Jarvis graduated from RMU with a  first class degree in Electrical/Electronics engineering, has worked for over 8 years as a logistics and supply chain professional within West and Central Africa.</p>
+  <br>
+  <p>
+      Sam is a multi talented computer programmer who knows exactly what to do in order to get the 1s and 0s of Shmyde up and running. His goal is to impact the digital world of Africa. Bringing your designs closer to you is a step in that direction. 
+  </p>
   <br>
   <div class="row">
     <div class="col-sm-6">
@@ -81,7 +85,7 @@
 <div id="design-section" class="bg-1" ng-controller="DesignSectionController">
   <div class="container bg-1">
     <h3 class="text-center">Design</h3>
-    <p class="text-center">For a quick design<br> Select one of our popular templates!</p>
+    <p class="text-center">Take control of your style. <br> Choose your category.</p>
     
     <div class="row text-center">
       <div class="col-sm-4">

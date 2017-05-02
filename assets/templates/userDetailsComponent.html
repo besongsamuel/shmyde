@@ -1,0 +1,61 @@
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Confirm User Details</h4>
+            </div>
+            <div class="modal-body">
+                <div class='row'>
+                    
+                    <!-- Last name and First name input-->
+                    <div class="form-group">
+                        <div class="col-sm-6 form-group">
+                            <input type="text" id="last_name" name="last_name" placeholder="Last Name" class="form-control" ng-model="$ctrl.user.last_name">
+                        </div>
+
+                        <div class="col-sm-6  form-group">
+                            <input type="text" id="first_name" name="first_name" placeholder="First Name" class="form-control" ng-model="$ctrl.user.first_name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-6 form-group">
+                            <input type="email" class="form-control" placeholder='Email'  ng-model="$ctrl.user.email" id="user_email">
+                        </div>
+                        <div class="col-sm-6 form-group">
+                            <input type="tel" class="form-control" placeholder='Phone Number' ng-model="$ctrl.user.phone_number" id="contact_phone">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group col-sm-12">
+                        <input type="text" class="form-control" placeholder='Address Line 1' ng-model="$ctrl.user.address_line_1" id="address_line_01">
+                    </div>
+                    <div class="form-group  col-sm-12">
+                        <input type="text" class="form-control" placeholder='Address Line 2' ng-model="$ctrl.user.address_line_2" id="address_line_02">
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-6 form-group">
+                            <input type="text" class="form-control" ng-model="$ctrl.user.city" id="city" name="city" placeholder="City">
+                        </div>
+                        
+                        <div class="form-group col-sm-6">
+                            <input type="text" class="form-control" ng-model="postcode" id="postal_code" placeholder="Zip Code">
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="col-sm-12 form-group">
+                        <select  class="form-control"  ng-model="$ctrl.user.country" name="country" id='country' pvp-country-picker>
+                        </select>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Update</button>
+            </div>
+        </div>
+    </div>

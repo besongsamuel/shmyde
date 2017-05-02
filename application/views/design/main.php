@@ -73,13 +73,12 @@
             
             $('#myMeasurementModal').on('shown.bs.modal', function() 
             {
-                
-                productManager.LoadMeasurementsIntoModal();
+                productManager.product.request_tailor = false;
             });
         
-            $('#userDataModal').on('shown.bs.modal', function() {
-
-                LoadUserDataIntoModal();
+            $('#userDataModal').on('shown.bs.modal', function() 
+            {
+                productManager.product.request_tailor = true;
             });
                         
         });
@@ -93,15 +92,7 @@
         {
             productManager.applySelectedThread();
         }
-        
-        function LoadUserDataIntoModal()
-        {
-            productManager.requestTailor = true;
-            
-            
-            userManager.setUserToModal();   
-        }
-        
+               
         function updateUserData()
         {
             userManager.updateUser();
@@ -160,62 +151,12 @@
     </div>
 
     <!-- Measurement Modal -->
-    <div id="myMeasurementModal" class="modal fade" role="dialog"  ng-controller="DesignController as $design">
-        <user-measurements measurements="$design.measurements"></user-measurements>
+    <div id="myMeasurementModal" class="modal fade" role="dialog"  ng-controller="DesignController">
+        <user-measurements measurements='measurements'></user-measurements>
     </div>
 
     <div id="userDataModal" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Confirm User Details</h4>
-          </div>
-          <div class="modal-body">
-              <div style="width: 100%;">
-                  <div class="form-group">
-                      <label for="last_name">Last Name:</label>
-                    <input type="text" class="form-control" id="last_name">
-                    <label for="first_name">First Name:</label>
-                    <input type="text" class="form-control" id="first_name">
-                  </div>
-                  <div class="form-group">
-                    <label for="contact_phone">Phone Number:</label>
-                    <input type="tel" class="form-control" id="contact_phone">
-                  </div>
-                  <div class="form-group">
-                    <label for="user_email">Email:</label>
-                    <input type="user_email" class="form-control" id="user_email">
-                  </div>
-                  <div class="form-group">
-                    <label for="address_line_01">Address:</label>
-                    <input type="text" class="form-control" id="address_line_01">
-                  </div>
-                  <div class="form-group">
-                    <input type="text" class="form-control" id="address_line_02">
-                  </div>
-                  <div class="form-group">
-                    <label for="city">City</label>
-                    <input type="text" class="form-control" id="city" name="city" placeholder="City">
-                  </div>
-                  <div class="form-group">
-                    <label for="country">Country</label>
-                    <input type="text" class="form-control" id="country" name="country" placeholder="Country">
-                  </div>
-                  <div class="form-group">
-                    <label for="postal_code">Postal Code:</label>
-                    <input type="text" class="form-control" id="postal_code">
-                  </div>
-              </div>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal" onclick="updateUserData()">Update</button>
-          </div>
-        </div>
-
-      </div>
+        <user-details user='userObject.user'></user-details>
     </div>
 
     <div id="buttonsModal" class="modal fade" role="dialog">

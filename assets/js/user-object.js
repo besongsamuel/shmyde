@@ -34,30 +34,7 @@ function User(user_object)
         this.user.email = $("#userDataModal #user_email").val();
         
     };
-    
-    this.setUserToModal = function()
-    {
-        $("#userDataModal #last_name").val(this.user.last_name);
-
-        $("#userDataModal #first_name").val(this.user.first_name);
-
-        $("#userDataModal #contact_phone").val(this.user.phone_number);
-
-        $("#userDataModal #address_line_01").val(this.user.address_line_1);
-
-        $("#userDataModal #address_line_02").val(this.user.address_line_2);
         
-        $("#userDataModal #city").val(this.user.city);
-        
-        $("#userDataModal #country").val(this.user.country);
-
-        $("#userDataModal #postal_code").val(this.user.postcode);
-
-        $("#userDataModal #user_email").val(this.user.email);
-        
-        
-    };
-    
     this.CheckOut = function(productManager, order_id, order_status)
     {
         var designParameters = productManager.getDesignParameters();

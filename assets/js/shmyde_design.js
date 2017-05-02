@@ -658,16 +658,6 @@
         
         this.LoadInitialDesign = function()
         {
-            $('#myMeasurementModal').on('shown.bs.modal', function() {
-            
-                this.LoadMeasurementsIntoModal();
-            });
-        
-            $('#userDataModal').on('shown.bs.modal', function() {
-
-                this.LoadUserDataIntoModal();
-            });
-                    
             if(!this.design_data.currentButton || !this.design_data.currentThread)
             {
                 this.button_image = this.assets_dir.concat("images/buttons/") + this.design_data.currentButton.image_name;
@@ -1486,27 +1476,7 @@
             );
         }           
     }
-    
-    function LoadUserDataIntoModal(){
-       
-       var user = this.design_data['user'];
-       
-       $("#last_name").val(user.last_name);
-       
-       $("#first_name").val(user.first_name);
-       
-       $("#contact_phone").val(user.phone_number);
-       
-       $("#address_line_01").val(user.address_line_01);
-       
-       $("#address_line_02").val(user.address_line_02);
-       
-       $("#postal_code").val(user.postal_code);
-       
-       $("#email").val(user.email);
-       
-    }
-    
+        
     /**
     * This function loads all available threads to the 
     * threads slider in the modal buttons dialog. 

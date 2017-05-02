@@ -11,12 +11,61 @@
     
     app.component('userMeasurements', 
     {
-        templateUrl : '../../application/view/templates/measurementComponent.html',
-        bindings    : 
+        
+        templateUrl : '/shmyde/assets/templates/measurementComponent.html',
+        controller  : function()
         {
-            measurements : '<'
+            var ctrl = this;
+            
+            ctrl.$onInit = function()
+            {
+                ctrl.measurementsCopy = ctrl.measurements;
+            }; 
+            
+            ctrl.reset = function()
+            {
+                ctrl.measurements = ctrl.measurementsCopy;
+            };
+        },
+        bindings: 
+        {
+            measurements : '='
         }
     });
+    
+    app.component('userDetails', 
+    {
+        templateUrl : '/shmyde/assets/templates/userDetailsComponent.html',
+        controller  : function()
+        {
+            var ctrl = this;
+            
+            ctrl.$onInit = function()
+            {
+                
+            };    
+        },
+        bindings: 
+        {
+            user : '<'
+        }
+    });
+    
+    app.component('termsAndConditions', 
+    {
+        templateUrl : '/shmyde/assets/templates/termsandconditions.html',
+        controller  : function()
+        {
+            var ctrl = this;
+            
+            ctrl.$onInit = function()
+            {
+                
+            };    
+        },
+    });
+    
+    
     
     app.directive('isUniqueEmail', function($http, $q) 
     {

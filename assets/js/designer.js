@@ -660,20 +660,7 @@ function Product(product_object)
                 $('<span>').attr('class', 'tab').append("Request Tailor")
         ));
     };
-    
-    this.LoadMeasurementsIntoModal = function()
-    {
-        this.requestTailor = false; 
-        
-        var designScope = angular.element("#design-page").scope();
-        
-        designScope.$apply(function()
-        {
-            // Set Measurements
-            designScope.measurements = designScope.productManager.product.measurements;
-        });
-    };
-        
+            
     this.createMixElement = function(menu, type)
     {
         var Instance = this;
@@ -769,15 +756,16 @@ function Product(product_object)
             measurements : -1,
             mix_menus : [],
             options : [],
-            design_image : ''
+            design_image : '',
+            request_tailor : false
         };
-        
         
         designParameters.fabric_id = this.product.default_fabric !== null ? this.product.default_fabric.fabric_id : -1;
         designParameters.mix_fabric_id = this.product.mix_fabric !== null ? this.product.mix_fabric.fabric_id : -1;
         designParameters.button_id = this.product.default_button !== null ? this.product.default_button.id : -1;
         designParameters.thread_id = this.product.default_thread !== null ? this.product.default_thread.id : -1;
         designParameters.measurements = this.product.measurements;
+        designParameters.request_tailor = this.product.request_tailor;
         
         for(var key in this.product.product_menus)
         {

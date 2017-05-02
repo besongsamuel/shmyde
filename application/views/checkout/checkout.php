@@ -16,6 +16,15 @@
                 checkoutScope.frontDesignImage = sessionStorage.getItem("frontDesignImage");
                 checkoutScope.backDesignImage = sessionStorage.getItem("backDesignImage");
             });
+            
+            var measurementScope = angular.element("#myMeasurementModal").scope();
+            
+            measurementScope.$apply(function()
+            {
+                measurementScope.measurements = checkoutScope.productManager.product.measurements;
+            });
+            
+            
                                      
         });
 
@@ -76,7 +85,7 @@
                       <td>
                           <p ng-bind-html="product_name"></p>
                           <p ng-repeat="detail in productManager.product_details">{{detail}}</p>
-                          <a href="#"  data-toggle="modal" data-target="#myMeasurementModal">Measurements</a>
+                          <a ng-show="!productManager.product.request_tailor" href="#"  data-toggle="modal" data-target="#myMeasurementModal">Measurements</a>
                       </td>
                       <td><input type="number" ng-model="quantity" style="width: 50px;" /></td>
                       <td>{{productManager.total_price * quantity }} FCFA</td>
@@ -144,15 +153,12 @@
         <!-- Terms and conditions modal -->
         <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="Terms and conditions" aria-hidden="true">
             <div class="modal-dialog">
-                <div class="modal-content">
+                <div class="modal-content" style="height: 400px; overflow-y:auto;">
                     <div class="modal-header">
                         <h3 class="modal-title">Terms and conditions</h3>
                     </div>
 
-                    <div class="modal-body">
-                        <p>Lorem ipsum dolor sit amet, veniam numquam has te. No suas nonumes recusabo mea, est ut graeci definitiones. His ne melius vituperata scriptorem, cum paulo copiosae conclusionemque at. Facer inermis ius in, ad brute nominati referrentur vis. Dicat erant sit ex. Phaedrum imperdiet scribentur vix no, ad latine similique forensibus vel.</p>
-                        <p>Dolore populo vivendum vis eu, mei quaestio liberavisse ex. Electram necessitatibus ut vel, quo at probatus oportere, molestie conclusionemque pri cu. Brute augue tincidunt vim id, ne munere fierent rationibus mei. Ut pro volutpat praesent qualisque, an iisque scripta intellegebat eam.</p>
-                    </div>
+                    <terms-and-conditions></terms-and-conditions>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" id="agreeButton" data-dismiss="modal" ng-click="agree_to_terms = true">Agree</button>
@@ -166,38 +172,7 @@
     
         <!-- Measurements Modal -->
     <div id="myMeasurementModal" class="modal fade" role="dialog" ng-controller="CheckoutController">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Your Measurements</h4>
-          </div>
-          <div class="modal-body">
-                <table class="table">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="measurement in productManager.product.measurements">
-                        <td>{{measurement.name}}</td>
-                        <td>{{measurement.description}}</td>
-                        <td style="width: 90px;"><input type="number" ng-model="measurement.default_value" style="width: 50px; text-align: center;" /> cm</td>
-                      </tr>
-                    </tbody>
-                  </table>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-
-      </div>
+        <user-measurements measurements='measurements'></user-measurements>
     </div>
 
 

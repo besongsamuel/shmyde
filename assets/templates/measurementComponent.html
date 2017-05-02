@@ -1,8 +1,8 @@
-<div class="modal-dialog">
+ <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <button type="button" class="close" data-dismiss="modal" ng-click="$ctrl.reset()">&times;</button>
             <h4 class="modal-title">Measurements</h4>
           </div>
           <div class="modal-body">
@@ -19,7 +19,7 @@
                             <tr ng-repeat="measurement in $ctrl.measurements">
                                 <td>
                                     <div class="form-group">
-                                        <label for="usr">{{measurement.name}}</label>
+                                        <label for="{{measurement.id}}">{{measurement.name}}</label>
                                         <input type="number" class="form-control" id="{{measurement.id}}" ng-model="measurement.default_value" string-to-number ng-mousedown="loadYTVideo(measurement.id, measurement.description, measurement.youtube_link)">
                                     </div>
                                 </td>
@@ -29,7 +29,7 @@
                       
                   </div>
                   <div class="col-sm-6">
-                      <iframe id="youtube_frame" src="" value="-1"  style="width: 100%; height: 100%; margin: auto; background-color: darkgray;">
+                      <iframe id="youtube_frame" src="" style="width: 100%; height: 100%; margin: auto; background-color: darkgray;">
 
                       </iframe>
                       <div>
@@ -45,4 +45,5 @@
           </div>
         </div>
 
-      </div>
+      </div>   
+

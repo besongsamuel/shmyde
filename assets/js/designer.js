@@ -396,7 +396,7 @@ function Product(product_object)
             menu.design_options[prev_option_selected].selected = 0;
             menu.design_options[menu.option_selected].selected = 1;
             
-            var id_menu = "#menu_" + menu.id;
+            var id_menu = ".menu_" + menu.id;
             var id_option = ".option_" + menu.option_selected;
 
             var prev_id_option = ".option_" + prev_option_selected;

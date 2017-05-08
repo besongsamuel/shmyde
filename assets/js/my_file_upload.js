@@ -217,9 +217,8 @@
             var caller = this.get_caller();
 
             var container = document.createElement("DIV");
-            container.setAttribute("class", "col-sm-5");
+            container.setAttribute("class", "col-sm-5 image-container");
             container.setAttribute("id", curr_element);
-            container.setAttribute("style", "margin : 5px;")
             
             var top_container = document.createElement("DIV");
             top_container.setAttribute("style", "width : 410px");

@@ -120,7 +120,7 @@
             
           
             
-            <div class="uploader">
+            <div class="container">
                 <button type="button" id="add_front_image" class="btn btn-primary" style="margin-top: 25px;">Add Front Image</button>
                 <form action="<?php echo site_url('admin/upload_image/'.$product_id);  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="front_image_upload_form">                
                     <span id="front_image" name="front_image" class="row">
@@ -130,7 +130,7 @@
             </div>
             
             
-            <div class="uploader">
+            <div class="container">
                 <button type="button" id="add_back_image" class="btn btn-primary" style="margin-top: 25px;">Add Back Image</button>
                 <form action="<?php echo site_url('admin/upload_image/'.$product_id);  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="back_image_upload_form">                               
                     <span id="back_image" name="back_image"  class="row">

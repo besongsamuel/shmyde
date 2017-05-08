@@ -42,7 +42,7 @@ class User extends CI_Controller {
             // No user is logged, goto home page
             if($this->userObject->id == -1)
             {
-                $this->template->load('shmyde', 'home', $this->data);
+                $this->template->load('shmyde', 'home/index', $this->data);
             }
             else
             {

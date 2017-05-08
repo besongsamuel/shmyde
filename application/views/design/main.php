@@ -158,7 +158,7 @@
     <div id="userDataModal" class="modal fade" role="dialog">
         <user-details user='userObject.user'></user-details>
     </div>
-
+    
     <div id="buttonsModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->

@@ -36,3 +36,11 @@ a:active
     height: 300px;
     width: 230px;
 }
+
+.image-container
+{
+    padding: 15px;
+    border-style: ridge;
+    margin: 15px;
+    background-color: lightgray;
+}

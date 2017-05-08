@@ -297,13 +297,14 @@ class Design_model extends CI_Model
      * @param type $user_id
      * @param type $userDesign
      */
-    public function SaveUserDesign($user_id, $order_id, $total_price, $designParameters, $frontBase64Image, $backBase64Image)
+    public function SaveUserDesign($user_id, $order_id, $name, $total_price, $designParameters, $frontBase64Image, $backBase64Image)
     {    
         $data = array
         (
             'user_design'       => $designParameters,
             'user_id'           => $user_id,
             'price'             => $total_price,
+            'type'             => $name,
             'status'            => 20 // This is the status for saved designs
         );
         

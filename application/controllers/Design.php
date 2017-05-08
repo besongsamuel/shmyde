@@ -178,11 +178,12 @@ class Design extends CI_Controller
             
             $base64designImage = $this->input->post('frontDesignImage');
             $backBase64designImage = $this->input->post('backDesignImage');
+            $name = $this->input->post('name');
             
             $user_id = $this->userObject->id;
             
             // Return the new order ID if it was -1
-            echo json_encode($this->design_model->SaveUserDesign($user_id, $order_id, $total_price, $designParameters, $base64designImage, $backBase64designImage));
+            echo json_encode($this->design_model->SaveUserDesign($user_id, $order_id, $name, $total_price, $designParameters, $base64designImage, $backBase64designImage));
             
         }
         

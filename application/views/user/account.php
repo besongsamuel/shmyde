@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 
-<div style="background-color: white" ng-controller="AccountController" id="account-container">
+<div style="background-color: white" ng-controller="AccountController" id="account-container" class="container">
     
     <!-- Profile Header -->
 <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
@@ -15,7 +16,8 @@
             userScope.first_name = userScope.userObject.user.first_name;
             userScope.last_name = userScope.userObject.user.last_name;
             userScope.gender = userScope.userObject.user.gender;
-            userScope.dob = userScope.userObject.user.dob;
+            var dob = new Date(userScope.userObject.user.dob.toString().replace("-","/"));
+            userScope.dob = dob;
             userScope.address_line_1 = userScope.userObject.user.address_line_1;
             userScope.address_line_2 = userScope.userObject.user.address_line_2;
             userScope.country = userScope.userObject.user.country;
@@ -27,7 +29,6 @@
 
 <div class="container">
     <div class="shmyde-profile">
-        <img align="left" class="shmyde-image-lg" ng-src="<?php echo ASSETS_PATH; ?>images/account/background.png" alt="Profile image"/>
         <img align="left" class="shmyde-image-profile thumbnail" ng-src="<?php echo ASSETS_PATH; ?>images/account/{{userObject.user.avatar}}" alt="Profile image example"/>
         <div class="shmyde-profile-text">
             <h1>{{userObject.user.last_name + ", " + userObject.user.first_name}}</h1>
@@ -250,7 +251,7 @@
 
 <!-- User Orders -->
 <div class="row" id="orders">
-    <div class="col-md-8 col-md-offset-2">
+    <div class="col-md-12">
         <form class="form-horizontal" role="form">
             <fieldset>
                 <!-- Form Name -->
@@ -270,10 +271,10 @@
                             <td>
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <img width="80" height="100" ng-src="<?php echo ASSETS_PATH?>images/orders/order_{{design.id}}_{{design.user_id}}_front.png"/>
+                                        <img width="180" height="300" ng-src="<?php echo ASSETS_PATH?>images/orders/order_{{design.id}}_{{design.user_id}}_front.png"/>
                                     </div>
                                     <div class="col-sm-4">
-                                        <img width="80" height="100"  ng-src="<?php echo ASSETS_PATH?>images/orders/order_{{design.id}}_{{design.user_id}}_back.png"/>
+                                        <img width="180" height="300"  ng-src="<?php echo ASSETS_PATH?>images/orders/order_{{design.id}}_{{design.user_id}}_back.png"/>
                                     </div>
                                 </div>
                             </td>
@@ -283,7 +284,7 @@
                             <td>
                                 <span ng-show="can_complete(design.status)"><a href="<?php echo site_url('user/complete_checkout/{{design.id}}') ?>">Complete</a> | </span>
                                 <span ng-show="can_edit(design.status)"><a  href="<?php echo site_url('design/edit/{{design.id}}') ?>">Edit</a> | </span>
-                                <span ng-show="can_edit(design.status)" ng-click="delete_design(design.id)"><a href="#orders">Delete</a></span>
+                                <span ng-show="can_edit(design.status)" ng-click="showDeleteDesignConfirmationBox(design.id)"><a href="#orders">Delete</a></span>
                             </td>
                         </tr>
                     </tbody>

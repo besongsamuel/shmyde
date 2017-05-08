@@ -175,7 +175,7 @@
 
             <!-- IMAGE UPLOAD SECTION -->
             
-            <div class="uploader">
+            <div class="container">
             
                 <button type="button" id="add_image" class="btn btn-primary" style="margin-top: 25px;">Add Image</button>
 
@@ -191,7 +191,7 @@
             
             </div>
             
-            <div class="uploader">
+            <div class="container">
 
                 <button type="button" id="add_thumbnail" class="btn btn-primary" style="margin-top: 25px;">Add Thumbnail</button>
 

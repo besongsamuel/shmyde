@@ -159,6 +159,8 @@ class Admin extends CI_Controller {
             show_404();
         }
         
+        $this->data['cssLinks'] = array('admin');
+
         if ($this->input->server('REQUEST_METHOD') == 'POST')
         {
             if($page == 'product')
@@ -199,10 +201,7 @@ class Admin extends CI_Controller {
 
             return;
         }
-        
-        $this->data = Array();
-        
-        $this->data['cssLinks'] = array('admin');
+                
         
         $this->data['is_edit'] = json_encode(true);
         
@@ -215,7 +214,6 @@ class Admin extends CI_Controller {
         {
             $this->begin_edit_menu($id);
         }
-
 
         if($page == 'option')
         {
@@ -623,9 +621,7 @@ class Admin extends CI_Controller {
             
             return;
         }
-        
-        $this->data = Array();
-        
+                
         $this->data['cssLinks'] = array('admin');
                        
         $this->view_create_product($page);
@@ -922,9 +918,14 @@ class Admin extends CI_Controller {
                     
                 $id = $this->admin_model->get_table_next_id("shmyde_design_option");
                 
-                foreach ($this->input->post('option_dependent_menu') as $key => $value) {
-
-                    $this->admin_model->add_option_dependent_menu($id, $key);
+                $option_dependent_menus = $this->input->post('option_dependent_menu');
+                
+                if(isset($option_dependent_menus))
+                {
+                    foreach ($this->input->post('option_dependent_menu') as $key => $value) 
+                    {
+                        $this->admin_model->add_option_dependent_menu($id, $key);
+                    }
                 }
                 
                 redirect('/admin/view/option/'.$this->input->post('menu').'/'.$this->input->post('product'), 'refresh');

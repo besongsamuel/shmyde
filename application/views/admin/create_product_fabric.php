@@ -96,7 +96,7 @@
 
         <div class="container">
             
-            <div class="uploader" >
+            <div class="container" >
                 
                 <button type="button" id="add_fabric_image" class="btn btn-primary" style="">Add Fabric Image</button>
 

@@ -49,14 +49,14 @@ class Checkout_model extends CI_Model {
 
 		if($order_id == -1)
 		{
-			$result =  $this->db->insert(ORDERS_TABLE, $data);
-			$insert_id = $this->db->insert_id();
+                    $result =  $this->db->insert(ORDERS_TABLE, $data);
+                    $insert_id = $this->db->insert_id();
 		}
 		else
 		{
-			$insert_id = $order_id;
-			$this->db->where('id', $insert_id);
-			$result = $this->db->update(ORDERS_TABLE, $data);
+                    $insert_id = $order_id;
+                    $this->db->where('id', $insert_id);
+                    $result = $this->db->update(ORDERS_TABLE, $data);
 		}
             
 	    	$decoded_frontBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $frontBase64Image));

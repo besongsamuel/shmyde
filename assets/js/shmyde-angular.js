@@ -51,6 +51,48 @@
         }
     });
     
+    app.component('messageBox', 
+    {
+        templateUrl : '/shmyde/assets/templates/messageBox.html',
+        controller  : function()
+        {
+            var ctrl = this;
+            
+            ctrl.$onInit = function()
+            {
+                ctrl.title = '';
+                ctrl.message = '';
+                ctrl.oklabel = 'Ok';
+                ctrl.cancellabel = 'Cancel';
+                ctrl.valuelabel = 'Value';
+                ctrl.placeholder = '';
+            };  
+            
+            ctrl.ok = function()
+            {
+                ctrl.onUpdate({value: ctrl.value});
+            };
+            
+            ctrl.cancel = function()
+            {
+                ctrl.onCancel();
+            };
+        },
+        bindings: 
+        {
+            title : '=',
+            message : '=',
+            placeholder : '=',
+            hasvalue : '=',
+            hascancel : '=',
+            valuelabel : '=',
+            value : '=',
+            onUpdate: '&',
+            onCancel: '&'
+    
+        }
+    });
+    
     app.component('termsAndConditions', 
     {
         templateUrl : '/shmyde/assets/templates/termsandconditions.html',
@@ -64,8 +106,6 @@
             };    
         },
     });
-    
-    
     
     app.directive('isUniqueEmail', function($http, $q) 
     {
@@ -118,7 +158,6 @@
           }
         };
     });
-
     
     app.directive('pwCheck', [function () {
     return {
@@ -185,8 +224,6 @@
       };
     });
 
-    
-        
     app.controller('CheckoutController', ['$scope', '$sce', '$http', function($scope, $sce, $http){
         
         $scope.designTypes = ['Casual', 'Professional', 'Party'];
@@ -252,7 +289,7 @@
 
     }]);
     
-    app.controller('UserController', ['$scope', '$http', function($scope, $http)
+    app.controller('UserController', ['$scope', '$rootScope', '$http', function($scope, $rootScope, $http)
     {
         $scope.registrationObject = 
         {
@@ -431,70 +468,6 @@
                 });
             }
             
-        };
-        
-        $scope.get_design_status = function(status_code)
-        {
-            if(parseInt(status_code) === 0)
-            {
-                return "Pending Payment";
-            }
-            
-            if(parseInt(status_code) === 1)
-            {
-                return "Pending Dilivery";
-            }
-            
-            if(parseInt(status_code) === 2)
-            {
-                return "Incomplete Design";
-            }
-            
-            if(parseInt(status_code) === 20)
-            {
-                return "Saved Design";
-            }
-        };
-        
-        $scope.can_complete = function(status_code)
-        {
-            if(parseInt(status_code) === 0)
-            {
-                return true;
-            }
-            
-            return false;
-        };
-        
-        $scope.can_edit = function(status_code)
-        {
-            if(parseInt(status_code) === 0 || parseInt(status_code) === 20)
-            {
-                return true;
-            }
-            
-            return false;
-        };
-        
-        $scope.delete_design = function(design_id)
-        {
-            if (confirm('Are you sure you want to parmanently delete this design?')) 
-            {
-                $.ajax({
-                    url : $scope.site_url.concat('Design/DeleteUserDesign'),
-                    data : {
-                        order_id :  design_id},
-                    async : true,
-                    type : 'POST',
-                    success : function(response)
-                    {
-                        $scope.$apply(function()
-                        {
-                            $scope.user_orders = JSON.parse(response);
-                        });
-                    }
-                });
-            }
         };
         
         $scope.setPassword = function()
@@ -739,11 +712,242 @@
             $scope.country = $scope.userObject.user.country;
             $scope.city = $scope.userObject.user.city;
         };
+        
+        $scope.get_design_status = function(status_code)
+        {
+            if(parseInt(status_code) === 0)
+            {
+                return "Pending Payment";
+            }
+            
+            if(parseInt(status_code) === 1)
+            {
+                return "Pending Dilivery";
+            }
+            
+            if(parseInt(status_code) === 2)
+            {
+                return "Incomplete Design";
+            }
+            
+            if(parseInt(status_code) === 20)
+            {
+                return "Saved Design";
+            }
+        };
+        
+        $scope.can_complete = function(status_code)
+        {
+            if(parseInt(status_code) === 0)
+            {
+                return true;
+            }
+            
+            return false;
+        };
+        
+        $scope.can_edit = function(status_code)
+        {
+            if(parseInt(status_code) === 0 || parseInt(status_code) === 20)
+            {
+                return true;
+            }
+            
+            return false;
+        };
+        
+        $scope.delete_design = function(design_id)
+        {
+            if (confirm('Are you sure you want to parmanently delete this design?')) 
+            {
+                $.ajax({
+                    url : $scope.site_url.concat('Design/DeleteUserDesign'),
+                    data : {
+                        order_id :  design_id},
+                    async : true,
+                    type : 'POST',
+                    success : function(response)
+                    {
+                        $scope.$apply(function()
+                        {
+                            $scope.user_orders = JSON.parse(response);
+                        });
+                    }
+                });
+            }
+        };
     }]);
     
-    app.controller('HeaderController', ['$scope', '$rootScope', function($scope, $rootScope)
+    app.controller('HeaderController', ['$scope', '$rootScope', '$compile', function($scope, $rootScope, $compile)
     {
+       
+            
+        /* Global Scope Message Box Parameters */
         
+        $rootScope.message_box = 
+        {
+            message :  '',
+            title :  '',
+            okLabel :  'Ok',
+            cancelLabel :  'Cancel',
+            valueLabel :  'Value: ',
+            hasValue    : false,
+            hasCancel   : false,
+            value       : null,
+            placeholder : '',
+            onUpdate :  function(value)
+            {
+                
+            },
+            onCancel : function(value)
+            {
+                
+            }
+        };
+        
+        /**
+         * Initializes the message box object 
+         * before displaying the modal. 
+         * @param {type} title
+         * @param {type} message
+         * @returns {undefined}
+         */
+        $rootScope.showMessageBox = function(title, message)
+        {
+            $rootScope.message_box.title = title;
+            $rootScope.message_box.message = message;
+            $rootScope.message_box.hasValue = false;
+            $rootScope.message_box.hasCancel = false;
+            
+            $rootScope.message_box.onUpdate = function(){};
+            
+            var element = $('message-box');
+            var newScope = angular.element('message-box').scope();
+            $compile(element.html())(newScope);
+            
+            $('#messageboxModal').modal('show');
+        };
+        
+        $rootScope.showConfirmationBox = function(title, message, hasValue, valueLabel, value, placeholder)
+        {
+            $rootScope.message_box.title = title;
+            $rootScope.message_box.message = message;
+            $rootScope.message_box.hasValue = hasValue;
+            $rootScope.message_box.valueLabel = valueLabel;
+            $rootScope.message_box.message = message;
+            $rootScope.message_box.value = value;
+            $rootScope.message_box.placeholder = placeholder;
+            $rootScope.message_box.hasCancel = true;
+            
+            $rootScope.message_box.onUpdate = function(){};
+            
+            var element = $('message-box');
+            var newScope = angular.element('message-box').scope();
+            $compile(element.html())(newScope);
+            
+            $('#messageboxModal').modal('show');
+        };
+        
+        $rootScope.showUpdateDesignConfirmationBox = function()
+        {
+            $rootScope.showConfirmationBox('Save User Design', 'Are you sure you want to save current design?', true, 'Design Name', '', 'Design Name');
+            
+            $rootScope.message_box.onUpdate = function(design_name)
+            {
+                var designParameters = $rootScope.productManager.getDesignParameters();
+
+                $rootScope.productManager.setProductDetails();
+
+                Instance = this;
+
+                var node = document.getElementById($rootScope.productManager.designDomElementID);
+
+                domtoimage.toPng(node)
+                .then(function (dataUrlFront) 
+                {    
+                    var backNode = document.getElementById($rootScope.productManager.designBackDomElementID);
+
+                    domtoimage.toPng(backNode)
+                    .then(function (dataUrlBack) 
+                    {
+                        // Save current Design. Shall be reloaded after login
+                        $.ajax({
+                            url : $rootScope.site_url.concat('Design/SaveUserDesign'),
+                            data :  {
+                                        designParameters : JSON.stringify(designParameters), 
+                                        order_id : $rootScope.order_id, 
+                                        price : $rootScope.productManager.total_price,
+                                        frontDesignImage : dataUrlFront,
+                                        backDesignImage :  dataUrlBack,
+                                        name            : design_name
+                                    },
+                            async : true,
+                            type : 'POST',
+                            success : function(response)
+                            {
+                                $rootScope.order_id = parseInt(JSON.parse(response));
+
+                                if($rootScope.order_id !== -1)
+                                {
+                                    $rootScope.order_status = 20;
+                                }
+                                
+                                $rootScope.showMessageBox('Saved', 'Your design has been saved. ');
+                            }
+                        });
+                    });
+                })
+                .catch(function (error) {
+                    console.error('oops, something went wrong!', error);
+                });
+            };
+            
+            var element = $('message-box');
+            var newScope = angular.element('message-box').scope();
+            $compile(element.html())(newScope);
+            
+            $('#messageboxModal').modal('show');
+            
+        };
+        
+        $rootScope.showDeleteDesignConfirmationBox = function(design_id)
+        {
+            $rootScope.showConfirmationBox('Delete User Design', 'Are you sure you want to delete design?', false);
+            
+            $rootScope.message_box.value = design_id;
+            
+            $rootScope.message_box.onUpdate = function(value)
+            {
+                $.ajax({
+                    url : $scope.site_url.concat('Design/DeleteUserDesign'),
+                    data : { order_id :  value},
+                    async : true,
+                    type : 'POST',
+                    success : function(response)
+                    {
+                        $scope.$apply(function()
+                        {
+                            $scope.user_orders = JSON.parse(response);
+                            // reload page to reflect changes
+                            window.location.reload();
+                            //= $scope.site_url.concat('user/account#orders');
+                            
+                            
+                        });
+                    }
+                });
+            };
+            
+            var element = $('message-box');
+            var newScope = angular.element('message-box').scope();
+            $compile(element.html())(newScope);
+            
+            $('#messageboxModal').modal('show');
+            
+        };
+        
+        /* Message Box End */
+            
         /**
          * Checks if the root scope is initialized
          * @returns {undefined}
@@ -986,7 +1190,7 @@
         $scope.selected_category = 0;
         
         $scope.title = "Measurements";
-        
+                
         $scope.DesignCategorySelected = function(category_selected)
         {
             $scope.selected_category = category_selected;
@@ -1034,7 +1238,7 @@
                 return;
             }
             
-            if($scope.user_logged && $scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_id === -1)
+            if(parseInt($scope.userObject.user.id) > -1 && $scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_id === -1)
             {
                 return true;
             }
@@ -1050,64 +1254,17 @@
                 return;
             }
             
-            if($scope.user_logged && $scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && $rootScope.order_status === 20)
+            if(parseInt($scope.userObject.user.id) > -1 && $scope.controller.toString() === 'design' && $scope.method.toString() === 'product' && parseInt($rootScope.order_status) === 20)
+            {
+                return true;
+            }
+            
+            if(parseInt($scope.userObject.user.id) > -1 && $scope.controller.toString() === 'design' && $scope.method.toString() === 'edit' && parseInt($rootScope.order_status) === 20)
             {
                 return true;
             }
             
             return false;
-        };
-        
-        $rootScope.savedesign = function()
-        {
-            if (confirm('Are you sure you want to save the current design?')) 
-            {
-                var designParameters = $rootScope.productManager.getDesignParameters();
-                
-                $rootScope.productManager.setProductDetails();
-                
-                Instance = this;
-                
-                var node = document.getElementById($rootScope.productManager.designDomElementID);
-            
-                domtoimage.toPng(node)
-                .then(function (dataUrlFront) 
-                {    
-                    var backNode = document.getElementById($rootScope.productManager.designBackDomElementID);
-
-                    domtoimage.toPng(backNode)
-                    .then(function (dataUrlBack) 
-                    {
-                        // Save current Design. Shall be reloaded after login
-                        $.ajax({
-                            url : $rootScope.site_url.concat('Design/SaveUserDesign'),
-                            data :  {
-                                        designParameters : JSON.stringify(designParameters), 
-                                        order_id : $rootScope.order_id, 
-                                        price : $rootScope.productManager.total_price,
-                                        frontDesignImage : dataUrlFront,
-                                        backDesignImage :  dataUrlBack
-                                    },
-                            async : true,
-                            type : 'POST',
-                            success : function(response)
-                            {
-                                $rootScope.order_id = parseInt(JSON.parse(response));
-                                
-                                if($rootScope.order_id !== -1)
-                                {
-                                    $rootScope.order_status = 20;
-                                }
-                                
-                                alert("Current design has been saved to your user account. ");
-                            }
-                        });
-                    });
-                })
-                .catch(function (error) {
-                    console.error('oops, something went wrong!', error);
-                });
-            } 
         };
         
         $scope.loadYTVideo = function(id, description, videoLink)

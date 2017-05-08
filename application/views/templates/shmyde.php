@@ -69,6 +69,8 @@
             });
 
             var rootScope = angular.element("#shmyde-application").scope();
+            
+           
                        
             /* Apply these values to the root scope */
             rootScope.$apply(function()
@@ -156,8 +158,8 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#" ng-show="saveDesignVisible()" ng-click="savedesign()">SAVE DESIGN</a></li>
-            <li><a href="#" ng-show="updateDesignVisible()" ng-click="savedesign()">UPDATE DESIGN</a></li>
+              <li><a href="#" ng-show="saveDesignVisible()" ng-click="showUpdateDesignConfirmationBox()">SAVE DESIGN</a></li>
+            <li><a href="#" ng-show="updateDesignVisible()" ng-click="showUpdateDesignConfirmationBox()">UPDATE DESIGN</a></li>
             <li><a href="#myPage" ng-show="homeMenuVisible()">HOME</a></li>
             <li><a href="#design-section" ng-show="designMenuVisible()">DESIGN</a></li>
             <li><a href="#about-us" ng-show="aboutUsVisible()">ABOUT US</a></li>
@@ -195,6 +197,12 @@
              
         <?php echo $body; ?>
              
+    </div>
+        
+    <div id="messageboxModal" class="modal fade" role="dialog"  ng-controller="DesignController">
+        <message-box value='message_box.value' hasvalue='message_box.hasValue' hascancel='message_box.hasCancel' placeholder='message_box.placeholder' valuelabel='message_box.valueLabel' title='message_box.title' message='message_box.message' on-update='message_box.onUpdate(value)'>
+            
+        </message-box>
     </div>
     
 </body>

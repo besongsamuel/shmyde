@@ -210,34 +210,44 @@
 <!-- Container (Contact Section) -->
 <div id="contact" class="container" ng-controller="ContactUsController" ng-show="contactUsVisible()">
     <h3 class="text-center">Contact</h3>
-    <p class="text-center"><em>{{Message}}</em></p>
+    <div class="row" ng-show="contact_us_loading">
+        <div class="shmyde-loading">
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+            <div class="loading-bar"></div>
+        </div>
+    </div>
+    <p ng-class="{'error-text text-center' : error, 'text-center' : !error }"><em>{{Message}}</em></p>
     <div class="row">
        	<div class="col-md-4">
-            	<p>Tell us your feeling.</p>
+            <p>Tell us your feeling.</p>
             	<p><span class="glyphicon glyphicon-map-marker"></span>{{shmyde_address_line_1}}</p>
 		<p><span class="glyphicon glyphicon-map-marker"></span>{{shmyde_address_line_2}}</p>
             	<p><span class="glyphicon glyphicon-phone"></span>{{shmyde_contact_phone}}</p>
             	<p><span class="glyphicon glyphicon-envelope"></span>{{shmyde_contact_email}}</p>
         </div>
-        <div class="col-md-8">
-            <div class="row">
-                <div class="col-sm-6 form-group">
-                    <input class="form-control" id="name" name="name" placeholder="Name" type="text" ng-model="contactName" required>
+        <form name='contactUsForm' novalidate="" ng-submit="submitComment()">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-sm-6 form-group">
+                        <input class="form-control" id="contactName" name="name" placeholder="Name" type="text" ng-model="contactName" required>
+                    </div>
+                    <div class="col-sm-6 form-group">
+                        <input class="form-control" id="contactEmail" name="email" placeholder="Email" type="email" ng-model="contactEmail" required>
+                    </div>
                 </div>
-                <div class="col-sm-6 form-group">
-                    <input class="form-control" id="email" name="email" placeholder="Email" type="email" ng-model="contactEmail" required>
+                <textarea class="form-control" id="contactComments" name="comments" placeholder="Comment" ng-model="contactComment" rows="5" required minlength="10">
+
+                </textarea>
+                <br>
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <button type="submit" class="btn pull-right">Send</button>
+                    </div>
                 </div>
             </div>
-            <textarea class="form-control" id="comments" name="comments" placeholder="Comment" ng-model="contactComment" rows="5">
-            
-            </textarea>
-            <br>
-            <div class="row">
-                <div class="col-md-12 form-group">
-                    <button class="btn pull-right" ng-click="submitComment()">Send</button>
-                </div>
-            </div>
-        </div>
+        </form>
     </div>
     <br>
 </div>

@@ -1136,32 +1136,73 @@
         $scope.contactName = "";
         $scope.contactEmail = "";
         $scope.contactComment = "";
+        $scope.contact_us_loading = false;
         
         $scope.Message = "We love our fans";
+        $scope.error = false;
         
         $scope.submitComment = function()
         {
-            $.ajax({
-                url : $scope.site_url.concat('Home/ContactUs'),
-                data : {
-                        contactName : JSON.stringify($scope.contactName),
-                        contactEmail : JSON.stringify($scope.contactEmail),
-                        contactComment : JSON.stringify($scope.contactComment),
+            if($scope.contactUsForm.$valid)
+            {
+                $scope.error = false;
+                $scope.contact_us_loading = true;
+                $scope.Message = "";
+                $.ajax({
+                    url : $scope.site_url.concat('Home/ContactUs'),
+                    data : {
+                            contactName : JSON.stringify($scope.contactName),
+                            contactEmail : JSON.stringify($scope.contactEmail),
+                            contactComment : JSON.stringify($scope.contactComment)
+                        },
+                    async : true,
+                    type : 'POST',
+                    success : function()
+                    {
+                        $scope.contact_us_loading = false;
+                        $scope.contactName = "";
+                        $scope.contactEmail = "";
+                        $scope.contactComment = "";
+                        $scope.Message = "We have recieved your comments. Thank you for your interest.";
+                        
+                        //recompile controller
+                        $scope.$digest();
                     },
-                async : true,
-                type : 'POST',
-                success : function()
+                    error : function()
+                    {
+                        $scope.contact_us_loading = false;
+                        $scope.Message = "An unexpected error occured. Please contact us later. ";
+                        $scope.$digest();
+                    }
+                });
+            }
+            else
+            {
+                $scope.error = true;
+                
+                if($scope.contactUsForm.email.$invalid)
                 {
-                    $scope.contactName = "";
-                    $scope.contactEmail = "";
-                    $scope.contactComment = "";
-                    $scope.Message = "We have recieved your comments. Thank you for your interest.";
-                },
-                error : function()
-                {
-                    $scope.Message = "An unexpected error occured. Please contact us later. ";
+                    $scope.Message = "Please provide a valid email. ";
+                    $("#contactEmail").focus();
+                    
                 }
-            });
+                
+                if($scope.contactUsForm.name.$invalid)
+                {
+                    $scope.Message = "Please enter a name. ";
+                    $("#contactName").focus();
+                    
+                }
+                
+                if($scope.contactUsForm.comments.$invalid)
+                {
+                    $scope.Message = "Please enter a comment. ";
+                    $("#contactComments").focus();
+                    
+                }
+            }
+            
+            
         };
         
     }]);

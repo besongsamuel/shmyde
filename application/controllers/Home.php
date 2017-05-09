@@ -26,12 +26,12 @@ class Home extends CI_Controller {
         /// </summary>
         public function ContactUs()
         {
-                $contactName = $this->input->post('contactName');
-                $contactEmail = $this->input->post('contactEmail');
-                $contactComment = $this->input->post('contactComment');
-                set_error_handler(function(){ });
-                $this->send_contactus_mail($contactName, $contactEmail, $contactComment);
-                restore_error_handler();
+            $contactName = $this->input->post('contactName');
+            $contactEmail = $this->input->post('contactEmail');
+            $contactComment = $this->input->post('contactComment');
+            set_error_handler(function(){ });
+            $this->send_contactus_mail($contactName, $contactEmail, $contactComment);
+            restore_error_handler();
         }
         
         /// <summary>

@@ -372,6 +372,11 @@ input:focus.ng-valid + .form_hint::before {color:#28921f;} /* change form hint a
 	top: 0px;
 }
 
+.error-text
+{
+    color: red;
+}
+
 #loading-center
 {
 	width: 100%;

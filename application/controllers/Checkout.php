@@ -21,6 +21,12 @@ class Checkout extends CI_Controller
     
     public function index()
     {
+        
+        if($this->session->userdata('user_id') == null && $this->GetTmpUserDesign() == NULL)
+        {
+            show_404();
+        }
+        
         $this->data['title'] = "Product Checkout";
         $user_design = null;
           
@@ -156,7 +162,6 @@ class Checkout extends CI_Controller
      */
     public function GetTmpUserDesign()
     {   
-        
         if(session_id() !== "")
         {
             return $this->admin_model->GetTmpUserDesign(session_id());

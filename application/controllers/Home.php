@@ -8,7 +8,7 @@ class Home extends CI_Controller {
         }
         
         public function index()
-        {
+        {                        
             $this->data['title'] = 'Home';
             $this->data['cssLinks'] = array('home');
             /**

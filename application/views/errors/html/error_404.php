@@ -1,21 +1,28 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?><!DOCTYPE html>
+
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<title>404 Page Not Found</title>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>404 Page Not Found</title>
+    
+    <!-- Bootstrap -->
+    <link href="<?php echo ASSETS_PATH; ?>frameworks/bootstrap-3.3.6-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo ASSETS_PATH; ?>css/main.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Calligraffitti" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+       
 <style type="text/css">
 
 ::selection { background-color: #E13300; color: white; }
 ::-moz-selection { background-color: #E13300; color: white; }
 
-body {
-	background-color: #fff;
-	margin: 40px;
-	font: 13px/20px normal Helvetica, Arial, sans-serif;
-	color: #4F5155;
-}
 
 a {
 	color: #003399;
@@ -44,21 +51,51 @@ code {
 	padding: 12px 10px 12px 10px;
 }
 
-#container {
-	margin: 10px;
-	border: 1px solid #D0D0D0;
-	box-shadow: 0 0 8px #D0D0D0;
+body 
+{
+    height: 100%;
 }
 
-p {
-	margin: 12px 15px 12px 15px;
+#container 
+{
+    margin-top: 60px;
+    border: 1px solid #D0D0D0;
+    box-shadow: 0 0 8px #D0D0D0;
+    background-color: white;
+    height: 200px;
+    text-align: center;
+}
+
+p 
+{
+    margin: 12px 15px 12px 15px;
 }
 </style>
-</head>
-<body>
-	<div id="container">
-		<h1><?php echo $heading; ?></h1>
-		<?php echo $message; ?>
-	</div>
+  </head>
+	
+      
+    <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          
+            <span>                
+                <img src="<?php echo ASSETS_PATH ?>/images/logo_shmyde_old.png" alt="Shmyde Corp." class="site-logo" > 
+                <a class="navbar-brand site-name" href="http://localhost/shmyde/">Shmyde</a>
+            </span>
+          
+        </div>
+      </div>
+    </nav>  
+    
+    
+        <div id="container" class="container">
+        <h1><?php echo $heading; ?></h1>
+        <?php echo $message; ?>
+    </div>
+        
+    
 </body>
+
 </html>

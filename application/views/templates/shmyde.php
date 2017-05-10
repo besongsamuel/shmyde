@@ -128,6 +128,8 @@
 
   </head>
 	
+  <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">
+      
     <!-- Preloading Section -->
     <div id="loading">
         <div id="loading-center">
@@ -140,9 +142,10 @@
     </div>
     <!-- Preloading Section End -->
       
-    <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="50">
-
-    <nav class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
+    <div class="shmyde-main-container">
+        
+        <!- Header Section-->
+        <nav class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderController">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -179,87 +182,89 @@
       </div>
     </nav>  
     
-    <?php if($this->router->class == 'admin') :  ?>
-        <div class="container" style="margin-top: 10px;">
-            <span>
-                <a href="<?php echo site_url('admin/view/product'); ?>">PRODUCTS</a> |
-                <a href="<?php echo site_url('admin/view/menu'); ?>">MENUS</a> |
-                <a href="<?php echo site_url('admin/view/measurement'); ?>">MEASUREMENTS</a> |
-                <a href="<?php echo site_url('admin/view/product_fabric'); ?>">PRODUCT FABRICS</a> |
-                <a href="<?php echo site_url('admin/view/option'); ?>">OPTIONS</a> |
-                <a href="<?php echo site_url('admin/view/thread'); ?>">THREADS</a> |
-                <a href="<?php echo site_url('admin/view/button'); ?>">BUTTONS</a>
-            </span>
-        </div>
-    <?php endif; ?>  
-    
-    <div class="wrapper">
-             
-        <?php echo $body; ?>
-             
-    </div>
+        <?php if($this->router->class == 'admin') :  ?>
+                <div class="container" style="margin-top: 10px;">
+                    <span>
+                        <a href="<?php echo site_url('admin/view/product'); ?>">PRODUCTS</a> |
+                        <a href="<?php echo site_url('admin/view/menu'); ?>">MENUS</a> |
+                        <a href="<?php echo site_url('admin/view/measurement'); ?>">MEASUREMENTS</a> |
+                        <a href="<?php echo site_url('admin/view/product_fabric'); ?>">PRODUCT FABRICS</a> |
+                        <a href="<?php echo site_url('admin/view/option'); ?>">OPTIONS</a> |
+                        <a href="<?php echo site_url('admin/view/thread'); ?>">THREADS</a> |
+                        <a href="<?php echo site_url('admin/view/button'); ?>">BUTTONS</a>
+                    </span>
+                </div>
+            <?php endif; ?>  
         
-    <div id="messageboxModal" class="modal fade" role="dialog"  ng-controller="DesignController">
-        <message-box value='message_box.value' hasvalue='message_box.hasValue' hascancel='message_box.hasCancel' placeholder='message_box.placeholder' valuelabel='message_box.valueLabel' title='message_box.title' message='message_box.message' on-update='message_box.onUpdate(value)'>
+        <!-- Body Section -->
+        <div class="wrapper">
+
+            <?php echo $body; ?>
             
-        </message-box>
+            <div id="messageboxModal" class="modal fade" role="dialog"  ng-controller="DesignController">
+                <message-box value='message_box.value' hasvalue='message_box.hasValue' hascancel='message_box.hasCancel' placeholder='message_box.placeholder' valuelabel='message_box.valueLabel' title='message_box.title' message='message_box.message' on-update='message_box.onUpdate(value)'>
+
+                </message-box>
+            </div>
+            
+            <!-- Container (Contact Section) -->
+            <div id="contact" class="container" ng-controller="ContactUsController" ng-show="contactUsVisible()">
+                <h3 class="text-center">Contact</h3>
+                <div class="row" ng-show="contact_us_loading">
+                    <div class="shmyde-loading">
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                        <div class="loading-bar"></div>
+                    </div>
+                </div>
+                <p ng-class="{'error-text text-center' : error, 'text-center' : !error }"><em>{{Message}}</em></p>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>Tell us your feeling.</p>
+                            <p><span class="glyphicon glyphicon-map-marker"></span>{{shmyde_address_line_1}}</p>
+                            <p><span class="glyphicon glyphicon-map-marker"></span>{{shmyde_address_line_2}}</p>
+                            <p><span class="glyphicon glyphicon-phone"></span>{{shmyde_contact_phone}}</p>
+                            <p><span class="glyphicon glyphicon-envelope"></span>{{shmyde_contact_email}}</p>
+                    </div>
+                    <form name='contactUsForm' novalidate="" ng-submit="submitComment()">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-sm-6 form-group">
+                                    <input class="form-control" id="contactName" name="name" placeholder="Name" type="text" ng-model="contactName" required>
+                                </div>
+                                <div class="col-sm-6 form-group">
+                                    <input class="form-control" id="contactEmail" name="email" placeholder="Email" type="email" ng-model="contactEmail" required>
+                                </div>
+                            </div>
+                            <textarea class="form-control" id="contactComments" name="comments" placeholder="Comment" ng-model="contactComment" rows="5" required minlength="10">
+
+                            </textarea>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <button type="submit" class="btn pull-right">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <br>
+            </div>
+
+        </div>
+        
+        <!-- Footer Section -->
+        <footer class="text-center">
+            <a class="up-arrow" href="#myPage" data-toggle="tooltip" title="TO TOP">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+            </a>
+            <br>
+            <p>Powered by Shmyde Copyright <?= date('Y'); ?> <a href='#'>Shmyde.com</a>. All Rights Reserved</p> 
+        </footer> 
     </div>
     
 </body>
-
-<!-- Container (Contact Section) -->
-<div id="contact" class="container" ng-controller="ContactUsController" ng-show="contactUsVisible()">
-    <h3 class="text-center">Contact</h3>
-    <div class="row" ng-show="contact_us_loading">
-        <div class="shmyde-loading">
-            <div class="loading-bar"></div>
-            <div class="loading-bar"></div>
-            <div class="loading-bar"></div>
-            <div class="loading-bar"></div>
-        </div>
-    </div>
-    <p ng-class="{'error-text text-center' : error, 'text-center' : !error }"><em>{{Message}}</em></p>
-    <div class="row">
-       	<div class="col-md-4">
-            <p>Tell us your feeling.</p>
-            	<p><span class="glyphicon glyphicon-map-marker"></span>{{shmyde_address_line_1}}</p>
-		<p><span class="glyphicon glyphicon-map-marker"></span>{{shmyde_address_line_2}}</p>
-            	<p><span class="glyphicon glyphicon-phone"></span>{{shmyde_contact_phone}}</p>
-            	<p><span class="glyphicon glyphicon-envelope"></span>{{shmyde_contact_email}}</p>
-        </div>
-        <form name='contactUsForm' novalidate="" ng-submit="submitComment()">
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-sm-6 form-group">
-                        <input class="form-control" id="contactName" name="name" placeholder="Name" type="text" ng-model="contactName" required>
-                    </div>
-                    <div class="col-sm-6 form-group">
-                        <input class="form-control" id="contactEmail" name="email" placeholder="Email" type="email" ng-model="contactEmail" required>
-                    </div>
-                </div>
-                <textarea class="form-control" id="contactComments" name="comments" placeholder="Comment" ng-model="contactComment" rows="5" required minlength="10">
-
-                </textarea>
-                <br>
-                <div class="row">
-                    <div class="col-md-12 form-group">
-                        <button type="submit" class="btn pull-right">Send</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-    <br>
-</div>
-
-<!-- Footer -->
-<footer class="text-center">
-    <a class="up-arrow" href="#myPage" data-toggle="tooltip" title="TO TOP">
-    <span class="glyphicon glyphicon-chevron-up"></span>
-    </a>
-    <br>
-    <br>
-    <p>Powered by Shmyde Copyright <?= date('Y'); ?> <a href='#'>Shmyde.com</a>. All Rights Reserved</p> 
-</footer>   
+  
 
 </html>

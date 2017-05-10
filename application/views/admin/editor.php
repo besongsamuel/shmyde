@@ -116,7 +116,7 @@
                             .attr("class", "list-group-item")
                             .attr("onclick", "load_product_buttons(" + image_id + ")")
                             .append(
-                                $("<img>").attr("style", "width : 100px; height : 100px")
+                                $("<img>").attr("style", "width : 230px; height : 300px; margin: 10px; ")
                                 .attr("src", image_path)
                                 .attr("class", "front")
                                 .attr("id", "image_" + image_id)
@@ -171,7 +171,7 @@
                             .attr("class", "list-group-item")
                             .attr("onclick", "load_product_buttons(" + image_id + ")")
                             .append(
-                                $("<img>").attr("style", "width : 100px; height : 100px")
+                                $("<img>").attr("style", "width : 230px; height : 300px")
                                 .attr("src", image_path)
                                 .attr("id", "image_" + image_id)
                                 .attr("class", "back")
@@ -276,7 +276,7 @@
                             .text("BUTTON " + id)
                         );    
                             
-            $("#editor_images").append(
+            $("#designer").append(
                     $("<img>").attr("style", "position : absolute; left : " + x_pos + "px; top : " + y_pos + "px; border:1px solid red")
                     .attr("src", image_path)
                     .attr("width", button_image_size + "px")
@@ -653,9 +653,9 @@
                 <!-- Button List -->
                 <div class="col-sm-4">
                     <div style="margin-bottom: 10px;">
-                        <button type="button" class="btn btn-primary" onclick="create_new_button()">New Button</button>
-                        <button type="button" class="btn btn-danger" onclick="delete_button()">Delete Button</button>
-                        <button type="button" class="btn btn-success" onclick="save_button()">Save Button</button>
+                        <button type="button" class="" onclick="create_new_button()">New Button</button>
+                        <button type="button" class="" onclick="delete_button()">Delete Button</button>
+                        <button type="button" class="" onclick="save_button()">Save Button</button>
                     </div>
                     <div class="list-group" id="buttons">
                         <a href="#" class="list-group-item active">First item</a>
@@ -665,17 +665,16 @@
                 </div>
                 
                 <!-- Editor -->
-                <div class="col-sm-6" id="editor">
+                <div class="col-sm-3" id="editor">
                    
-                    <div style="width : auto; height: auto;" id="editor_images">
-                        <img id="editor_image" src="" style="position : absolute;" >
-                    </div>
-                    
-                    
+                    <div style="width : 230px; height: 300px;" id="editor_images">
+                        <div style="position : absolute">
+                            <div style="position: relative" id="designer">
+                                <img id="editor_image" src="" style="position : absolute;" >
+                            </div>
+                        </div>
+                    </div> 
                 </div>
-                
-                
-                
             </div>
             
         </div>

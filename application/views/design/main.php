@@ -1,6 +1,6 @@
 
 
-    <script src="<?php echo ASSETS_PATH; ?>/js/designer.js" type="text/javascript"></script>
+    <script src="<?php echo ASSETS_PATH; ?>/js/shmyde-designer.js" type="text/javascript"></script>
 
     <script>
         

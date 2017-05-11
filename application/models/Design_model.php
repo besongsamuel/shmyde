@@ -310,12 +310,13 @@ class Design_model extends CI_Model
         
         if($order_id == -1)
         {
+            $insert_id = $this->get_next_id(ORDERS_TABLE);
+            $data['id'] = $insert_id;
+            
             $this->db->insert(ORDERS_TABLE, $data);
             
             $decoded_frontBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $frontBase64Image));
             $decoded_backBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $backBase64Image));
-            
-            $insert_id = $this->db->insert_id();
             
             file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_front.png', $decoded_frontBase64Image);
             file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_back.png', $decoded_backBase64Image);

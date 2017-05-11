@@ -76,5 +76,19 @@ class CI_Model {
 		//	most likely a typo in your model code.
 		return get_instance()->$key;
 	}
+        
+        /**
+         * Given a table, this method returns the next ID
+         * @param type $table_name
+         * @return type
+         */
+        public function get_next_id($table_name)
+        {
+            $count_sql = "SELECT max(id) as max_id FROM ".$table_name;	
+
+            $next_id = $this->db->query($count_sql)->row()->max_id + 1;
+
+            return $next_id;
+        }
 
 }

@@ -1,5 +1,5 @@
 
-    <script src="<?php echo ASSETS_PATH; ?>/js/designer.js" type="text/javascript"></script>       
+    <script src="<?php echo ASSETS_PATH; ?>/js/shmyde-designer.js" type="text/javascript"></script>       
     <link href="<?php echo ASSETS_PATH; ?>/css/product-checkout.css" rel="stylesheet" type="text/css"/>
     <script>
             
@@ -15,6 +15,23 @@
                 checkoutScope.productManager.setProductDetails();  
                 checkoutScope.frontDesignImage = sessionStorage.getItem("frontDesignImage");
                 checkoutScope.backDesignImage = sessionStorage.getItem("backDesignImage");
+                checkoutScope.order_id = -1;
+                checkoutScope.order_status = -1;
+                if(checkoutScope.order_id === -1)
+                {
+                    if(sessionStorage.getItem("order_id")!== null && sessionStorage.getItem("order_id")!== 'undefined')
+                    {
+                        checkoutScope.order_id = parseInt(sessionStorage.getItem("order_id"));
+                    }
+                }
+                if(checkoutScope.order_status === -1)
+                {
+                    if(sessionStorage.getItem("order_status")!== null && sessionStorage.getItem("order_status")!== 'undefined')
+                    {
+                        checkoutScope.order_status = parseInt(sessionStorage.getItem("order_status"));
+                    }
+                }
+
             });
             
             var measurementScope = angular.element("#myMeasurementModal").scope();
@@ -51,8 +68,7 @@
                 <div class="section-body">
                     <div class="form-group">
                     <label for="design-types">Design Type:</label>
-                    <select class="form-control" ng-model="type" id="design-types">
-                        <option ng-repeat="type in designTypes" value="{{type}}">{{type}}</option>
+                    <select class="form-control" ng-model="selectedType" ng-options="designType.value as designType.value for designType in designTypes" id="design-types">
                     </select>
                   </div>                  
                 </div>

@@ -226,8 +226,15 @@
 
     app.controller('CheckoutController', ['$scope', '$sce', '$http', function($scope, $sce, $http){
         
-        $scope.designTypes = ['Casual', 'Professional', 'Party'];
-        
+        $scope.designTypes = 
+        [
+            {id : 0, value : 'Casual'}, 
+            {id : 1, value : 'Professional'}, 
+            {id : 2, value : 'Party'}
+        ];
+         
+        $scope.selectedType = 'Casual';
+                
         $scope.orderDetailsTableHeader = ['Product', 'Description', 'Quantity', 'Price'];
         
         $scope.quantity = 1;
@@ -255,10 +262,10 @@
             var xsrf = $.param({
                     design_data : JSON.stringify($scope.productManager.getDesignParameters()), 
                     quantity : $scope.quantity,
-                    price : $scope.price,
+                    price : $scope.productManager.total_price * $scope.quantity,
                     frontDesignImage : $scope.frontDesignImage,
                     backDesignImage :  $scope.backDesignImage,
-                    type : $scope.type,
+                    type : $scope.selectedType,
                     order_id : $scope.order_id
                 });
             
@@ -269,10 +276,9 @@
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).then(function successCallback(response) 
             {
-                
                 if(Boolean(JSON.parse(response.data)))
                 {
-                    window.location = $scope.productManager.base_url.concat('checkout/message/0');
+                     window.location = $scope.productManager.base_url.concat('checkout/message/0');
                 }
                 else
                 {

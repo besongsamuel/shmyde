@@ -44,30 +44,34 @@ class Checkout_model extends CI_Model {
 		    'date_modified'     => date('Y-m-j H:i:s'),
 		    'user_design'       => $design_data,
 	    );
-		
-		$insert_id = -1;
-
-		if($order_id == -1)
-		{
-                    $result =  $this->db->insert(ORDERS_TABLE, $data);
-                    $insert_id = $this->db->insert_id();
-		}
-		else
-		{
-                    $insert_id = $order_id;
-                    $this->db->where('id', $insert_id);
-                    $result = $this->db->update(ORDERS_TABLE, $data);
-		}
             
-	    	$decoded_frontBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $frontBase64Image));
-	    	$decoded_backBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $backBase64Image));
+            
+            $insert_id = -1;
 
-	    	file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_front.png', $decoded_frontBase64Image);
-	    	file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_back.png', $decoded_backBase64Image);
+            if($order_id == -1)
+            { 
+                $insert_id = $this->get_next_id(ORDERS_TABLE);
+                $data['id'] = $insert_id;
+                $result =  $this->db->insert(ORDERS_TABLE, $data);
+            }
+            else
+            {
+                $insert_id = $order_id;
+                $this->db->where('id', $insert_id);
+                $result = $this->db->update(ORDERS_TABLE, $data);
+            }
+            
+            $decoded_frontBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $frontBase64Image));
+            $decoded_backBase64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $backBase64Image));
 
-	    	return $result;
+            file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_front.png', $decoded_frontBase64Image);
+            file_put_contents(ASSETS_DIR_PATH.'/images/orders/order_'.$insert_id.'_'.$user_id.'_back.png', $decoded_backBase64Image);
+
+            return $result;
 		
 	}
+        
+        
 	
 	
 }

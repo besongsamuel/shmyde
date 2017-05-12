@@ -8,7 +8,8 @@
         messageScope.$apply(function(){
             
             messageScope.messages = JSON.parse('<?php echo $message; ?>');
-            messageScope.message_header = JSON.parse('<?php echo $message_title; ?>');;
+            messageScope.message_header = JSON.parse('<?php echo $message_title; ?>');
+            messageScope.from_design = Boolean(JSON.parse('<?php if(isset($isDesignPresent)) { echo 'true';} else {echo 'false';} ?>'));
         });
         
     });
@@ -28,6 +29,7 @@
             </div>
             <div class="center-button">
                 <button type="button" class="btn btn-default" ng-click="gotoHome()">Home</button>
+                <button type="button" class="btn btn-default" ng-show="from_design" ng-click="gotoDesign()">Back To Design</button>
             </div>
         </div>        
      </div>        

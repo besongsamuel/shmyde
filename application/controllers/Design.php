@@ -145,23 +145,14 @@ class Design extends CI_Controller
                 session_start();
             }
             
-            $this->admin_model->SaveTmpUserDesign(session_id(), $designParameters);            
-        }
-        
-        /**
-        * Given the user ID, this function grabs the design the user
-        * is currently working on if any
-        * @param type $user_id
-        * @return type
-        */
-        public function GetTmpUserDesign()
-        {   
-            // Get the design with the current Session ID
-            if (session_id() === "") 
-            {
-                session_start();
-            }
-            return $this->admin_model->GetTmpUserDesign(session_id());
+            $data = array
+            (
+                'session_id' => session_id(),
+                'product_design' => $designParameters,
+                'date_created' => date('Y-m-j H:i:s')
+            );
+            
+            $this->admin_model->SaveTmpUserDesign($data);            
         }
         
         /**

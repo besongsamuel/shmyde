@@ -1423,26 +1423,18 @@ class Admin_model extends CI_Model {
      * @param type $user_id
      * @param type $userDesign
      */
-    public function SaveTmpUserDesign($user_id, $userDesign)
+    public function SaveTmpUserDesign($data)
     {        
-        $this->db->where('session_id', $user_id);
+        $this->db->where('session_id', $data['session_id']);
         $this->db->delete(USER_TMP_DESIGN_TABLE);
-        
-        $data = array(
-            
-            'session_id' => $user_id,
-            'product_design' => $userDesign
-        );
-        
         $this->db->insert(USER_TMP_DESIGN_TABLE, $data);
-        
     }
     
-    public function GetTmpUserDesign($user_id)
+    public function GetTmpUserDesign($session_id)
     {
         $this->db->select('*');
         $this->db->from(USER_TMP_DESIGN_TABLE);
-        $this->db->where('session_id', $user_id);
+        $this->db->where('session_id', $session_id);
         $user_product_design = $this->db->get()->row();
         $this->db->reset_query();
         

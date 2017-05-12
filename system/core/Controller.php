@@ -181,5 +181,22 @@ class CI_Controller {
 	{
 		return self::$instance;
 	}
+        
+        /**
+        * Given the user ID, this function grabs the design the user
+        * is currently working on if any
+        * @param type $user_id
+        * @return type
+        */
+        public function GetTmpUserDesign()
+        {   
+            // Get the design with the current Session ID
+            if (session_id() === "") 
+            {
+                session_start();
+            }
+            
+            return $this->admin_model->GetTmpUserDesign(session_id());
+        }
 
 }

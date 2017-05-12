@@ -249,26 +249,35 @@ class User extends CI_Controller {
         
         public function registration_complete($success)
         {
-           $this->data['title'] = "Registration";
+            $this->data['title'] = "Registration";
+            
+            $success_val = intval($success);
            
-           $success = intval($success);
+            // This will return a value if the user finished registration from 
+            // a design. We give him the possibility to go back
+            if($this->GetTmpUserDesign() !== null)
+            {
+                $this->data['isDesignPresent'] = true;
+            }
 
-           if($success == 0)
+           if($success_val == 0)
            {
-               $this->data['message_title'] = 'Registration Complete';
+                $this->data['message_title'] = 'Registration Complete';
 
-               $this->data['message'] = array();
+                $this->data['message'] = array();
 
-               array_push($this->data['message'], 'Your account has been created sucessfully');
-               array_push($this->data['message'], 'A confirmation email has been sent to '.$this->userObject->email.' with instructions');
-               array_push($this->data['message'], 'on how to activate your account. ');
-               array_push($this->data['message'], 'WELCOME TO SHMYDE.');
-               array_push($this->data['message'], 'Thank you.');
-               array_push($this->data['message'], 'Best Regards ');
-               array_push($this->data['message'], 'SHMYDE SARL');
+                array_push($this->data['message'], 'Your account has been created sucessfully');
+                array_push($this->data['message'], 'A confirmation email has been sent to '.$this->userObject->email.' with instructions');
+                array_push($this->data['message'], 'on how to activate your account. ');
+                array_push($this->data['message'], 'WELCOME TO SHMYDE.');
+                array_push($this->data['message'], 'Thank you.');
+                array_push($this->data['message'], 'Best Regards ');
+                array_push($this->data['message'], 'SHMYDE SARL');
+               
+                
 
            }
-           else if($success == 1)
+           else if($success_val == 1)
            {
                $this->data['message_title'] = 'Registration Complete';
 
@@ -283,7 +292,7 @@ class User extends CI_Controller {
                array_push($this->data['message'], 'SHMYDE SARL');
                
            }
-           else if($success == 2)
+           else if($success_val == 2)
            {
                $this->data['message_title'] = 'A server error occured ';
                $this->data['message'] = array();
@@ -296,7 +305,7 @@ class User extends CI_Controller {
            $this->data['user'] = json_encode($this->userObject);
            $this->data['message_title'] = json_encode($this->data['message_title']);
            $this->data['message'] = json_encode($this->data['message']);
-
+           
            $this->template->load('shmyde', 'message/message', $this->data);
         }
         
@@ -573,4 +582,5 @@ class User extends CI_Controller {
                 echo json_encode(false);
             }
 	}	
+        
 }

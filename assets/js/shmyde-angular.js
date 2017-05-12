@@ -541,7 +541,12 @@
         
         $scope.gotoHome = function()
         {
-            window.location = $scope.home_url;
+            window.location.href = $scope.home_url;
+        };
+        
+        $scope.gotoDesign = function()
+        {
+            window.location.href = $scope.site_url.concat('design/product');
         };
         
     }]);

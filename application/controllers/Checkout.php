@@ -66,7 +66,9 @@ class Checkout extends CI_Controller
             // Perform Checkout
             if($this->checkout_model->checkout($this->userObject->id, $order_id, $quantity, $price, $type, $design_data, $base64designImage, $backBase64designImage))
             {
-                //$this->send_order_confirmation();
+                set_error_handler(function(){ });
+                $this->send_order_confirmation();
+                restore_error_handler();
                 echo json_encode(true);
             }
             else
@@ -151,25 +153,5 @@ class Checkout extends CI_Controller
         $this->data['message'] = json_encode($this->data['message']);
 
         $this->template->load('shmyde', 'message/message', $this->data);
-    }
-
-
-    /**
-     * Given the user ID, this function grabs the design the user
-     * is currently working on if any
-     * @param type $user_id
-     * @return type
-     */
-    public function GetTmpUserDesign()
-    {   
-        if(session_id() !== "")
-        {
-            return $this->admin_model->GetTmpUserDesign(session_id());
-        }
-        else
-        {
-            return null;
-        }
-        
     }
 }

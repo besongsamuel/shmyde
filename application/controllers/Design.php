@@ -76,6 +76,12 @@ class Design extends CI_Controller
             {
                 // New Design
                 $product_id = $this->input->get('product_id');
+                
+                if(!isset($product_id))
+                {
+                    // User did not select any product to design
+                    show_error('No product to design was selected. ');
+                }
                 $my_product = new DesignProduct();
                 $my_product->LoadProduct($this->design_model, $product_id);
                 $this->data['product'] = json_encode($my_product);
@@ -101,7 +107,7 @@ class Design extends CI_Controller
                 // Get the order object
                 $order = $this->GetUserOrder($order_id);
                 
-                $this->data['order_status'] = json_encode("-1");;
+                $this->data['order_status'] = json_encode("-1");
                 
                 if($order != null)
                 {

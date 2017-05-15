@@ -24,7 +24,7 @@ class Checkout extends CI_Controller
         
         if($this->session->userdata('user_id') == null && $this->GetTmpUserDesign() == NULL)
         {
-            show_404();
+            show_error('There is no user design to checkout. ');
         }
         
         $this->data['title'] = "Product Checkout";
@@ -41,6 +41,10 @@ class Checkout extends CI_Controller
             $productManager->LoadUserDesign($user_design);
             $this->data['productManager'] = json_encode($productManager);
             
+        }
+        else
+        {
+            show_error('No user is currently logged in. ');
         }
 
         $this->data['cssLinks'] = array('product-checkout');

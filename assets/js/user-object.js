@@ -48,6 +48,7 @@ function User(user_object)
             sessionStorage.setItem("order_id", order_id);
             sessionStorage.setItem("order_status", order_status);
             
+            
             // Save current Design. Shall be reloaded after login
             $.ajax({
                 url : Instance.base_url.concat('Design/SaveTmpUserDesign'),
@@ -62,6 +63,9 @@ function User(user_object)
         }
         else
         {
+            sessionStorage.setItem("order_id", order_id);
+            sessionStorage.setItem("order_status", order_status);
+            
             var node = document.getElementById(productManager.designDomElementID);
             
             domtoimage.toPng(node)

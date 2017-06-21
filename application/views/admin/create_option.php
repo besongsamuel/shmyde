@@ -60,6 +60,8 @@
                 root : $( "#images" ),
                 mode : "multiple", 
 		show_parameters : true,
+		dir : 'design',
+		table_name : 'shmyde_images',    
                 form : $( "#multiple_image_upload_form" )
             });
     
@@ -70,6 +72,8 @@
                 root : $( "#image" ),
                 form : $( "#single_image_upload_form" ),
 		show_parameters : false,
+		dir : 'design\thumbnail',
+		table_name : 'shmyde_option_thumbnail',
                 mode : "single"
             });
                         
@@ -125,7 +129,7 @@
             $( "#add_image" ).click(function() {
 
                 var undefined;
-                multi_uploader.add_upload_button(undefined, 0, 0, 0, 0);
+                multi_uploader.add_upload_button(multi_uploader.guid(), 0, 0, 0, 0);
 
             });
             
@@ -133,7 +137,7 @@
             $( "#add_thumbnail" ).click(function() {
 
                 var undefined;
-                single_uploader.add_upload_button(undefined, 0, 0, 0, 0);
+                single_uploader.add_upload_button(single_uploader.guid(), 0, 0, 0, 0);
 
             });
                        
@@ -144,9 +148,9 @@
                                  
                 ev.preventDefault();
                 
-                submit_upload_form(multi_uploader, 'design', 'shmyde_images' );
+                submit_upload_form(multi_uploader);
                 
-                submit_upload_form(single_uploader,  'design\thumbnail', 'shmyde_option_thumbnail' );
+                submit_upload_form(single_uploader);
 
             });
             

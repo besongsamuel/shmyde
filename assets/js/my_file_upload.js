@@ -4,24 +4,6 @@
  * and open the template in the editor.
  */
 
-    /**
-     * This function gets the free array position at which an item 
-     * should be inserted
-     * @param {type} array The array to be checked
-     * @returns {Number}
-     */
-    function get_insert_id(array){
-
-        for (var i = 0; i < array.length; i++) {
-
-            if(array[i] === -1)
-                return i;
-
-        }
-
-
-    }
-
 
     function My_Uploader(parameters)
     {
@@ -31,12 +13,6 @@
          * to true
          */
         this.can_add = true;
-        
-        /**
-         * This represents a pool of image id's from which new image items are 
-         * added. A value of -1 means the position is free
-         */
-        this.image_ids = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 ];
         
         /**
          * This represents the id of the item associated with the image. 
@@ -98,6 +74,18 @@
         };
         
         /**
+         * This is a helper method to create guids for image ID's 
+         */
+        this.guid = function() 
+        {
+            function s4() 
+            {
+                return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+            }
+            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+        }
+        
+        /**
          * This function deletes an image by calling the Admin.delete_image function 
          * in the server
          * @param {type} image_id
@@ -131,21 +119,18 @@
          */
         this.add_upload_button = function(image_id, pos_x_value, pos_y_value, is_inner_value, depth_value, applied_to_back_value){
             
+            // It is a new image being created, we create a new ID for the image
+            if(typeof image_id === 'undefined')
+            {
+                image_id = this.guid();
+            }
             
-            if(this.mode === 'single'){
-
-
-                if(typeof image_id === 'undefined'){
-
-                    image_id = 0;
-                }
-
-                if(this.can_add === true){
-                    
-                    console.log("Adding a new Upload Item in Single Image Mode");
-                    
+            if(this.mode === 'single')
+            {
+                if(this.can_add === true)
+                {
                     var container = this.create_image_upload_element(
-                            parseInt(image_id), 
+                            image_id.toString(), 
                             this.image_name, 
                             this.file_name, 
                             parseInt(pos_x_value), 
@@ -155,146 +140,105 @@
                             parseInt(applied_to_back_value));
 
                     this.root.append(container);
-
-                    this.image_ids[image_id] = image_id;
-
                     this.can_add = false;
-
-
                 }
-
-
             }
 
-            if(this.mode === 'multiple'){
-
-                console.log("Adding a new Upload Item in Multiple Image Mode");
-                
-                var insert_id = get_insert_id(this.image_ids);
-
-                 if(typeof image_id !== 'undefined'){
-
-                    insert_id = image_id;
-                }
-
-                var container;
-
-                if(typeof image_id === 'undefined'){
-
-                    container = this.create_image_upload_element(parseInt(insert_id), 
-                    this.image_name, 
-                    this.file_name, 
-                    parseInt(pos_x_value), 
-                    parseInt(pos_y_value), 
-                    parseInt(is_inner_value), 
-                    parseInt(depth_value),
-                    parseInt(applied_to_back_value));
-                }
-                else{
-                    container = this.create_image_upload_element(
-                            parseInt(image_id), 
-                    this.image_name, 
-                    this.file_name, 
-                    parseInt(pos_x_value), 
-                    parseInt(pos_y_value), 
-                    parseInt(is_inner_value), 
-                    parseInt(depth_value),
-                    parseInt(applied_to_back_value));
-                }
-
-                this.image_ids[insert_id] = insert_id;
+            if(this.mode === 'multiple')
+            {
+                var container = 
+                    this.create_image_upload_element(
+                        image_id.toString(), 
+                        this.image_name, 
+                        this.file_name, 
+                        parseInt(pos_x_value), 
+                        parseInt(pos_y_value), 
+                        parseInt(is_inner_value), 
+                        parseInt(depth_value),
+                        parseInt(applied_to_back_value));
 
                 this.root.append(container);
-
             }
-
         };
 
         
-        this.create_image_upload_element = function(curr_element, image_name, file_name, pos_x_value, pos_y_value, is_inner_value, depth_value, applied_to_back_value){
-            
-            
+        this.create_image_upload_element = function(curr_element, image_name, file_name, pos_x_value, pos_y_value, is_inner_value, depth_value, applied_to_back_value)
+        {
             var caller = this.get_caller();
-
+            
+            // Create the Upload Element Container
             var container = document.createElement("DIV");
-            container.setAttribute("class", "col-sm-5 image-container");
-            container.setAttribute("id", curr_element);
+            container.setAttribute("class", "col-sm-6");
             
+            // Create the Top Container that contains the Upload button
             var top_container = document.createElement("DIV");
-            top_container.setAttribute("style", "width : 410px");
+            top_container.setAttribute("class", "row");
             
+            // Create the upload button
             var upload_button_container = document.createElement("DIV");
-            upload_button_container.setAttribute("style", "width : 100%;");
+            upload_button_container.setAttribute("class", "input-group");
             var upload_button = document.createElement("INPUT");
             upload_button.setAttribute("type", "file");
             upload_button.setAttribute("class", "form-control");
-            upload_button.setAttribute("name", file_name.concat("_").concat(curr_element));
-            upload_button.setAttribute("id", file_name.concat("_").concat(curr_element));
-            upload_button.setAttribute("current_element", curr_element);
-            upload_button.onchange = function() {
-                
+            upload_button.setAttribute("name", "file[".concat(curr_element).concat("]"));
+            upload_button.setAttribute('current_element', curr_element);
+            upload_button.onchange = function() 
+            {
                var image_element = document.getElementById(caller.image_name.concat("_").concat(this.getAttribute('current_element')));
-
-               if (this.files && this.files[0]) {
-
-                        var reader = new FileReader();
-
-                        reader.onload = function (e) {
-
-                            image_element.setAttribute("src", e.target.result);
-                        };
-
-
-                        reader.readAsDataURL(this.files[0]);
+               if (this.files && this.files[0]) 
+               {
+                    var reader = new FileReader();
+                    reader.onload = function (e) 
+                    {
+                        image_element.setAttribute("src", e.target.result);
+                    };
+                    reader.readAsDataURL(this.files[0]);
                 }
 
             };
             
             upload_button_container.appendChild(upload_button);
-            
             top_container.appendChild(upload_button_container);
             
-            
-            
+            // Create bottom container. This will contain the image and 
+            // it's asdsociated attributes
             var bottom_container = document.createElement("DIV");
-            bottom_container.setAttribute("style", "width : 410px");
+            bottom_container.setAttribute("class", "row");
             
             
             var left_container = document.createElement("DIV");
-            left_container.setAttribute("style", "float : left; margin-right : 10px;, width : 200px;");
+            left_container.setAttribute("class", "col-sm-6");
             
             var right_container = document.createElement("DIV");
-            right_container.setAttribute("style", "float : right; width : 200px;");
+            right_container.setAttribute("class", "col-sm-6");
             
             
             var image_container = document.createElement("DIV");
-            image_container.setAttribute("style", "margin-top : 5px; margin-bottom : 5px;");
+            image_container.setAttribute("style", "padding: 10px;");
             var image = document.createElement("img");
-            image.setAttribute("style", "width : 200px; height : 250px;");
+            image.setAttribute("style", "width : 100%;");
             image.setAttribute("id", image_name.concat("_").concat(curr_element)); 
             image_container.appendChild(image);
-            
             left_container.appendChild(image_container);
             
+            // Create Delete Button
             var delete_button_container = document.createElement("DIV");
-            delete_button_container.setAttribute("style", "margin-top : 5px; margin-bottom : 5px; float : right;");
+            delete_button_container.setAttribute("class", "input-group");
             var delete_button = document.createElement("BUTTON");
             delete_button.setAttribute("type", "button");
             delete_button.setAttribute("class", "btn btn-danger");
             delete_button.setAttribute("current_element", curr_element);
-
             var text = document.createTextNode("Delete");   
             delete_button.appendChild(text);
-            delete_button.onclick = function(){
-                
+            
+            delete_button.onclick = function()
+            {
                 
                 var image_id = this.getAttribute("current_element");
                 
                 var parent = document.getElementById(image_id);
                 
                 var parent_container = parent.parentElement;
-
-                caller.image_ids[image_id] = -1;
 
                 caller.can_add = true;
 
@@ -304,76 +248,59 @@
 
             };
             delete_button_container.appendChild(delete_button);
-
+            
+            // Create Depth Input Element
             var depth_container = document.createElement("DIV");
-            depth_container.setAttribute("style", "margin-top : 5px; margin-bottom : 5px; ");
-            depth_container.setAttribute("class", "form-group");
-
+            depth_container.setAttribute("class", "input-group");
             var depth_label = document.createElement("label");
-            depth_label.setAttribute("for", "depth");
             var depth_text = document.createTextNode("Depth"); 
             depth_label.appendChild(depth_text);
-
             var depth = document.createElement("input");
             depth.setAttribute("type", "number");
             depth.setAttribute("name", "depth[".concat(curr_element).concat("]"));
-            depth.setAttribute("id", "depth");
             depth.setAttribute("class", "form-control");
-            depth.setAttribute("style", "width : 100%; margin-left : 5px; margin-right : 5px;");
             depth.value = depth_value;
-
             depth_container.appendChild(depth_label);
             depth_container.appendChild(depth);
-
+            
+            // Create Contrast Input Element
             var contrast_container = document.createElement("DIV");
-            contrast_container.setAttribute("style", "margin-top : 5px; margin-bottom : 5px;");
-            contrast_container.setAttribute("class", "form-group");
-
+            contrast_container.setAttribute("class", "input-group");
             var contrast_label = document.createElement("label");
-            contrast_label.setAttribute("for", "contrast");
             var contrast_text = document.createTextNode("Is Inner Contrast"); 
             contrast_label.appendChild(contrast_text);
-            
             var contrast = document.createElement("input");
             contrast.setAttribute("type", "checkbox");
             contrast.setAttribute("name", "is_inner[".concat(curr_element).concat("]"));
             contrast.setAttribute("id", "is_inner");
             contrast.setAttribute("class", "form-control");
             contrast.setAttribute("value", "1");
-            contrast.setAttribute("style", "width : 100%;  margin-left : 5px; margin-right : 5px;");
             contrast.checked = Boolean(is_inner_value);
-
             contrast_container.appendChild(contrast_label);
             contrast_container.appendChild(contrast);
             
+            
+            // Create Back Item Checkbox
             var back_item_container = document.createElement("DIV");
-            back_item_container.setAttribute("style", "margin-top : 5px; margin-bottom : 5px;");
-            back_item_container.setAttribute("class", "form-group");
-
+            back_item_container.setAttribute("class", "input-group");
             var back_item_label = document.createElement("label");
-            back_item_label.setAttribute("for", "back_item");
             var back_item_text = document.createTextNode("Applied to the back"); 
             back_item_label.appendChild(back_item_text);
-            
             var back_item = document.createElement("input");
             back_item.setAttribute("type", "checkbox");
             back_item.setAttribute("name", "is_back_image[".concat(curr_element).concat("]"));
             back_item.setAttribute("id", "is_back_image");
             back_item.setAttribute("class", "form-control");
             back_item.setAttribute("value", "1");
-            back_item.setAttribute("style", "width : 100%;  margin-left : 5px; margin-right : 5px;");
             back_item.checked = Boolean(applied_to_back_value);
-
             back_item_container.appendChild(back_item_label);
             back_item_container.appendChild(back_item);
 
 
             var position_container = document.createElement("DIV");
-            position_container.setAttribute("style", "margin-top : 5px; margin-bottom : 5px;");
-            position_container.setAttribute("class", "form-group");
+            position_container.setAttribute("class", "input-group");
 
             var xpos_label = document.createElement("label");
-            xpos_label.setAttribute("for", "xpos");
             var xpos_text = document.createTextNode("Position X"); 
             xpos_label.appendChild(xpos_text);
 
@@ -382,11 +309,9 @@
             xpos.setAttribute("name", "pos_x[".concat(curr_element).concat("]"));
             xpos.setAttribute("id", "pos_y");
             xpos.setAttribute("class", "form-control");
-            xpos.setAttribute("style", "width : 100%; margin-left : 5px; margin-right : 5px;");
             xpos.value = pos_x_value;
 
             var ypos_label = document.createElement("label");
-            ypos_label.setAttribute("for", "ypos");
             var ypos_text = document.createTextNode("Position Y"); 
             ypos_label.appendChild(ypos_text);
 
@@ -395,7 +320,6 @@
             ypos.setAttribute("name", "pos_y[".concat(curr_element).concat("]"));
             ypos.setAttribute("id", "pos_y");
             ypos.setAttribute("class", "form-control");
-            ypos.setAttribute("style", "width : 100%; margin-left : 5px; margin-right : 5px;");
             ypos.value = pos_y_value;
 
             position_container.appendChild(xpos_label);
@@ -416,9 +340,6 @@
 
             container.appendChild(top_container);
             container.appendChild(bottom_container); 
-            
-            
-            
 
             return container;
         };
@@ -449,54 +370,17 @@
      * @param {type} uploader The uploader to be submitted
      * @returns {undefined}
      */
-    function submit_upload_form(uploader){
+    function submit_upload_form(form_id, dir_name, database_table_name){
         
-        console.log("Submitting Upload Form");
-        console.log("******************** Parameters ********************");
+        // Create Form Data
+        var mu_formData = new FormData(document.getElementById(form_id));
         
-        var form_id = uploader.form.attr('id');
-
-        var parameters = new Object();
-
-        parameters.file_name = uploader.file_name;
-        parameters.image_name = uploader.image_name;
-        parameters.image_dir = uploader.image_dir;
-        parameters.table_name = uploader.table_name;
-        parameters.item_id = uploader.item_id;
-        
-        console.log(parameters);
-        
-        $("#".concat(form_id).concat(" #parameters")).val(JSON.stringify(parameters));
-
-        var mu_formData = new FormData();
-
-        var other_data = uploader.form.serializeArray();
-
-        $.each(other_data,function(key,input){
-
-            mu_formData.append(input.name,input.value);
-
-        });
-
-
-         for (var i = 0; i < uploader.image_ids.length; i++) { 
-
-            if(uploader.image_ids[i] === -1 || typeof uploader.image_ids[i] === 'undefined')
-                continue;
-
-
-            var id = "#".concat(uploader.file_name).concat("_").concat(uploader.image_ids[i]);
-            
-            var filename = (uploader.file_name).concat("_").concat(uploader.image_ids[i]);
-
-            if($(id).length > 0 && $(id)[0].files.length > 0){
-
-                mu_formData.append(filename, $(id)[0].files[0]);
-
-            }
-
-        }
-
+        // Id of the associated item
+        mu_formData.append("id", uploader.item_id);
+        // Image directory where the images will be uploaded to
+        mu_formData.append("dir", dir_name);
+        // Database table where the data will be stored
+        mu_formData.append("table", database_table_name);
 
         $.ajax({
                url : uploader.form.attr('action'),
@@ -504,10 +388,9 @@
                data : mu_formData,
                processData: false,  
                contentType: false,  
-               success : function(data) {
-
+               success : function(data) 
+               {
                    //alert(data);
-
                }
         });
 

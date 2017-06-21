@@ -923,7 +923,7 @@ class Admin extends CI_Controller {
 		    }
 		}
 
-		redirect('/admin/view/option/'.$this->input->post('menu').'/'.$this->input->post('product'), 'refresh');
+		redirect('/admin/view/option/'.$this->input->post('shmyde_design_main_menu_id').'/'.$this->input->post('product'), 'refresh');
 	}
     }
     

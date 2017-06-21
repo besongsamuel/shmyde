@@ -919,7 +919,7 @@ class Admin extends CI_Controller {
 		{
 		    foreach ($this->input->post('option_dependent_menu') as $key => $value) 
 		    {
-			$this->admin_model->add_option_dependent_menu($data['id], $key);
+			$this->admin_model->add_option_dependent_menu($data['id'], $key);
 		    }
 		}
 

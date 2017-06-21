@@ -202,6 +202,8 @@
 
             <form action="<?php if($title == 'CREATE') { echo site_url('admin/create/option'); } else { echo site_url('admin/edit/option/'.$option->id); }  ?>" role="form" method="post" enctype="multipart/form-data" id="create_option">
 
+		<input type="text" class="form-control" name="option[id]" value="<?php  echo $id; ?>" hidden>
+
                 <div class="form-group">
                     <label for="product">Product:</label>
                     <select class="form-control" id="product" name="product" value="<?php echo $selected_product; ?>" onchange="ProductChanged(-1);">
@@ -247,7 +249,7 @@
                     </tbody>
                         
                 </table>
-
+		    
                 <div class="form-group">
                     <label for="name">Name:</label>
                     <input type="text" class="form-control" id="name" name="option[name]" value="<?php  if(isset($option)) { echo $option->name; } ?>">

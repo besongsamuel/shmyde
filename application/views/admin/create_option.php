@@ -177,13 +177,11 @@
             
                 <button type="button" id="add_image" class="btn btn-primary" style="margin-top: 25px;">Add Image</button>
 
-                <form action="<?php echo site_url('admin/upload_image/'.$id);  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="multiple_image_upload_form">
+                <form action="<?php echo site_url('admin/upload_image/');  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="multiple_image_upload_form">
 
                     <div id="images" name="images" class="row">
 
                     </div>
-
-                    <input type="text" id="parameters" name="parameters" hidden="true" />
 
                 </form>
             
@@ -193,15 +191,12 @@
 
                 <button type="button" id="add_thumbnail" class="btn btn-primary" style="margin-top: 25px;">Add Thumbnail</button>
 
-                <form action="<?php echo site_url('admin/upload_image/'.$id);  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="single_image_upload_form">
+                <form action="<?php echo site_url('admin/upload_image/');  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="single_image_upload_form">
 
 
                     <div id="image" name="image" class="row">
 
                     </div>
-
-                    <input type="text" id="parameters" name="parameters" hidden="true" />
-
 
                 </form>
             

@@ -455,7 +455,7 @@ class Admin extends CI_Controller {
         
     function begin_edit_option($id, $param0 = 0, $param1 = 0){
                 
-        $this->data['option_id'] = $id;
+        $this->data['id'] = $id;
         
         $this->data['menus'] = $this->admin_model->get_design_dependent_menus();
 

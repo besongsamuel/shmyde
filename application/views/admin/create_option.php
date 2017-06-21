@@ -59,8 +59,7 @@
                 delete_link: "<?= site_url('admin/delete_image') ?>",
                 root : $( "#images" ),
                 mode : "multiple", 
-                image_name : "file",
-                file_name : "file",
+		show_parameters : true,
                 form : $( "#multiple_image_upload_form" )
             });
     
@@ -70,9 +69,8 @@
                 delete_link: "<?= site_url('admin/delete_image') ?>",
                 root : $( "#image" ),
                 form : $( "#single_image_upload_form" ),
-                mode : "single",
-                image_name : "thumbnail",
-                file_name : "thumbnail"
+		show_parameters : false,
+                mode : "single"
             });
                         
             if(is_edit){

@@ -23,18 +23,7 @@
          * This represents the link that is called when an image is deleted
          */
         this.delete_link =  parameters.delete_link;
-        
-        /**
-         * This is the table name into which is stored the image when the object is 
-         * saved or edited
-         */
-        this.table_name = parameters.table_name;
-        
-        /**
-         * This is the image directory into which the image is stored or deleted
-         */
-        this.image_dir = parameters.image_dir;
-        
+            
         /**
          * The root parameter represents the HTML element unto which the the image 
          * elements are added
@@ -47,6 +36,16 @@
         this.mode = parameters.mode;
         
         /**
+         * Directory where the image will be saved
+         */
+        this.dir = parameters.dir;
+        
+        /**
+         * Database table where the image will be saved
+         */
+        this.table_name = parameters.table_name;
+        
+        /**
          * When this is true, the user can view the different paramaters
          * associated with the image. 
          */
@@ -56,19 +55,7 @@
          * This is a reference to the uploader form
          */
         this.form = parameters.form;
-        
-        /**
-         * This is the base name that shall be used to store the image. Images in the 
-         * directry are stored as this.image_name_this.item_id_this.image_id
-         */
-        this.image_name = parameters.image_name;
-        
-        /**
-         * This is the file name that shall be used to upload the file. When more than
-         * two uploaders are available on the same page, different names should be used
-         */
-        this.file_name = parameters.file_name;
-        
+
         /**
          * This is a reference to the uploader
          * @returns {My_Uploader}
@@ -97,19 +84,29 @@
          * @param {type} image_id
          * @returns {undefined}
          */
-        this.delete_image = function(image_id){
-            
-            var xmlhttp = new XMLHttpRequest();
+        this.delete_image = function(image_id)
+        {
+            // Create Form Data
+            var mu_formData = new FormData();
 
-            var parameters = "item_id=".concat(this.item_id).concat("&image_id=").concat(image_id).concat("&table_name=").concat(this.table_name).concat("&image_dir=").concat(this.image_dir);
+            // Id of the associated item
+            mu_formData.append("id", image_id);
+            // Image directory where the images will be uploaded to
+            mu_formData.append("dir", this.dir);
+            // Database table where the data will be stored
+            mu_formData.append("table", this.table_name);
 
-            var site_url = this.delete_link;
-
-            xmlhttp.open("POST", site_url, true);
-
-            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-            xmlhttp.send(parameters);
+            $.ajax({
+                   url : this.delete_link,
+                   type : 'POST',
+                   data : mu_formData,
+                   processData: false,  
+                   contentType: false,  
+                   success : function(data) 
+                   {
+                       //alert(data);
+                   }
+            });
         };
         
         /**
@@ -135,8 +132,6 @@
                 {
                     var container = this.create_image_upload_element(
                             image_id.toString(), 
-                            this.image_name, 
-                            this.file_name, 
                             parseInt(pos_x_value), 
                             parseInt(pos_y_value), 
                             parseInt(is_inner_value), 
@@ -153,8 +148,6 @@
                 var container = 
                     this.create_image_upload_element(
                         image_id.toString(), 
-                        this.image_name, 
-                        this.file_name, 
                         parseInt(pos_x_value), 
                         parseInt(pos_y_value), 
                         parseInt(is_inner_value), 
@@ -166,7 +159,7 @@
         };
 
         
-        this.create_image_upload_element = function(curr_element, image_name, file_name, pos_x_value, pos_y_value, is_inner_value, depth_value, applied_to_back_value)
+        this.create_image_upload_element = function(curr_element, pos_x_value, pos_y_value, is_inner_value, depth_value, applied_to_back_value)
         {
             var caller = this.get_caller();
             
@@ -189,7 +182,7 @@
             upload_button.setAttribute('current_element', curr_element);
             upload_button.onchange = function() 
             {
-               var image_element = document.getElementById(caller.image_name.concat("_").concat(this.getAttribute('current_element')));
+               var image_element = document.getElementById("image-".concat(this.getAttribute('current_element')));
                if (this.files && this.files[0]) 
                {
                     var reader = new FileReader();
@@ -220,7 +213,7 @@
             image_container.setAttribute("style", "padding: 10px; border-style: outset;");
             var image = document.createElement("img");
             image.setAttribute("style", "width : 100%; height: 100%;");
-            image.setAttribute("id", image_name.concat("_").concat(curr_element)); 
+            image.setAttribute("id", "image-".concat("_").concat(curr_element)); 
             image_container.appendChild(image);
             left_container.appendChild(image_container);
             
@@ -247,7 +240,8 @@
                 
                 var image_id = this.getAttribute("current_element");
                 
-                var parent = document.getElementById(image_id);
+                // Get the top most container. 
+                var parent = this.parentElement.parentElement.parentElement.parentElement;
                 
                 var parent_container = parent.parentElement;
 
@@ -357,9 +351,8 @@
      * @param {type} image_id The image id of the image being deleted
      * @returns {undefined}
      */
-    function delete_image(image_id){
-        
-        console.log("Deleting Image with ID : " + image_id);
+    function delete_image(image_id)
+    {
         
         var xmlhttp = new XMLHttpRequest();   
 
@@ -377,7 +370,7 @@
      * @param {type} uploader The uploader to be submitted
      * @returns {undefined}
      */
-    function submit_upload_form(uploader, dir_name, database_table_name){
+    function submit_upload_form(uploader){
         
         // Create Form Data
         var mu_formData = new FormData(document.getElementById(uploader.form.attr('id')));
@@ -385,9 +378,9 @@
         // Id of the associated item
         mu_formData.append("id", uploader.item_id);
         // Image directory where the images will be uploaded to
-        mu_formData.append("dir", dir_name);
+        mu_formData.append("dir", uploader.dir);
         // Database table where the data will be stored
-        mu_formData.append("table", database_table_name);
+        mu_formData.append("table", uploader.table_name);
 
         $.ajax({
                url : uploader.form.attr('action'),

@@ -47,6 +47,12 @@
         this.mode = parameters.mode;
         
         /**
+         * When this is true, the user can view the different paramaters
+         * associated with the image. 
+         */
+        this.show_parameters = parameters.show_parameters;
+        
+        /**
          * This is a reference to the uploader form
          */
         this.form = parameters.form;
@@ -92,8 +98,6 @@
          * @returns {undefined}
          */
         this.delete_image = function(image_id){
-            
-            console.log("Deleting Image with ID : " + image_id);
             
             var xmlhttp = new XMLHttpRequest();
 
@@ -219,6 +223,14 @@
             image.setAttribute("id", image_name.concat("_").concat(curr_element)); 
             image_container.appendChild(image);
             left_container.appendChild(image_container);
+            
+            if(!caller.show_parameters)
+            {
+                left_container.setAttribute("class", "col-sm-12");
+                bottom_container.appendChild(left_container);
+                container.appendChild(top_container);
+                return container;
+            }
             
             // Create Delete Button
             var delete_button_container = document.createElement("DIV");

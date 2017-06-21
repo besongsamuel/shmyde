@@ -168,7 +168,8 @@
             
             // Create the Upload Element Container
             var container = document.createElement("DIV");
-            container.setAttribute("class", "col-sm-6");
+            container.setAttribute("class", "col-sm-5");
+            container.setAttribute("style", "margin : 5px;");
             
             // Create the Top Container that contains the Upload button
             var top_container = document.createElement("DIV");
@@ -176,11 +177,11 @@
             
             // Create the upload button
             var upload_button_container = document.createElement("DIV");
-            upload_button_container.setAttribute("class", "input-group");
+            upload_button_container.setAttribute("class", "input-group col-sm-12");
             var upload_button = document.createElement("INPUT");
             upload_button.setAttribute("type", "file");
             upload_button.setAttribute("class", "form-control");
-            upload_button.setAttribute("name", "file[".concat(curr_element).concat("]"));
+            upload_button.setAttribute("name", curr_element);
             upload_button.setAttribute('current_element', curr_element);
             upload_button.onchange = function() 
             {
@@ -205,18 +206,16 @@
             var bottom_container = document.createElement("DIV");
             bottom_container.setAttribute("class", "row");
             
-            
             var left_container = document.createElement("DIV");
             left_container.setAttribute("class", "col-sm-6");
             
             var right_container = document.createElement("DIV");
             right_container.setAttribute("class", "col-sm-6");
             
-            
             var image_container = document.createElement("DIV");
-            image_container.setAttribute("style", "padding: 10px;");
+            image_container.setAttribute("style", "padding: 10px; border-style: outset;");
             var image = document.createElement("img");
-            image.setAttribute("style", "width : 100%;");
+            image.setAttribute("style", "width : 100%; height: 100%;");
             image.setAttribute("id", image_name.concat("_").concat(curr_element)); 
             image_container.appendChild(image);
             left_container.appendChild(image_container);
@@ -265,41 +264,34 @@
             
             // Create Contrast Input Element
             var contrast_container = document.createElement("DIV");
-            contrast_container.setAttribute("class", "input-group");
+            contrast_container.setAttribute("class", "checkbox input-group");
             var contrast_label = document.createElement("label");
             var contrast_text = document.createTextNode("Is Inner Contrast"); 
-            contrast_label.appendChild(contrast_text);
             var contrast = document.createElement("input");
             contrast.setAttribute("type", "checkbox");
             contrast.setAttribute("name", "is_inner[".concat(curr_element).concat("]"));
-            contrast.setAttribute("id", "is_inner");
-            contrast.setAttribute("class", "form-control");
             contrast.setAttribute("value", "1");
             contrast.checked = Boolean(is_inner_value);
+            contrast_label.appendChild(contrast);
+            contrast_label.appendChild(contrast_text);
             contrast_container.appendChild(contrast_label);
-            contrast_container.appendChild(contrast);
-            
             
             // Create Back Item Checkbox
             var back_item_container = document.createElement("DIV");
-            back_item_container.setAttribute("class", "input-group");
+            back_item_container.setAttribute("class", "checkbox input-group");
             var back_item_label = document.createElement("label");
             var back_item_text = document.createTextNode("Applied to the back"); 
-            back_item_label.appendChild(back_item_text);
             var back_item = document.createElement("input");
             back_item.setAttribute("type", "checkbox");
             back_item.setAttribute("name", "is_back_image[".concat(curr_element).concat("]"));
-            back_item.setAttribute("id", "is_back_image");
-            back_item.setAttribute("class", "form-control");
             back_item.setAttribute("value", "1");
             back_item.checked = Boolean(applied_to_back_value);
+            back_item_label.appendChild(back_item);
+            back_item_label.appendChild(back_item_text);
             back_item_container.appendChild(back_item_label);
-            back_item_container.appendChild(back_item);
 
-
-            var position_container = document.createElement("DIV");
-            position_container.setAttribute("class", "input-group");
-
+            var x_container = document.createElement("DIV");
+            x_container.setAttribute("class", "input-group");
             var xpos_label = document.createElement("label");
             var xpos_text = document.createTextNode("Position X"); 
             xpos_label.appendChild(xpos_text);
@@ -311,6 +303,8 @@
             xpos.setAttribute("class", "form-control");
             xpos.value = pos_x_value;
 
+            var y_container = document.createElement("DIV");
+            y_container.setAttribute("class", "input-group");
             var ypos_label = document.createElement("label");
             var ypos_text = document.createTextNode("Position Y"); 
             ypos_label.appendChild(ypos_text);
@@ -322,16 +316,17 @@
             ypos.setAttribute("class", "form-control");
             ypos.value = pos_y_value;
 
-            position_container.appendChild(xpos_label);
-            position_container.appendChild(xpos);
 
-            position_container.appendChild(ypos_label);
-            position_container.appendChild(ypos);
+            x_container.appendChild(xpos_label);
+            x_container.appendChild(xpos);
+            y_container.appendChild(ypos_label);
+            y_container.appendChild(ypos);
 
             right_container.appendChild(depth_container);
             right_container.appendChild(back_item_container);
             right_container.appendChild(contrast_container);
-            right_container.appendChild(position_container);
+            right_container.appendChild(x_container);
+            right_container.appendChild(y_container);
             right_container.appendChild(delete_button_container);
 
             bottom_container.appendChild(left_container);
@@ -370,10 +365,10 @@
      * @param {type} uploader The uploader to be submitted
      * @returns {undefined}
      */
-    function submit_upload_form(form_id, dir_name, database_table_name){
+    function submit_upload_form(uploader, dir_name, database_table_name){
         
         // Create Form Data
-        var mu_formData = new FormData(document.getElementById(form_id));
+        var mu_formData = new FormData(document.getElementById(uploader.form.attr('id')));
         
         // Id of the associated item
         mu_formData.append("id", uploader.item_id);

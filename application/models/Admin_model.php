@@ -1029,6 +1029,33 @@ class Admin_model extends CI_Model {
         return true;
     }
     
+    public function create($table_name, $data)
+    {
+        if(isset($data['id']))
+        {
+            $query = $this->db->get_where($table_name, array('id' => $data['id']));
+            $count = $query->num_rows(); 
+            if($count === 0)
+            {
+                $this->db->insert($table_name, $data);
+                return $this->db->insert_id();
+            }
+            else
+            {
+                $this->db->where('id', $data['id']);
+                $this->db->update($table_name, $data);
+                return $data['id'];
+            }
+        }
+        else
+        {
+            $this->db->insert($table_name, $data);
+            return $this->db->insert_id();
+        }
+        
+        
+    }
+    
     public function create_button($image_name, $design_image_name, $name){
         
         $id = $this->get_table_next_id("shmyde_buttons");

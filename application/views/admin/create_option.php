@@ -144,11 +144,11 @@
             
             main_form.submit(function (ev) {
                                  
-                submit_upload_form(single_uploader);
+                ev.preventDefault();
                 
-                submit_upload_form(multi_uploader);
+                submit_upload_form(multi_uploader, 'design', 'shmyde_images' );
                 
-                
+                submit_upload_form(single_uploader,  'design\thumbnail', 'shmyde_option_thumbnail' );
 
             });
             
@@ -175,7 +175,7 @@
             
                 <button type="button" id="add_image" class="btn btn-primary" style="margin-top: 25px;">Add Image</button>
 
-                <form action="<?php echo site_url('admin/upload_image/'.$option_id);  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="multiple_image_upload_form">
+                <form action="<?php echo site_url('admin/upload_image/'.$id);  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="multiple_image_upload_form">
 
                     <div id="images" name="images" class="row">
 
@@ -191,7 +191,7 @@
 
                 <button type="button" id="add_thumbnail" class="btn btn-primary" style="margin-top: 25px;">Add Thumbnail</button>
 
-                <form action="<?php echo site_url('admin/upload_image/'.$option_id);  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="single_image_upload_form">
+                <form action="<?php echo site_url('admin/upload_image/'.$id);  ?>" role="form" method="post" enctype="multipart/form-data" style="margin-top: 20px; margin-bottom: 20px;" id="single_image_upload_form">
 
 
                     <div id="image" name="image" class="row">

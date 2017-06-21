@@ -1263,125 +1263,38 @@ class Admin extends CI_Controller {
      */
     public function upload_image($id){
         
+        $this->load->library('upload');
         
-        $parameters = json_decode($this->input->post('parameters'));
-                                
-        $image_dir = $parameters->image_dir;
+        $image_keys = array();
         
-        $table_name = $parameters->table_name;
-        
-        $upload_file_name = $parameters->file_name;
-        
-        $image_name = $parameters->image_name;
-                              
-        $upload_path = ASSETS_DIR_PATH.'images/'.$image_dir;
-                        
-        for ($i = 0; $i <= 100; $i++) {
-
-            $key = $upload_file_name."_".$i;
-            
-            ///This will represent the name of the file name if it exists
-            $file_name = $image_name.'_'.$id.'_'.$i;
-            
-            $file_size = 0;
-            
-            $file_tmp = '';
-            
-            $file_ext = '';
-            
-            $depth = 0;
-            
-            $pos_x = 0;
-            
-            $pos_y = 0;
-            
-            $is_inner = 0;
-            
-            $is_back_image = 0;
-            
-            if(isset($_FILES[$key]) && $_FILES[$key]['size'] > 0){
-                                             
-                $file_size = $_FILES[$key]['size'];
-                
-                $file_tmp =$_FILES[$key]['tmp_name'];
-
-                $tmp = explode('.',$_FILES[$key]['name']);
-
-                $file_ext =strtolower(end($tmp));
-            }
-            
-            if(isset($this->input->post('depth')[$i])){
-            
-                $depth = $this->input->post('depth')[$i];
-
-                $pos_x = $this->input->post('pos_x')[$i];
-
-                $pos_y = $this->input->post('pos_y')[$i];
-                
-                if(isset($this->input->post('is_inner')[$i])){
-                    
-                    $is_inner = $this->input->post('is_inner')[$i];
-                    
-                }
-                
-                if(isset($this->input->post('is_back_image')[$i])){
-                    
-                    $is_back_image = $this->input->post('is_back_image')[$i];
-                    
-                }
-                
-                if($file_size == 0){
-                    
-                    $file_name = $this->admin_model->get_image_name($id, $i, $table_name);
-                    
-                    $this->admin_model->save_image($id, $i, $file_name, $table_name, $pos_x, $pos_y, $is_inner, $depth, $is_back_image);
-
-                }
-
-            }
-                        
-            if($file_size > 0){
-                
-                $errors= array();
-                                
-                $file_size =$_FILES[$key]['size'];
-                
-                $file_tmp =$_FILES[$key]['tmp_name'];
-
-                $tmp = explode('.',$_FILES[$key]['name']);
-
-                $file_ext=strtolower(end($tmp));
-
-                $expensions= array("jpeg","jpg","png");
-
-                if(in_array($file_ext,$expensions)=== false){
-
-                   $errors[]="extension '".$file_ext."' not allowed, please choose a JPEG or PNG file.";
-                }
-
-                if($file_size > 2097152){
-                    
-                   $errors[]='File size must be excately 2 MB';
-                }
-
-                if(empty($errors)== true){
-                    
-                   move_uploaded_file($file_tmp, $upload_path.$file_name.'.'.$file_ext);
-                                      
-                   $this->admin_model->save_image($id, $i, $file_name.'.'.$file_ext, $table_name, $pos_x, $pos_y, $is_inner, $depth, $is_back_image);
-
-
-                   echo "Upload ".$file_name.'.'.$file_ext." Successful \n";
-
-                }else{
-
-                   echo print_r($errors);
-
-                }
-             }          
-
+        if($this->input->post('depth') != null)
+        {
+            $image_keys = array_keys($this->input->post('depth'));
         }
         
+        foreach ($image_keys as $image_key) 
+        {
+            $this->initialize_upload_library(ASSETS_DIR_PATH."images/".$this->input->post('dir')."/", $image_key.".png");
+            
+            $data = array
+            (
+                "id" => $image_key,
+                "depth" => $this->input->post('depth')[$image_key],
+                "item_id" => $this->input->post('id'),
+                "pos_x" => $this->input->post('pos_x')[$image_key],
+                "pos_y" => $this->input->post('pos_y')[$image_key],
+                "is_inner" => $this->input->post('is_inner')[$image_key] != null ? 1 : 0,
+                "is_back_image" => $this->input->post('is_back_image')[$image_key] != null ? 1 : 0,
+                "name" => $image_key.".png"
+            );
+            
+            $this->admin_model->create($this->input->post('table'), $data);
+            
+            if(!$this->upload->do_upload($image_key))
+            {
+                $this->upload->display_errors();
+            }
+        }
                             
     }
                     
@@ -1462,6 +1375,17 @@ class Admin extends CI_Controller {
         }
         
         $this->admin_model->delete_image($item_id, $image_id, $table_name);
+    }
+    
+    private function initialize_upload_library($uploadDirectory, $fileName)
+    {
+        $config['upload_path'] = $uploadDirectory;
+        $config['file_name'] = $fileName;
+        $config['overwrite'] = true;
+        $config['allowed_types'] = 'gif|jpg|png|jpeg|csv|tiff|jfif';
+        $config['max_size']     = '10000';
+        
+        $this->upload->initialize($config);
     }
         
 

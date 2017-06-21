@@ -1781,5 +1781,12 @@ class Admin_model extends CI_Model {
     {
         $this->db->query("UPDATE ".$tableName." SET ".$columnName." = ".$this->db->escape($newValue)." WHERE ".$condition);
     }
+	
+    public function delete($table_name, $id)
+    {
+    	$this->db->where('id', $id);
+	$this->db->delete($table_name);
+    }
+	
  
 }

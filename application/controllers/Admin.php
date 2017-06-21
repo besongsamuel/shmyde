@@ -175,7 +175,7 @@ class Admin extends CI_Controller {
 
             if($page == 'option')
             {
-                $this->edit_option($id, $param0, $param1);
+                $this->create_option('option');
             }
             
             
@@ -358,29 +358,6 @@ class Admin extends CI_Controller {
                 $this->input->post('youtube_video'))){
             
             redirect('/admin/view/measurement', 'refresh');
-        }
-    }
-    
-    function edit_option($id){
-
-        if($this->admin_model->edit_option(
-                $id, $this->input->post('name'), 
-                $this->input->post('menu'), 
-                $this->input->post('price'), 
-                $this->input->post('description'), 
-                $this->input->post('is_default'))){
-            
-            $this->admin_model->delete_option_dependent_menus($id);
-        
-            if($this->input->post('option_dependent_menu') != null)
-            {
-                foreach ($this->input->post('option_dependent_menu') as $key => $value)
-                {
-                    $this->admin_model->add_option_dependent_menu($id, $key);
-                }
-            }
-            
-            redirect('/admin/view/option/'.$this->input->post('product').'/'. $this->input->post('menu'), 'refresh');
         }
     }
     

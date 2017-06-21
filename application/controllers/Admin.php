@@ -623,6 +623,9 @@ class Admin extends CI_Controller {
         }
                 
         $this->data['cssLinks'] = array('admin');
+	
+	// This creates a unique id for the object being created.     
+	$this->data['id'] = uniqid();    
                        
         $this->view_create_product($page);
                        
@@ -944,10 +947,6 @@ class Admin extends CI_Controller {
         
         if($page == 'product'){
             
-            $id = $this->admin_model->get_table_next_id("shmyde_product");
-            
-            $this->data['product_id'] = $id;
-        
         }
                        
     }
@@ -960,10 +959,6 @@ class Admin extends CI_Controller {
     private function view_create_product_fabric($page){
         
         if($page == 'product_fabric'){
-            
-            $id = $this->admin_model->get_table_next_id("shmyde_fabrics");
-            
-            $this->data['fabric_id'] = $id;
             
             $this->data['product_fabric'] = '';
                                     
@@ -1029,11 +1024,6 @@ class Admin extends CI_Controller {
             $this->data['selected_product'] = $param0;
             
             $this->data['selected_menu'] = $param1;
-            
-            $id = $this->admin_model->get_table_next_id("shmyde_design_option");
-
-            /// The ID of the option that shall be created. This is associated with the images uploaded. 
-            $this->data['option_id'] = $id;
 
         }
         

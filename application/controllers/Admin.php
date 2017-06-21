@@ -1242,19 +1242,35 @@ class Admin extends CI_Controller {
         
         foreach ($image_keys as $image_key) 
         {
-            $this->initialize_upload_library(ASSETS_DIR_PATH."images/".$this->input->post('dir')."/", $image_key.".png");
+            	$this->initialize_upload_library(ASSETS_DIR_PATH."images/".$this->input->post('dir')."/", $image_key.".png");
+		
+            	$data = array();
+		
+		// Parameters are present
+		if($this->input->post('depth')[$image_key] != null)
+		{
+			$data = array
+		        (
+				"id" => $image_key,
+				"depth" => $this->input->post('depth')[$image_key],
+				"item_id" => $this->input->post('id'),
+				"pos_x" => $this->input->post('pos_x')[$image_key],
+				"pos_y" => $this->input->post('pos_y')[$image_key],
+				"is_inner" => $this->input->post('is_inner')[$image_key] != null ? 1 : 0,
+				"is_back_image" => $this->input->post('is_back_image')[$image_key] != null ? 1 : 0,
+				"name" => $image_key.".png"
+		         );
+		}
+		else
+		{
+			$data = array
+		        (
+				"id" => $image_key,
+				"item_id" => $this->input->post('id'),
+				"name" => $image_key.".png"
+		         );
+		}
             
-            $data = array
-            (
-                "id" => $image_key,
-                "depth" => $this->input->post('depth')[$image_key],
-                "item_id" => $this->input->post('id'),
-                "pos_x" => $this->input->post('pos_x')[$image_key],
-                "pos_y" => $this->input->post('pos_y')[$image_key],
-                "is_inner" => $this->input->post('is_inner')[$image_key] != null ? 1 : 0,
-                "is_back_image" => $this->input->post('is_back_image')[$image_key] != null ? 1 : 0,
-                "name" => $image_key.".png"
-            );
             
             $this->admin_model->create($this->input->post('table'), $data);
             

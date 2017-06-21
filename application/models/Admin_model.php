@@ -640,96 +640,12 @@ class Admin_model extends CI_Model {
         $this->db->query('DELETE from shmyde_design_option where id = '.$id);
         
     }
-    
-    /**
-     * This function creates a style or checkbox option
-     * @param type $name The name of the option
-     * @param type $shmyde_design_sub_menu_id the submenu with which this option is associated
-     * @param type $type the type of the option style/checkbox
-     * @param type $price the price for adding the option
-     * @param type $description  the description of the option
-     * @param type $is_default specifies if this is the default option
-     * @return boolean
-     */
-    public function create_option($name, 
-            $shmyde_design_main_menu_id, 
-            $price, 
-            $description, 
-            $is_default){
 
-        $insert_id = $this->get_table_next_id("shmyde_design_option");
-
-        $sql = "INSERT INTO shmyde_design_option (id, name, shmyde_design_main_menu_id, price, description) 
-
-        VALUES (".$insert_id." , ".$this->db->escape($name).", ".$this->db->escape($shmyde_design_main_menu_id).", ".$price.", '".$description."')";
-
-        $this->db->query($sql);
-
-        $sql = "UPDATE shmyde_design_option SET is_default = false where shmyde_design_main_menu_id = ".$shmyde_design_main_menu_id;
-
-        $this->db->query($sql);
-
-        if($is_default){
-            
-            $sql = "UPDATE shmyde_design_option SET is_default = true where id = ".$insert_id;
-        }
-        else{
-            $sql = "UPDATE shmyde_design_option SET is_default = false where id = ".$insert_id;
-        }
-
-        $this->db->query($sql);
-        
-        return true;
+    public function reset_option_defaults()
+    {
+    	$this->db->update('shmyde_design_option', { 'is_default' => 0 });
     }
-    
-    /**
-     * 
-     * @param type $id the id of the option being edited
-     * @param type $name The name of the option
-     * @param type $shmyde_design_sub_menu_id the submenu with which this option is associated
-     * @param type $type the type of the option style/checkbox
-     * @param type $price the price for adding the option
-     * @param type $description  the description of the option
-     * @param type $is_default specifies if this is the default option
-     * @return boolean
-     */
-    public function edit_option($id, 
-            $name, 
-            $shmyde_design_main_menu_id, 
-            $price, 
-            $description, 
-            $is_default){
-    
-    	$sql = "UPDATE shmyde_design_option 
-    	SET name = ".$this->db->escape($name).", shmyde_design_main_menu_id = ".$this->db->escape($shmyde_design_main_menu_id).", price = ".$this->db->escape($price).", description = ".$this->db->escape($description)." WHERE id = ".$id;
-
-        $this->db->query($sql);
-
-        if($is_default){
-            
-            $sql = "UPDATE shmyde_design_option SET is_default = false where shmyde_design_main_menu_id = ".$shmyde_design_main_menu_id;
-
-            $this->db->query($sql);
-            
-            $sql = "UPDATE shmyde_design_option SET is_default = true where id = ".$id;
-            
-            $this->db->query($sql);
-        }
-        else{
-            
-            $sql = "UPDATE shmyde_design_option SET is_default = false where id = ".$id;
-            
-            $this->db->query($sql);
-            
-            
-        }
-        
-              
-        return true;
-		
-		
-    }
-    
+	
     
     /**
      * This function gets the images associated with an option

@@ -891,6 +891,11 @@ class Admin extends CI_Controller {
 		$this->admin_model->create("shmyde_design_option", $data);	
 		// Save dependent menus
 		$option_dependent_menus = $this->input->post('option_dependent_menu');
+		
+		if($data['is_default'] == 1)
+		{
+			$this->admin_model->reset_option_defaults();
+		}
 
 		if(isset($option_dependent_menus))
 		{

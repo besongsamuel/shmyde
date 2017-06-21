@@ -907,33 +907,24 @@ class Admin extends CI_Controller {
      */
     private function create_option($page)
     {
-             
-        if($page == 'option'){
-            
-            if($this->admin_model->create_option(
+	if($page == 'option')
+	{
+		$data = $this->input->post('option');	
+		// Create or edit option 
+		$this->admin_model->create("shmyde_design_option", $data);	
+		// Save dependent menus
+		$option_dependent_menus = $this->input->post('option_dependent_menu');
 
-                $this->input->post('name'), 
-                $this->input->post('menu'), 
-                $this->input->post('price'), 
-                $this->input->post('description'),  
-                $this->input->post('is_default')
-                )){
-                    
-                $id = $this->admin_model->get_table_next_id("shmyde_design_option");
-                
-                $option_dependent_menus = $this->input->post('option_dependent_menu');
-                
-                if(isset($option_dependent_menus))
-                {
-                    foreach ($this->input->post('option_dependent_menu') as $key => $value) 
-                    {
-                        $this->admin_model->add_option_dependent_menu($id, $key);
-                    }
-                }
-                
-                redirect('/admin/view/option/'.$this->input->post('menu').'/'.$this->input->post('product'), 'refresh');
-            }
-        }
+		if(isset($option_dependent_menus))
+		{
+		    foreach ($this->input->post('option_dependent_menu') as $key => $value) 
+		    {
+			$this->admin_model->add_option_dependent_menu($data['id], $key);
+		    }
+		}
+
+		redirect('/admin/view/option/'.$this->input->post('menu').'/'.$this->input->post('product'), 'refresh');
+	}
     }
     
     

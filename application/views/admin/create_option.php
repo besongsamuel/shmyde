@@ -55,28 +55,24 @@
                                                                       
             var multi_uploader = new My_Uploader({
             
-                item_id: "<?= $option_id ?>",
+                item_id: "<?= $id ?>",
                 delete_link: "<?= site_url('admin/delete_image') ?>",
-                table_name: "shmyde_images",
-                image_dir : "design/",
                 root : $( "#images" ),
                 mode : "multiple", 
-                image_name : "option_image",
-                file_name : "option_file",
+                image_name : "file",
+                file_name : "file",
                 form : $( "#multiple_image_upload_form" )
             });
     
             var single_uploader = new My_Uploader({
             
-                item_id: "<?= $option_id ?>",
+                item_id: "<?= $id ?>",
                 delete_link: "<?= site_url('admin/delete_image') ?>",
-                table_name: "shmyde_option_thumbnail",
-                image_dir : "design/thumbnail/",
                 root : $( "#image" ),
                 form : $( "#single_image_upload_form" ),
                 mode : "single",
-                image_name : "option_thumbnail",
-                file_name : "caption_file"
+                image_name : "thumbnail",
+                file_name : "thumbnail"
             });
                         
             if(is_edit){

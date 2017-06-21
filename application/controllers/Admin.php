@@ -1358,23 +1358,17 @@ class Admin extends CI_Controller {
      * @param type $item_id The item id
      * @param type $image_id The id of the image
      */
-    private function remove_image($table_name, $image_dir, $item_id, $image_id){
+    private function remove_image()
+    {
         
-        $image_name = $this->admin_model->get_image_name($item_id, $image_id, $table_name);
-              
-        if($image_name != ""){
-            
-            
-            $upload_file = ASSETS_DIR_PATH.'images/'.$image_dir.$image_name;
-            
-            
-            if(file_exists($upload_file)){
-                
-                 unlink($upload_file);
-            }
-        }
-        
-        $this->admin_model->delete_image($item_id, $image_id, $table_name);
+ 	$id = $this->input->post('id');
+ 	$dir = $this->input->post('dir');
+    	$table = $this->input->post('table');
+	$upload_file = ASSETS_DIR_PATH.'images/'.$image_dir.'/'.$id.'.png';
+	    
+	unlink($upload_file);    
+	    
+        $this->admin_model->delete($table_name, $id);
     }
     
     private function initialize_upload_library($uploadDirectory, $fileName)

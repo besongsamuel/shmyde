@@ -144,18 +144,12 @@
             
             var main_form = $("#create_option");
             
-            main_form.submit(function (ev) {
-                                 
-                ev.preventDefault();
-                
+            main_form.submit(function (ev) 
+	    {
+		// Upload the images. 
                 submit_upload_form(multi_uploader);
-                
                 submit_upload_form(single_uploader);
-
             });
-            
-            
-                                              
         });
  
     </script>
@@ -219,7 +213,7 @@
 
                 <div class="form-group">
                     <label for="menu">Menu:</label>
-                    <select class="form-control" id="menu" name="menu">
+                    <select class="form-control" id="menu" name="option[shmyde_design_main_menu_id]">
                         
                     </select>
                 </div>
@@ -256,22 +250,22 @@
 
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input type="text" class="form-control" id="name" name="name" value="<?php  if(isset($option)) { echo $option->name; } ?>">
+                    <input type="text" class="form-control" id="name" name="option[name]" value="<?php  if(isset($option)) { echo $option->name; } ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="price">Price:</label>
-                    <input type="number" class="form-control" id="price" name="price" value="<?php  if(isset($option)) { echo $option->price; } else { echo '0'; } ?>">
+                    <input type="number" class="form-control" id="price" name="option[price]" value="<?php  if(isset($option)) { echo $option->price; } else { echo '0'; } ?>">
                 </div>
 
                 <div class="form-group">
                     <label for="description">Description:</label>
-                    <textarea class="form-control" rows="5" id="description" name="description"><?php  if(isset($option)) { echo $option->description; } ?></textarea>
+                    <textarea class="form-control" rows="5" id="description" name="option[description]"><?php  if(isset($option)) { echo $option->description; } ?></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="is_default">Is Default:</label>
-                    <input type="checkbox" class="form-control" id="is_default" name="is_default" <?php if(isset($option) && $option->is_default) { echo 'checked'; } ?>>
+                    <input type="checkbox" class="form-control" id="is_default" name="option[is_default]" <?php if(isset($option) && $option->is_default) { echo 'checked'; } ?>>
                 </div>
 
                 <button type="submit" class="btn btn-danger btn-block"><?php echo $title; ?></button>

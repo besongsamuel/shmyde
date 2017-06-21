@@ -637,8 +637,7 @@ class Admin_model extends CI_Model {
             }
         }
         
-        $this->db->query('DELETE from shmyde_design_option where id = '.$id);
-        
+	$this->delete('shmyde_design_option', $id);        
     }
 
     public function reset_option_defaults()
